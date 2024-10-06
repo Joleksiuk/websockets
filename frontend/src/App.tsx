@@ -1,8 +1,13 @@
 import './App.css'
-import ChatBase from './ChatBase/ChatBase'
+import AppBase from './Chat/AppBase'
+import { AuthProvider } from './Service/AuthProvider'
 
 function App() {
-    return <ChatBase />
+    return (
+        <AuthProvider>
+            <AppBase />
+        </AuthProvider>
+    )
 }
 
 export default App

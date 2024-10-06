@@ -1,81 +1,54 @@
 import React, { useState } from 'react'
-import TextField from '@mui/material/TextField'
 
 import {
-    createTheme,
     FilledInput,
     IconButton,
-    Input,
     InputAdornment,
-    PaletteMode,
     ThemeProvider,
 } from '@mui/material'
-import { CURRENT_THEME, getColor, getColorInMode, ThemeType } from '../Colors'
+import { CURRENT_THEME } from '../Colors'
 import SendIcon from '@mui/icons-material/Send'
+import { theme } from './TextInput.styled'
+import { useChatContext } from '../Service/MessagesProvider'
+import { useAuthContext } from '../Service/AuthProvider'
 
-export const theme = (mode: ThemeType) =>
-    createTheme({
-        palette: {
-            mode: mode as PaletteMode,
-        },
-        components: {
-            MuiOutlinedInput: {
-                styleOverrides: {
-                    root: {
-                        backgroundColor: getColorInMode(
-                            'TEXT_INPUT_BACKGROUND',
-                            mode,
-                        ),
-
-                        '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'TEXT_INPUT_BORDER',
-                                mode,
-                            ),
-                        },
-
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'TEXT_INPUT_BORDER_HOVER',
-                                mode,
-                            ),
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'TEXT_INPUT_BORDER_FOCUS',
-                                mode,
-                            ),
-                        },
-                        '&.Mui-focused': {
-                            backgroundColor: getColorInMode(
-                                'TEXT_INPUT_BACKGROUND_FOCUS',
-                                mode,
-                            ),
-                        },
-                    },
-                    input: {
-                        color: getColorInMode('TEXT', mode),
-                    },
-                },
-            },
-        },
-    })
 export default function TextInput() {
     const [text, setText] = useState('')
 
-    const [showPassword, setShowPassword] = React.useState(false)
+    const { addMessage } = useChatContext()
 
-    const handleClickShowPassword = () => setShowPassword((show) => !show)
+    const { user } = useAuthContext()
 
-    const handleMouseDownPassword = (
-        event: React.MouseEvent<HTMLButtonElement>,
+    const sendMessage = () => {
+        if (text.trim() !== '' && user !== null) {
+            const message = {
+                id: new Date().getTime(),
+                sender: user,
+                content: text,
+            }
+            addMessage(message)
+            setText('')
+        }
+    }
+
+    const handleClickSend = () => {
+        sendMessage()
+    }
+
+    const handleKeyDown = (
+        event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>,
     ) => {
+        if (event.key === 'Enter') {
+            event.preventDefault()
+            sendMessage()
+        }
+    }
+
+    const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
     }
 
-    const handleMouseUpPassword = (
-        event: React.MouseEvent<HTMLButtonElement>,
-    ) => {
+    const handleMouseUp = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
     }
 
@@ -85,13 +58,13 @@ export default function TextInput() {
                 value={text}
                 onChange={(text) => setText(text.target.value)}
                 defaultValue="Write you message here"
+                onKeyDown={handleKeyDown}
                 endAdornment={
                     <InputAdornment position="end">
                         <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            onMouseUp={handleMouseUpPassword}
+                            onClick={handleClickSend}
+                            onMouseDown={handleMouseDown}
+                            onMouseUp={handleMouseUp}
                         >
                             <SendIcon />
                         </IconButton>
