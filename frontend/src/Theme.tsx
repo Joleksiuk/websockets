@@ -1,11 +1,13 @@
 import { createTheme } from '@mui/material'
+import { getColor } from './Colors'
 
 export const theme = createTheme({
     palette: {
         primary: {
-            main: '#E0C2FF',
-            light: '#F5EBFF',
-            contrastText: '#47008F',
+            main: getColor('CHAT_BACKGROUND'),
+        },
+        text: {
+            primary: getColor('TEXT'),
         },
     },
 })

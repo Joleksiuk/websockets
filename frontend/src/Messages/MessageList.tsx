@@ -44,6 +44,7 @@ const messages: ChatMessage[] = [
     { id: 18, sender: 'Alice', content: 'Thanks for the encouragement! I’ll keep you updated.' },
     { id: 19, sender: 'John', content: 'Please do! Can’t wait to see what you build.' },
     { id: 20, sender: 'Alice', content: 'Will do! Talk soon.' },
+    { id: 19, sender: 'John', content: 'some new message' },
 ]
 
 export default function MessageList(): JSX.Element {
