@@ -1,12 +1,12 @@
-import './App.css';
-import Button from '@mui/material/Button';
+import './App.css'
+import ChatBase from './ChatBase/ChatBase'
 
 function App() {
-  return (
-    <div className="App">
-     <Button variant="text">Text</Button>
-    </div>
-  );
+    return (
+        <div className="App">
+            <ChatBase></ChatBase>
+        </div>
+    )
 }
 
-export default App;
+export default App
