@@ -1,13 +1,20 @@
 import { createTheme } from '@mui/material'
-import { getColor } from './Colors'
+import { getColorInMode, ThemeType } from './Colors'
 
-export const theme = createTheme({
-    palette: {
-        primary: {
-            main: getColor('CHAT_BACKGROUND'),
+export const theme = (mode: ThemeType) =>
+    createTheme({
+        palette: {
+            primary: {
+                main: getColorInMode('CHAT_BACKGROUND', mode),
+            },
+            text: {
+                primary: getColorInMode('TEXT', mode),
+            },
         },
-        text: {
-            primary: getColor('TEXT'),
+
+        typography: {
+            h3: {
+                color: getColorInMode('TEXT', mode),
+            },
         },
-    },
-})
+    })

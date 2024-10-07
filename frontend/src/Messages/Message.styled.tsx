@@ -1,7 +1,8 @@
-import { styled } from '@mui/material'
+import { styled as muiStyled } from '@mui/material'
 import { getColor } from '../Colors'
+import styled from 'styled-components'
 
-export const MessageStyled = styled('div')<{ isRight: boolean }>(
+export const MessageStyled = muiStyled('div')<{ isRight: boolean }>(
     ({ isRight, theme }) => ({
         maxWidth: '60%',
         padding: '8px 16px',
@@ -19,3 +20,8 @@ export const MessageStyled = styled('div')<{ isRight: boolean }>(
         borderBottomRightRadius: isRight ? '0' : '12px',
     }),
 )
+export const MessageContainerStyled = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`

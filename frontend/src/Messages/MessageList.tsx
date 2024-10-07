@@ -1,5 +1,6 @@
+import Avatar from '../Avatar/Avatar'
 import { useChatContext } from '../Service/MessagesProvider'
-import { MessageStyled } from './Message.styled'
+import { MessageContainerStyled, MessageStyled } from './Message.styled'
 
 export default function MessageList(): JSX.Element {
     const { messages } = useChatContext()
@@ -7,9 +8,12 @@ export default function MessageList(): JSX.Element {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {messages.map((msg) => (
-                <MessageStyled key={msg.id} isRight={msg.sender === 'John'}>
-                    {msg.content}
-                </MessageStyled>
+                <MessageContainerStyled>
+                    <Avatar />
+                    <MessageStyled key={msg.id} isRight={msg.sender === 'John'}>
+                        {msg.content}
+                    </MessageStyled>
+                </MessageContainerStyled>
             ))}
         </div>
     )

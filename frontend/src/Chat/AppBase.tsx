@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChatStyled, Square } from './ChatBase.styled'
 import { ThemeProvider } from '@mui/material'
 import { theme } from '../Theme'
 import MessageList from '../Messages/MessageList'
-import TextInput from '../TextInput/TextInput'
+import TextInput from '../Inputs/TextInput'
 import ModeSwitch from '../ModeSwitch/ModeSwitch'
 import { getColor, ThemeType } from '../Colors'
 import styled from 'styled-components'
 import { ChatProvider } from '../Service/MessagesProvider'
-import UsernameInput from '../UsernameInput/UsernameInput'
-import { AuthProvider, useAuthContext } from '../Service/AuthProvider'
+import UsernameInput from '../Inputs/UsernameInput'
+import { useAuthContext } from '../Service/AuthProvider'
+import { ChatroomProvider } from '../Chatroom/ChatroomProvider'
 type Props = {
     mode: ThemeType
 }
@@ -39,28 +40,32 @@ export default function AppBase(): JSX.Element {
     }, [])
 
     return (
-        <ThemeProvider theme={theme}>
-            {mode && (
-                <Container mode={mode}>
-                    {user ? (
-                        <>
-                            <ModeSwitch
-                                onChange={(type) => setMode(type as ThemeType)}
-                            />
-                            <ChatProvider>
-                                <Square ref={squareRef}>
-                                    <ChatStyled>
-                                        <MessageList />
-                                    </ChatStyled>
-                                    <TextInput />
-                                </Square>
-                            </ChatProvider>
-                        </>
-                    ) : (
-                        <UsernameInput />
-                    )}
-                </Container>
-            )}
+        <ThemeProvider theme={theme(mode)}>
+            <ChatroomProvider>
+                {mode && (
+                    <Container mode={mode}>
+                        {user ? (
+                            <>
+                                <ModeSwitch
+                                    onChange={(type) =>
+                                        setMode(type as ThemeType)
+                                    }
+                                />
+                                <ChatProvider>
+                                    <Square ref={squareRef}>
+                                        <ChatStyled>
+                                            <MessageList />
+                                        </ChatStyled>
+                                        <TextInput />
+                                    </Square>
+                                </ChatProvider>
+                            </>
+                        ) : (
+                            <UsernameInput />
+                        )}
+                    </Container>
+                )}
+            </ChatroomProvider>
         </ThemeProvider>
     )
 }

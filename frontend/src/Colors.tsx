@@ -10,6 +10,9 @@ export type ColorsType = {
 const colors: ColorsType = {
     light: {
         TEXT: '#000000',
+        HEADER_TEXT: '#385566',
+        FIRST_BACKGROUND: '#d1bbe7',
+
         SCROLL_BACKGROUND: '#f5cef4af',
         SCROLL_BAR: '#f5cef4af',
         SCROLL_BAR_BORDER: '#c4a9dfaf',
@@ -32,9 +35,17 @@ const colors: ColorsType = {
         TEXT_INPUT_BORDER_HOVER: '#7018c9',
         TEXT_INPUT_BORDER_FOCUS: '#570aaf6e',
         TEXT_INPUT_BACKGROUND_FOCUS: '#f5ebff',
+
+        USERNAME_INPUT_BACKGROUND: '#f0f4f8',
+        USERNAME_INPUT_BORDER: '#a6aebf',
+        USERNAME_INPUT_BORDER_HOVER: '#3d5afe',
+        USERNAME_INPUT_BORDER_FOCUS: '#2979ff80',
+        USERNAME_INPUT_BACKGROUND_FOCUS: '#e3f2fd33',
     },
     dark: {
         TEXT: '#ffffff',
+        HEADER_TEXT: '#0e2836',
+        FIRST_BACKGROUND: '#6d7ea848',
 
         SCROLL_BACKGROUND: '#3a2d3eaf',
         SCROLL_BAR: '#5c4565af',
@@ -57,6 +68,12 @@ const colors: ColorsType = {
         TEXT_INPUT_BORDER_HOVER: '#a564f0',
         TEXT_INPUT_BORDER_FOCUS: '#834bbf6e',
         TEXT_INPUT_BACKGROUND_FOCUS: '#3a22531c',
+
+        USERNAME_INPUT_BACKGROUND: '#1c1f2649',
+        USERNAME_INPUT_BORDER: '#5f6368',
+        USERNAME_INPUT_BORDER_HOVER: '#64b5f6',
+        USERNAME_INPUT_BORDER_FOCUS: '#90caf980',
+        USERNAME_INPUT_BACKGROUND_FOCUS: '#28334733',
     },
 }
 
