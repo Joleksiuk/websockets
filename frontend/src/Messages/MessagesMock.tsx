@@ -1,4 +1,4 @@
-import { ChatMessage } from '../Service/MessagesProvider'
+import { ChatMessage } from '../Providers/MessagesProvider'
 
 export const messages: ChatMessage[] = [
     { id: 1, sender: 'John', content: 'Hey, how are you?' },

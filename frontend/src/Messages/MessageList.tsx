@@ -1,5 +1,5 @@
-import Avatar from '../Avatar/Avatar'
-import { useChatContext } from '../Service/MessagesProvider'
+import Avatar from '../Components/Avatar/Avatar'
+import { useChatContext } from '../Providers/MessagesProvider'
 import { MessageContainerStyled, MessageStyled } from './Message.styled'
 
 export default function MessageList(): JSX.Element {

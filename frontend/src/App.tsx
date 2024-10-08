@@ -1,12 +1,12 @@
 import './App.css'
-import AppBase from './Chat/AppBase'
-import { AuthProvider } from './Service/AuthProvider'
+import { ModeProvider } from './Providers/ModeProvider'
+import AppBase from './AppBase'
 
 function App() {
     return (
-        <AuthProvider>
+        <ModeProvider>
             <AppBase />
-        </AuthProvider>
+        </ModeProvider>
     )
 }
 

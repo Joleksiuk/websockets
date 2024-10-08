@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_KEY } from './AuthProvider'
+import { LOCAL_STORAGE_KEY } from '../Providers/AuthProvider'
 
 const AuthService = {
     login: (username: string) => {

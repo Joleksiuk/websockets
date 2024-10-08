@@ -1,6 +1,6 @@
 import { createTheme, PaletteMode } from '@mui/material'
-import { getColor, getColorInMode, ThemeType } from '../Colors'
 import styled from 'styled-components'
+import { ThemeType, getColorInMode, getColor } from '../Colors'
 
 export const theme = (mode: ThemeType) =>
     createTheme({

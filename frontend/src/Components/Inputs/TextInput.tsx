@@ -6,11 +6,11 @@ import {
     InputAdornment,
     ThemeProvider,
 } from '@mui/material'
-import { CURRENT_THEME } from '../Colors'
 import SendIcon from '@mui/icons-material/Send'
 import { theme } from './TextInput.styled'
-import { useChatContext } from '../Service/MessagesProvider'
-import { useAuthContext } from '../Service/AuthProvider'
+import { CURRENT_THEME } from '../../Colors'
+import { useAuthContext } from '../../Providers/AuthProvider'
+import { useChatContext } from '../../Providers/MessagesProvider'
 
 export default function TextInput() {
     const [text, setText] = useState('')

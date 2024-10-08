@@ -1,7 +1,8 @@
-import { styled, Theme } from '@mui/material'
-import { getColor } from '../Colors'
+import { styled as muiStyled, Theme } from '@mui/material'
+import { getColor, ThemeType } from '../../Colors'
+import styled from 'styled-components'
 
-export const Square = styled('div')(({ theme }: { theme: Theme }) => ({
+export const Square = muiStyled('div')(({ theme }: { theme: Theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '80vw',
@@ -15,7 +16,7 @@ export const Square = styled('div')(({ theme }: { theme: Theme }) => ({
     boxShadow: `${getColor('CHAT_SHADOW')}`,
 }))
 
-export const ChatStyled = styled('div')(({ theme }: { theme: Theme }) => ({
+export const ChatStyled = muiStyled('div')(({ theme }: { theme: Theme }) => ({
     flexGrow: 1,
     maxHeight: '100%',
     overflowY: 'auto',
@@ -37,3 +38,20 @@ export const ChatStyled = styled('div')(({ theme }: { theme: Theme }) => ({
         backgroundColor: getColor('SCROLL_BAR_HOVER'),
     },
 }))
+
+type Props = {
+    mode: ThemeType
+}
+
+export const Container = styled.div<Props>`
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: ${({ mode }) =>
+        mode &&
+        `linear-gradient(135deg, ${getColor('BACKGROUND_GRADIENT_1')}, ${getColor('BACKGROUND_GRADIENT_2')}, ${getColor('BACKGROUND_GRADIENT_3')}, ${getColor('BACKGROUND_GRADIENT_4')}, ${getColor('BACKGROUND_GRADIENT_5')})`};
+`
