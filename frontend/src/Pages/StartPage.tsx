@@ -4,18 +4,19 @@ import React from 'react'
 import Divider from '@mui/material/Divider'
 import { useChatroomContext } from '../Providers/ChatroomProvider'
 import { useAuthContext } from '../Providers/AuthProvider'
-import { CURRENT_THEME } from '../Colors'
 import {
     VerticalContainerStyled,
     HorizontalContainerStyled,
     ContainerStyled,
 } from './StartPage.styled'
+import { useModeContext } from '../Providers/ModeProvider'
 
 export default function StartPage() {
     const [username, setUsername] = React.useState('')
     const [chatroomName, setChatroomName] = React.useState('')
     const [chatroomId, setChatroomId] = React.useState('')
     const { login } = useAuthContext()
+    const { mode } = useModeContext()
 
     const { joinChatroom, createChatroom } = useChatroomContext()
 
@@ -52,7 +53,7 @@ export default function StartPage() {
     }
 
     return (
-        <VerticalContainerStyled mode={CURRENT_THEME}>
+        <VerticalContainerStyled mode={mode}>
             <Typography color="text.primary" variant="h3">
                 Choose your username
             </Typography>

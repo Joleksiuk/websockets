@@ -1,5 +1,3 @@
-export let CURRENT_THEME: ThemeType = 'dark'
-
 export type ThemeType = 'light' | 'dark'
 
 export type ColorsType = {
@@ -77,14 +75,6 @@ const colors: ColorsType = {
     },
 }
 
-export function getColor(variableName: string): string {
-    return colors[CURRENT_THEME][variableName]
-}
-
 export function getColorInMode(variableName: string, mode: ThemeType): string {
     return colors[mode][variableName]
-}
-
-export function setColorTheme(theme: ThemeType): void {
-    CURRENT_THEME = theme
 }

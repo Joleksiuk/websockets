@@ -27,8 +27,8 @@ export default function ChatBase(): JSX.Element {
                 <>
                     <ModeSwitch />
                     <ChatProvider>
-                        <Square ref={squareRef}>
-                            <ChatStyled>
+                        <Square ref={squareRef} mode={mode}>
+                            <ChatStyled mode={mode}>
                                 <MessageList />
                             </ChatStyled>
                             <TextInput />

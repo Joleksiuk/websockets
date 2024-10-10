@@ -1,6 +1,6 @@
 import { createTheme, PaletteMode } from '@mui/material'
 import styled from 'styled-components'
-import { ThemeType, getColorInMode, getColor } from '../Colors'
+import { ThemeType, getColorInMode } from '../Colors'
 
 export const theme = (mode: ThemeType) =>
     createTheme({
@@ -66,7 +66,12 @@ export const VerticalContainerStyled = styled.div<{ mode: ThemeType }>`
     padding: 100px 0px;
     background: ${({ mode }) =>
         mode &&
-        `linear-gradient(35deg, ${getColor('BACKGROUND_GRADIENT_1')}, ${getColor('BACKGROUND_GRADIENT_2')}, ${getColor('BACKGROUND_GRADIENT_3')}, ${getColor('BACKGROUND_GRADIENT_4')}, ${getColor('BACKGROUND_GRADIENT_5')})`};
+        `linear-gradient(35deg, 
+        ${getColorInMode('BACKGROUND_GRADIENT_1', mode)},
+        ${getColorInMode('BACKGROUND_GRADIENT_2', mode)},
+        ${getColorInMode('BACKGROUND_GRADIENT_3', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_4', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_5', mode)})`};
 `
 
 export const ContainerStyled = styled.div`

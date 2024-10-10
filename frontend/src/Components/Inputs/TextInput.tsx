@@ -8,15 +8,15 @@ import {
 } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import { theme } from './TextInput.styled'
-import { CURRENT_THEME } from '../../Colors'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import { useChatContext } from '../../Providers/MessagesProvider'
+import { useModeContext } from '../../Providers/ModeProvider'
 
 export default function TextInput() {
     const [text, setText] = useState('')
 
     const { addMessage } = useChatContext()
-
+    const { mode } = useModeContext()
     const { user } = useAuthContext()
 
     const sendMessage = () => {
@@ -53,7 +53,7 @@ export default function TextInput() {
     }
 
     return (
-        <ThemeProvider theme={theme(CURRENT_THEME)}>
+        <ThemeProvider theme={theme(mode)}>
             <FilledInput
                 value={text}
                 onChange={(text) => setText(text.target.value)}

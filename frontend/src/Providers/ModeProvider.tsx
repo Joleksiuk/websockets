@@ -13,7 +13,7 @@ interface ChatProviderProps {
 }
 
 export const ModeProvider: React.FC<ChatProviderProps> = ({ children }) => {
-    const [mode, setMode] = useState<ThemeType>('light')
+    const [mode, setMode] = useState<ThemeType>('dark')
 
     return (
         <ModeContext.Provider value={{ mode, setMode }}>

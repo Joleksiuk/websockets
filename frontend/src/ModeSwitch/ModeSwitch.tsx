@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { setColorTheme } from '../Colors'
 import { MaterialUISwitch } from './ModeSwitch.styled'
 import { useModeContext } from '../Providers/ModeProvider'
 
@@ -12,7 +11,6 @@ export default function ModeSwitch() {
         const isChecked = value.target.checked
         const mode = isChecked ? 'dark' : 'light'
         setChecked(isChecked)
-        setColorTheme(mode)
         setMode(mode)
     }
 

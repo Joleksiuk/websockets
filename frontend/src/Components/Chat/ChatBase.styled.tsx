@@ -1,8 +1,13 @@
 import { styled as muiStyled, Theme } from '@mui/material'
-import { getColor, ThemeType } from '../../Colors'
+import { getColorInMode, ThemeType } from '../../Colors'
 import styled from 'styled-components'
 
-export const Square = muiStyled('div')(({ theme }: { theme: Theme }) => ({
+type MUIProps = {
+    theme?: Theme
+    mode: ThemeType
+}
+
+export const Square = muiStyled('div')(({ theme, mode }: MUIProps) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '80vw',
@@ -10,13 +15,13 @@ export const Square = muiStyled('div')(({ theme }: { theme: Theme }) => ({
     maxWidth: '80vh',
     maxHeight: '80vw',
     borderRadius: '16px',
-    backgroundColor: `${getColor('CHAT_BACKGROUND')}`,
+    backgroundColor: `${getColorInMode('CHAT_BACKGROUND', mode)}`,
     overflow: 'hidden',
     padding: '20px',
-    boxShadow: `${getColor('CHAT_SHADOW')}`,
+    boxShadow: `${getColorInMode('CHAT_SHADOW', mode)}`,
 }))
 
-export const ChatStyled = muiStyled('div')(({ theme }: { theme: Theme }) => ({
+export const ChatStyled = muiStyled('div')(({ theme, mode }: MUIProps) => ({
     flexGrow: 1,
     maxHeight: '100%',
     overflowY: 'auto',
@@ -27,23 +32,19 @@ export const ChatStyled = muiStyled('div')(({ theme }: { theme: Theme }) => ({
         width: '16px',
     },
     '&::-webkit-scrollbar-track': {
-        backgroundColor: getColor('SCROLL_BACKGROUND'),
+        backgroundColor: getColorInMode('SCROLL_BACKGROUND', mode),
         borderRadius: '4px',
     },
     '&::-webkit-scrollbar-thumb': {
-        backgroundColor: getColor('SCROLL_BAR'),
+        backgroundColor: getColorInMode('SCROLL_BAR', mode),
         borderRadius: '8px',
     },
     '&::-webkit-scrollbar-thumb:hover': {
-        backgroundColor: getColor('SCROLL_BAR_HOVER'),
+        backgroundColor: getColorInMode('SCROLL_BAR_HOVER', mode),
     },
 }))
 
-type Props = {
-    mode: ThemeType
-}
-
-export const Container = styled.div<Props>`
+export const Container = styled.div<MUIProps>`
     display: flex;
     flex-direction: column;
     gap: 40px;
@@ -53,5 +54,10 @@ export const Container = styled.div<Props>`
     height: 100vh;
     background: ${({ mode }) =>
         mode &&
-        `linear-gradient(135deg, ${getColor('BACKGROUND_GRADIENT_1')}, ${getColor('BACKGROUND_GRADIENT_2')}, ${getColor('BACKGROUND_GRADIENT_3')}, ${getColor('BACKGROUND_GRADIENT_4')}, ${getColor('BACKGROUND_GRADIENT_5')})`};
+        `linear-gradient(135deg, 
+        ${getColorInMode('BACKGROUND_GRADIENT_1', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_2', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_3', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_4', mode)}, 
+        ${getColorInMode('BACKGROUND_GRADIENT_5', mode)})`};
 `
