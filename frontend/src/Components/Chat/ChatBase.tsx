@@ -8,6 +8,8 @@ import { ChatProvider } from '../../Providers/MessagesProvider'
 import TextInput from '../Inputs/TextInput'
 import StartPage from '../../Pages/StartPage'
 import { useModeContext } from '../../Providers/ModeProvider'
+import {} from '../UserList/UserList.styled'
+import UserList from '../UserList/UserList'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
@@ -25,6 +27,7 @@ export default function ChatBase(): JSX.Element {
         <Container mode={mode}>
             {user ? (
                 <>
+                    <UserList />
                     <ModeSwitch />
                     <ChatProvider>
                         <Square ref={squareRef} mode={mode}>

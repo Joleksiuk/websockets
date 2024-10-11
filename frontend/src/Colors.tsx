@@ -7,7 +7,7 @@ export type ColorsType = {
 
 const colors: ColorsType = {
     light: {
-        TEXT: '#000000',
+        TEXT: '#565672',
         HEADER_TEXT: '#385566',
         FIRST_BACKGROUND: '#d1bbe7',
 
@@ -39,9 +39,10 @@ const colors: ColorsType = {
         USERNAME_INPUT_BORDER_HOVER: '#3d5afe',
         USERNAME_INPUT_BORDER_FOCUS: '#2979ff80',
         USERNAME_INPUT_BACKGROUND_FOCUS: '#e3f2fd33',
+        SIDEBAR_BACKGROUND: '#61a4da2b',
     },
     dark: {
-        TEXT: '#ffffff',
+        TEXT: '#d2d2f5a7',
         HEADER_TEXT: '#0e2836',
         FIRST_BACKGROUND: '#6d7ea848',
 
@@ -72,6 +73,7 @@ const colors: ColorsType = {
         USERNAME_INPUT_BORDER_HOVER: '#64b5f6',
         USERNAME_INPUT_BORDER_FOCUS: '#90caf980',
         USERNAME_INPUT_BACKGROUND_FOCUS: '#28334733',
+        SIDEBAR_BACKGROUND: '#21212c39',
     },
 }
 

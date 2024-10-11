@@ -13,43 +13,18 @@ export const theme = (mode: ThemeType) =>
             },
         },
         components: {
-            MuiOutlinedInput: {
+            MuiTextField: {
                 styleOverrides: {
                     root: {
-                        color: getColorInMode('TEXT', mode),
-                        backgroundColor: getColorInMode(
-                            'USERNAME_INPUT_BACKGROUND',
-                            mode,
-                        ),
-
-                        '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'USERNAME_INPUT_BORDER',
-                                mode,
-                            ),
+                        '& .MuiOutlinedInput-root': {
+                            color: getColorInMode('TEXT', mode),
                         },
-
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'USERNAME_INPUT_BORDER_HOVER',
-                                mode,
-                            ),
+                        '& .MuiInputLabel-root': {
+                            color: getColorInMode('TEXT', mode),
                         },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: getColorInMode(
-                                'USERNAME_INPUT_BORDER_FOCUS',
-                                mode,
-                            ),
+                        '& .MuiInputLabel-root.Mui-focused': {
+                            color: getColorInMode('TEXT', mode),
                         },
-                        '&.Mui-focused': {
-                            backgroundColor: getColorInMode(
-                                'USERNAME_INPUT_BACKGROUND_FOCUS',
-                                mode,
-                            ),
-                        },
-                    },
-                    input: {
-                        color: getColorInMode('TEXT', mode),
                     },
                 },
             },

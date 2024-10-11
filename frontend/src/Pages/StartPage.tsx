@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, TextField, ThemeProvider, Typography } from '@mui/material'
 import React from 'react'
 
 import Divider from '@mui/material/Divider'
@@ -8,8 +8,11 @@ import {
     VerticalContainerStyled,
     HorizontalContainerStyled,
     ContainerStyled,
+    theme,
 } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
+import ModeSwitch from '../ModeSwitch/ModeSwitch'
+import { getColorInMode } from '../Colors'
 
 export default function StartPage() {
     const [username, setUsername] = React.useState('')
@@ -53,64 +56,77 @@ export default function StartPage() {
     }
 
     return (
-        <VerticalContainerStyled mode={mode}>
-            <Typography color="text.primary" variant="h3">
-                Choose your username
-            </Typography>
-            <TextField
-                id="outlined-basic"
-                label="Username"
-                variant="outlined"
-                value={username}
-                onChange={handleUsernameChange}
-                sx={{ width: '40%' }}
-            />
-            <br></br>
-            <br></br>
-            <HorizontalContainerStyled>
-                <ContainerStyled>
-                    <Typography variant="h3">Join room</Typography>
+        <ThemeProvider theme={theme(mode)}>
+            <VerticalContainerStyled mode={mode}>
+                <ModeSwitch />
+                <Typography color={getColorInMode('TEXT', mode)} variant="h3">
+                    Choose your username
+                </Typography>
+                <TextField
+                    id="outlined-basic"
+                    label="Username"
+                    variant="outlined"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    sx={{ width: '40%' }}
+                />
+                <br></br>
+                <br></br>
+                <HorizontalContainerStyled>
+                    <ContainerStyled>
+                        <Typography
+                            color={getColorInMode('TEXT', mode)}
+                            variant="h3"
+                        >
+                            Join room
+                        </Typography>
 
-                    <TextField
-                        id="outlined-basic"
-                        label="Chatroom ID"
-                        variant="outlined"
-                        value={chatroomId}
-                        onChange={handleChatroomIdChange}
-                    />
-                    <Button
-                        variant="contained"
-                        sx={{
-                            width: '70%',
-                        }}
-                        onClick={handleJoinChatroom}
-                    >
-                        JOIN
-                    </Button>
-                </ContainerStyled>
+                        <TextField
+                            id="outlined-basic"
+                            label="Chatroom ID"
+                            variant="outlined"
+                            value={chatroomId}
+                            onChange={handleChatroomIdChange}
+                        />
+                        <Button
+                            variant="contained"
+                            sx={{
+                                width: '70%',
+                            }}
+                            onClick={handleJoinChatroom}
+                        >
+                            JOIN
+                        </Button>
+                    </ContainerStyled>
 
-                <Divider orientation="vertical" flexItem />
-                <ContainerStyled>
-                    <Typography variant="h3">Create room</Typography>
+                    <Divider orientation="vertical" flexItem />
+                    <ContainerStyled>
+                        <Typography
+                            color={getColorInMode('TEXT', mode)}
+                            variant="h3"
+                        >
+                            Create room
+                        </Typography>
 
-                    <TextField
-                        id="outlined-basic"
-                        label="Chatroom name"
-                        variant="outlined"
-                        value={chatroomName}
-                        onChange={handleChatroomChange}
-                    />
-                    <Button
-                        variant="contained"
-                        sx={{
-                            width: '70%',
-                        }}
-                        onClick={handleCreateChatroom}
-                    >
-                        CREATE
-                    </Button>
-                </ContainerStyled>
-            </HorizontalContainerStyled>
-        </VerticalContainerStyled>
+                        <TextField
+                            id="outlined-basic"
+                            label="Chatroom name"
+                            variant="outlined"
+                            value={chatroomName}
+                            onChange={handleChatroomChange}
+                        />
+                        <Button
+                            variant="contained"
+                            sx={{
+                                width: '70%',
+                            }}
+                            onClick={handleCreateChatroom}
+                        >
+                            CREATE
+                        </Button>
+                    </ContainerStyled>
+                </HorizontalContainerStyled>
+            </VerticalContainerStyled>
+        </ThemeProvider>
     )
 }
