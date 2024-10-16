@@ -4,7 +4,6 @@ import { ChatStyled, Container, Square } from './ChatBase.styled'
 import MessageList from '../../Messages/MessageList'
 import ModeSwitch from '../../ModeSwitch/ModeSwitch'
 import { useAuthContext } from '../../Providers/AuthProvider'
-import { ChatProvider } from '../../Providers/MessagesProvider'
 import TextInput from '../Inputs/TextInput'
 import StartPage from '../../Pages/StartPage'
 import { useModeContext } from '../../Providers/ModeProvider'
@@ -29,14 +28,12 @@ export default function ChatBase(): JSX.Element {
                 <>
                     <UserList />
                     <ModeSwitch />
-                    <ChatProvider>
-                        <Square ref={squareRef} mode={mode}>
-                            <ChatStyled mode={mode}>
-                                <MessageList />
-                            </ChatStyled>
-                            <TextInput />
-                        </Square>
-                    </ChatProvider>
+                    <Square ref={squareRef} mode={mode}>
+                        <ChatStyled mode={mode}>
+                            <MessageList />
+                        </ChatStyled>
+                        <TextInput />
+                    </Square>
                 </>
             ) : (
                 <StartPage />

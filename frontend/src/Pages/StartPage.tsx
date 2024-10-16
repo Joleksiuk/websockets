@@ -43,18 +43,17 @@ export default function StartPage() {
 
     const handleJoinChatroom = () => {
         if (username.trim() !== '' && chatroomId.trim() !== '') {
-            joinChatroom(chatroomId)
+            joinChatroom(chatroomId, username)
             login(username)
         }
     }
 
     const handleCreateChatroom = () => {
         if (username.trim() !== '' && chatroomName.trim() !== '') {
-            createChatroom(chatroomName)
+            createChatroom(chatroomName, username)
             login(username)
         }
     }
-
     return (
         <ThemeProvider theme={theme(mode)}>
             <VerticalContainerStyled mode={mode}>

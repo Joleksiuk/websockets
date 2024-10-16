@@ -1,25 +1,31 @@
 import Avatar from '../Components/Avatar/Avatar'
-import { useChatContext } from '../Providers/MessagesProvider'
+import { useAuthContext } from '../Providers/AuthProvider'
+import { useChatroomContext } from '../Providers/ChatroomProvider'
 import { useModeContext } from '../Providers/ModeProvider'
-import { MessageContainerStyled, MessageStyled } from './Message.styled'
+import {
+    MessageContainerStyled,
+    MessageStyled,
+    MessagesWrapperStyled,
+} from './Message.styled'
 
 export default function MessageList(): JSX.Element {
-    const { messages } = useChatContext()
+    const { messages } = useChatroomContext()
     const { mode } = useModeContext()
+    const { user } = useAuthContext()
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {messages.map((msg) => (
+        <MessagesWrapperStyled>
+            {messages.map((msg, index) => (
                 <MessageContainerStyled>
-                    <Avatar />
+                    <Avatar username={msg.username} />
                     <MessageStyled
-                        key={msg.id}
-                        isRight={msg.sender === 'John'}
+                        key={`message-${index}`}
+                        isRight={msg.username === user}
                         mode={mode}
                     >
-                        {msg.content}
+                        {msg.message}
                     </MessageStyled>
                 </MessageContainerStyled>
             ))}
-        </div>
+        </MessagesWrapperStyled>
     )
 }

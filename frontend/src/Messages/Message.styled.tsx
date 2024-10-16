@@ -31,3 +31,9 @@ export const MessageContainerStyled = styled.div`
     align-items: center;
     gap: 10px;
 `
+
+export const MessagesWrapperStyled = styled.div`
+    display: 'flex';
+    flex-direction: 'column';
+    gap: '10px';
+`

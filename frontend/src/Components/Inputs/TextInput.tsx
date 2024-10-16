@@ -9,30 +9,25 @@ import {
 import SendIcon from '@mui/icons-material/Send'
 import { theme } from './TextInput.styled'
 import { useAuthContext } from '../../Providers/AuthProvider'
-import { useChatContext } from '../../Providers/MessagesProvider'
 import { useModeContext } from '../../Providers/ModeProvider'
+import { useChatroomContext } from '../../Providers/ChatroomProvider'
 
 export default function TextInput() {
     const [text, setText] = useState('')
 
-    const { addMessage } = useChatContext()
+    const { sendMessage } = useChatroomContext()
     const { mode } = useModeContext()
     const { user } = useAuthContext()
 
-    const sendMessage = () => {
+    const handleSendMessage = () => {
         if (text.trim() !== '' && user !== null) {
-            const message = {
-                id: new Date().getTime(),
-                sender: user,
-                content: text,
-            }
-            addMessage(message)
+            sendMessage(text, user)
             setText('')
         }
     }
 
     const handleClickSend = () => {
-        sendMessage()
+        handleSendMessage()
     }
 
     const handleKeyDown = (
@@ -40,7 +35,7 @@ export default function TextInput() {
     ) => {
         if (event.key === 'Enter') {
             event.preventDefault()
-            sendMessage()
+            handleSendMessage()
         }
     }
 
