@@ -5,15 +5,17 @@ import React, {
     ReactNode,
     useEffect,
 } from 'react'
-import { ChatroomActivity } from './Models'
+import { ClientMessage, ServerMessage } from './Models'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthContext } from './AuthProvider'
+import { connect } from 'http2'
+import { useWebsocketContext } from './WebsocketProvider'
 
 interface ChatroomContextType {
     chatroomId: string | undefined
     createChatroom: (name: string, username: string) => void
     joinChatroom: (chatroomId: string, username: string) => void
-    messages: ChatroomActivity[]
+    messages: ServerMessage[]
     sendMessage: (content: string, username: string) => void
     chatroomUsers: string[]
     setChatroomUsers: (users: string[]) => void
@@ -30,58 +32,37 @@ interface ChatroomProviderProps {
 export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     children,
 }) => {
-    const [messages, setMessages] = useState<ChatroomActivity[]>([])
+    const [messages, setMessages] = useState<ServerMessage[]>([])
     const [chatroomUsers, setChatroomUsers] = useState<string[]>([])
 
-    const [ws, setWs] = useState<WebSocket | null>(null)
-    const [isWsConnected, setIsWsConnected] = useState(false)
+    const { ws } = useWebsocketContext()
 
     const { chatroomId } = useParams()
-    const { user } = useAuthContext()
 
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (chatroomId && user) joinChatroom(chatroomId, user)
-    }, [isWsConnected])
-
-    useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8080')
-
-        socket.onopen = () => {
-            setIsWsConnected(true)
+        ws.onmessage = (event: MessageEvent) => {
+            handleMessageFromWebsocketServer(event)
         }
+    }, [ws])
 
-        socket.onmessage = (event) => {
-            console.log('Raw message received:', event.data)
-            handleWsMessage(event)
-        }
-
-        socket.onclose = () => {
-            console.log('Disconnected from WebSocket')
-            setIsWsConnected(false)
-        }
-
-        setWs(socket)
-        return () => {
-            socket.close()
-        }
-    }, [])
-
-    const handleWsMessage = (event: MessageEvent) => {
+    const handleMessageFromWebsocketServer = (event: MessageEvent) => {
         try {
-            const message: ChatroomActivity = JSON.parse(event.data)
+            const message: ServerMessage = JSON.parse(event.data)
+            console.log('Received message:', message)
+
             switch (message.activity) {
-                case 'MESSAGE':
+                case 'USER SENT MESSAGE':
                     setMessages((prevMessages) => [...prevMessages, message])
                     break
-                case 'JOIN ROOM':
+                case 'USER JOINED ROOM':
                     setChatroomUsers((prevUsers) => [
                         ...prevUsers,
                         message.username,
                     ])
                     break
-                case 'LEAVE ROOM':
+                case 'USER LEFT ROOM':
                     setChatroomUsers((prevUsers) =>
                         prevUsers.filter((user) => user !== message.username),
                     )
@@ -100,7 +81,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             return
         }
 
-        const chatMessage: ChatroomActivity = {
+        const chatMessage: ClientMessage = {
             activity: 'MESSAGE',
             roomId: chatroomId,
             username: username,
@@ -108,37 +89,52 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             message: content,
         }
 
-        sendMessageViaWs(chatMessage)
+        sendWebsocketMessageToServer(chatMessage)
     }
 
-    const createChatroom = (name: string, username: string) => {
-        const chatMessage: ChatroomActivity = {
+    const sleep = (ms: number) => {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    const createChatroom = async (name: string, username: string) => {
+        const roomId = Math.random().toString(36).substr(2, 16)
+        const chatMessage: ClientMessage = {
             activity: 'CREATE ROOM',
-            roomId: Math.random().toString(36).substr(2, 16),
+            roomId: roomId,
             username: username,
             timestamp: Date.now(),
             message: 'User has created the chatroom',
         }
-        sendMessageViaWs(chatMessage)
+        sendWebsocketMessageToServer(chatMessage)
+        joinChatroom(roomId, username)
+        navigate(`/chatroom/${roomId}`)
     }
 
     const joinChatroom = (chatroomId: string, username: string) => {
-        const chatMessage: ChatroomActivity = {
+        const chatMessage: ClientMessage = {
             activity: 'JOIN ROOM',
             roomId: chatroomId,
             username: username,
             timestamp: Date.now(),
             message: 'User has joined the chatroom',
         }
-        sendMessageViaWs(chatMessage)
+        sendWebsocketMessageToServer(chatMessage)
         navigate(`/chatroom/${chatroomId}`)
     }
 
-    const sendMessageViaWs = (message: ChatroomActivity) => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(message))
-        } else {
-            console.log('Connection is not open')
+    const sendWebsocketMessageToServer = async (message: ClientMessage) => {
+        let messageSent = false
+        let currentAttempts = 0
+        const maxAttempts = 2
+        while (!messageSent && currentAttempts < maxAttempts) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(message))
+                messageSent = true
+            } else {
+                console.log('Connection is not open')
+                currentAttempts++
+                await sleep(1000)
+            }
         }
     }
 

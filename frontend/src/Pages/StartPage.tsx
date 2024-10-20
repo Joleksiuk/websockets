@@ -51,7 +51,7 @@ export default function StartPage() {
         }
     }
 
-    const handleCreateChatroom = () => {
+    const handleCreateChatroom = async () => {
         if (username.trim() !== '' && chatroomName.trim() !== '') {
             createChatroom(chatroomName, username)
             login(username)
