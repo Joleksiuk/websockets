@@ -1,18 +1,17 @@
-import { ThemeProvider } from 'styled-components'
-import ChatPage from './Pages/ChatPage'
-import { AuthProvider } from './Providers/AuthProvider'
-import { DefaultTheme } from './Theme'
-import { useModeContext } from './Providers/ModeProvider'
-import { CssBaseline } from '@mui/material'
+import ChatroomPage from './Pages/ChatroomPage'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomePage from './Pages/HomePage'
 
 export default function AppBase() {
-    const { mode } = useModeContext()
     return (
-        <ThemeProvider theme={DefaultTheme(mode)}>
-            <CssBaseline />
-            <AuthProvider>
-                <ChatPage />
-            </AuthProvider>
-        </ThemeProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route
+                    path="/chatroom/:chatroomId"
+                    element={<ChatroomPage />}
+                />
+            </Routes>
+        </BrowserRouter>
     )
 }

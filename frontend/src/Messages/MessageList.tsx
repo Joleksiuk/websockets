@@ -12,10 +12,11 @@ export default function MessageList(): JSX.Element {
     const { messages } = useChatroomContext()
     const { mode } = useModeContext()
     const { user } = useAuthContext()
+
     return (
         <MessagesWrapperStyled>
             {messages.map((msg, index) => (
-                <MessageContainerStyled>
+                <MessageContainerStyled isRight={msg.username === user}>
                     <Avatar username={msg.username} />
                     <MessageStyled
                         key={`message-${index}`}

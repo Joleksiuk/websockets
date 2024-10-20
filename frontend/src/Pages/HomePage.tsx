@@ -1,10 +1,11 @@
-import ChatBase from '../Components/Chat/ChatBase'
+import React from 'react'
 import { ChatroomProvider } from '../Providers/ChatroomProvider'
+import StartPage from './StartPage'
 
-export default function ChatPage() {
+export default function HomePage() {
     return (
         <ChatroomProvider>
-            <ChatBase />
+            <StartPage />
         </ChatroomProvider>
     )
 }

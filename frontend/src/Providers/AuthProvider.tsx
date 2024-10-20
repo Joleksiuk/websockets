@@ -10,6 +10,8 @@ interface AuthContextType {
     user: string | null
     login: (username: string) => void
     logout: () => void
+
+    getUser: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -40,8 +42,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null)
     }
 
+    const getUser = () => {
+        if (user === null) {
+            const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY)
+            if (storedUser) {
+                setUser(storedUser)
+            }
+            console.log(storedUser)
+            return storedUser
+        }
+        return null
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, getUser, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

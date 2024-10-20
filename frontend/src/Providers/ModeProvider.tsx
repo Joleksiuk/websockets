@@ -6,7 +6,10 @@ interface ModeContextType {
     setMode: (mode: ThemeType) => void
 }
 
-const ModeContext = createContext<ModeContextType | undefined>(undefined)
+export const ModeContext = createContext<ModeContextType>({
+    mode: 'dark',
+    setMode: () => {},
+})
 
 interface ChatProviderProps {
     children: ReactNode

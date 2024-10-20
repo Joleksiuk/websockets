@@ -6,15 +6,17 @@ import React, {
     useEffect,
 } from 'react'
 import { ChatroomActivity } from './Models'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAuthContext } from './AuthProvider'
 
 interface ChatroomContextType {
-    chatroomId: string
-    chatroomName: string
-    setChatroomName: (name: string) => void
+    chatroomId: string | undefined
     createChatroom: (name: string, username: string) => void
     joinChatroom: (chatroomId: string, username: string) => void
     messages: ChatroomActivity[]
     sendMessage: (content: string, username: string) => void
+    chatroomUsers: string[]
+    setChatroomUsers: (users: string[]) => void
 }
 
 const ChatroomContext = createContext<ChatroomContextType | undefined>(
@@ -28,28 +30,31 @@ interface ChatroomProviderProps {
 export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     children,
 }) => {
-    const [chatroomName, setChatroomName] = useState<string>('Default')
-    const [chatroomId, setChatroomId] = useState<string>('')
     const [messages, setMessages] = useState<ChatroomActivity[]>([])
+    const [chatroomUsers, setChatroomUsers] = useState<string[]>([])
+
     const [ws, setWs] = useState<WebSocket | null>(null)
     const [isWsConnected, setIsWsConnected] = useState(false)
 
-    const onUserConnected = (username: string) => {
-        console.log('Connected to WebSocket')
-    }
+    const { chatroomId } = useParams()
+    const { user } = useAuthContext()
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (chatroomId && user) joinChatroom(chatroomId, user)
+    }, [isWsConnected])
 
     useEffect(() => {
         const socket = new WebSocket('ws://localhost:8080')
 
         socket.onopen = () => {
-            console.log('WebSocket connection opened')
-            setIsWsConnected(true) // Set connected status here
-            onUserConnected('User')
+            setIsWsConnected(true)
         }
 
         socket.onmessage = (event) => {
-            const message = JSON.parse(event.data)
-            addMessage(message)
+            console.log('Raw message received:', event.data)
+            handleWsMessage(event)
         }
 
         socket.onclose = () => {
@@ -57,15 +62,36 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             setIsWsConnected(false)
         }
 
-        setWs(socket) // Set ws here
-
+        setWs(socket)
         return () => {
             socket.close()
         }
     }, [])
 
-    const addMessage = (message: ChatroomActivity) => {
-        setMessages((prevMessages) => [...prevMessages, message])
+    const handleWsMessage = (event: MessageEvent) => {
+        try {
+            const message: ChatroomActivity = JSON.parse(event.data)
+            switch (message.activity) {
+                case 'MESSAGE':
+                    setMessages((prevMessages) => [...prevMessages, message])
+                    break
+                case 'JOIN ROOM':
+                    setChatroomUsers((prevUsers) => [
+                        ...prevUsers,
+                        message.username,
+                    ])
+                    break
+                case 'LEAVE ROOM':
+                    setChatroomUsers((prevUsers) =>
+                        prevUsers.filter((user) => user !== message.username),
+                    )
+                    break
+                default:
+                    console.log('Unknown message type:', message)
+            }
+        } catch (error) {
+            console.error('Error processing WebSocket message', error)
+        }
     }
 
     const sendMessage = (content: string, username: string) => {
@@ -74,48 +100,26 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             return
         }
 
-        const chatMessage = {
+        const chatMessage: ChatroomActivity = {
             activity: 'MESSAGE',
-            roomId: chatroomId, // Use the actual chatroomId instead of generating a new one
+            roomId: chatroomId,
             username: username,
             timestamp: Date.now(),
             message: content,
         }
 
-        console.log('WebSocket readyState:', ws?.readyState) // Log the WebSocket state
-
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            console.log('Sending message:', JSON.stringify(chatMessage))
-            ws.send(JSON.stringify(chatMessage))
-        } else {
-            console.log('WebSocket connection is not open')
-        }
-    }
-
-    const generateChatroomId = () => {
-        const id = Math.random().toString(36).substr(2, 16)
-        setChatroomId(id)
-        return id
+        sendMessageViaWs(chatMessage)
     }
 
     const createChatroom = (name: string, username: string) => {
-        const newRoomId = generateChatroomId()
-        setChatroomName(name)
-        setChatroomId(newRoomId)
-
         const chatMessage: ChatroomActivity = {
             activity: 'CREATE ROOM',
-            roomId: newRoomId,
+            roomId: Math.random().toString(36).substr(2, 16),
             username: username,
             timestamp: Date.now(),
             message: 'User has created the chatroom',
         }
-
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(chatMessage))
-        } else {
-            console.log('Connection is not open')
-        }
+        sendMessageViaWs(chatMessage)
     }
 
     const joinChatroom = (chatroomId: string, username: string) => {
@@ -126,9 +130,13 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             timestamp: Date.now(),
             message: 'User has joined the chatroom',
         }
+        sendMessageViaWs(chatMessage)
+        navigate(`/chatroom/${chatroomId}`)
+    }
 
+    const sendMessageViaWs = (message: ChatroomActivity) => {
         if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(chatMessage))
+            ws.send(JSON.stringify(message))
         } else {
             console.log('Connection is not open')
         }
@@ -137,13 +145,13 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     return (
         <ChatroomContext.Provider
             value={{
-                chatroomName,
-                setChatroomName,
                 chatroomId,
+                messages,
+                chatroomUsers,
                 createChatroom,
                 joinChatroom,
-                messages,
                 sendMessage,
+                setChatroomUsers,
             }}
         >
             {children}

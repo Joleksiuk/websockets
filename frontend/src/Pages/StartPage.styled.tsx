@@ -38,6 +38,7 @@ export const VerticalContainerStyled = styled.div<{ mode: ThemeType }>`
     justify-content: center;
     align-items: center;
     width: 100%;
+    height: 100vh;
     padding: 100px 0px;
     background: ${({ mode }) =>
         mode &&

@@ -13,6 +13,7 @@ import {
 import { useModeContext } from '../Providers/ModeProvider'
 import ModeSwitch from '../ModeSwitch/ModeSwitch'
 import { getColorInMode } from '../Colors'
+import { useNavigate } from 'react-router-dom'
 
 export default function StartPage() {
     const [username, setUsername] = React.useState('')
@@ -20,6 +21,7 @@ export default function StartPage() {
     const [chatroomId, setChatroomId] = React.useState('')
     const { login } = useAuthContext()
     const { mode } = useModeContext()
+    const navigate = useNavigate()
 
     const { joinChatroom, createChatroom } = useChatroomContext()
 
@@ -45,6 +47,7 @@ export default function StartPage() {
         if (username.trim() !== '' && chatroomId.trim() !== '') {
             joinChatroom(chatroomId, username)
             login(username)
+            navigate(`/chatroom/${chatroomId}`)
         }
     }
 

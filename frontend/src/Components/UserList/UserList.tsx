@@ -3,14 +3,14 @@ import { Typography } from '@mui/material'
 import { getColorInMode } from '../../Colors'
 import { useModeContext } from '../../Providers/ModeProvider'
 import Avatar from '../Avatar/Avatar'
-
-const userList: string[] = ['Christofer', 'Micheal', 'Cathrine', 'Oliver']
+import { useChatroomContext } from '../../Providers/ChatroomProvider'
 
 export default function UserList() {
     const { mode } = useModeContext()
+    const { chatroomUsers } = useChatroomContext()
     return (
         <UserListStyled mode={mode}>
-            {userList.map((user, index) => {
+            {chatroomUsers.map((user, index) => {
                 return (
                     <UserStyled key={index}>
                         <Avatar username={user} />
