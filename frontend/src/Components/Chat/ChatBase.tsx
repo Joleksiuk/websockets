@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { ChatStyled, Container, Square } from './ChatBase.styled'
 
 import MessageList from '../../Messages/MessageList'
-import ModeSwitch from '../../ModeSwitch/ModeSwitch'
 import TextInput from '../Inputs/TextInput'
 import { useModeContext } from '../../Providers/ModeProvider'
 import UserList from '../UserList/UserList'
@@ -28,7 +27,6 @@ export default function ChatBase(): JSX.Element {
                 Chatroom : {chatroomId}
             </Typography>
             <UserList />
-            <ModeSwitch />
             <Square ref={squareRef} mode={mode}>
                 <ChatStyled mode={mode}>
                     <MessageList />

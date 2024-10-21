@@ -5,8 +5,6 @@ const rooms = new Map()
 const users = new Map()
 
 wss.on('connection', (ws) => {
-    console.log('New client connected')
-
     ws.on('message', (message) => {
         try {
             console.log('Received message: ', message)
@@ -69,7 +67,6 @@ function handleCreateRoom(message, ws) {
         rooms.set(roomId, new Set())
         rooms.get(roomId).add(ws)
         console.log('Creating room with id: ', roomId)
-        console.log('Current rooms: ', rooms)
     } else {
         console.log(
             `Unable to create room with id : ${roomId} - Room already exists`,
@@ -92,7 +89,7 @@ function handleUserJoinedRoom(message, ws) {
         timestamp: Date.now(),
         message: `${username} has joined the room.`,
     }
-    if (!rooms.has(roomId)) {
+    if (rooms.has(roomId)) {
         rooms.get(roomId).add(ws)
         broadcastToRoom(roomId, joinNotification)
     } else {

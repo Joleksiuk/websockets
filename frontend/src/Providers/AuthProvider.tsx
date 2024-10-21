@@ -5,6 +5,7 @@ import React, {
     useEffect,
     ReactNode,
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
     user: string | null
@@ -25,6 +26,7 @@ export const LOCAL_STORAGE_KEY = 'chat-app-logged-user'
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<string | null>(null)
 
+    const navigate = useNavigate()
     useEffect(() => {
         const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY)
         if (storedUser) {
@@ -40,6 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = () => {
         localStorage.removeItem(LOCAL_STORAGE_KEY)
         setUser(null)
+        navigate(`/`)
     }
 
     const getUser = () => {

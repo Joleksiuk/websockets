@@ -7,8 +7,6 @@ import React, {
 } from 'react'
 import { ClientMessage, ServerMessage } from './Models'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAuthContext } from './AuthProvider'
-import { connect } from 'http2'
 import { useWebsocketContext } from './WebsocketProvider'
 
 interface ChatroomContextType {

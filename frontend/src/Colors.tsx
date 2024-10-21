@@ -42,7 +42,7 @@ const colors: ColorsType = {
         SIDEBAR_BACKGROUND: '#61a4da2b',
     },
     dark: {
-        TEXT: '#d2d2f5a7',
+        TEXT: '#f6f6fca7',
         HEADER_TEXT: '#0e2836',
         FIRST_BACKGROUND: '#6d7ea848',
 
