@@ -1,9 +1,14 @@
-import { Typography, TextField, Button, Divider } from '@mui/material'
+import {
+    Typography,
+    TextField,
+    Button,
+    Divider,
+    LinearProgress,
+} from '@mui/material'
 import React from 'react'
 import { getColorInMode } from '../Colors'
 import { HorizontalContainerStyled, ContainerStyled } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
-import { useNavigate } from 'react-router-dom'
 import { useChatroomContext } from '../Providers/ChatroomProvider'
 import { useAuthContext } from '../Providers/AuthProvider'
 
@@ -14,8 +19,13 @@ export default function RoomChoicePage() {
     const [chatroomName, setChatroomName] = React.useState('')
     const [chatroomId, setChatroomId] = React.useState('')
     const [password, setPassword] = React.useState('')
-
-    const { joinChatroom, createChatroom } = useChatroomContext()
+    const {
+        joinChatroom,
+        createChatroom,
+        isLoading,
+        hasInvalidPassword,
+        setHasInvalidPassword,
+    } = useChatroomContext()
 
     const handleChatroomChange = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -45,6 +55,26 @@ export default function RoomChoicePage() {
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
         setPassword(event.target.value)
+    }
+
+    if (isLoading) {
+        return <LinearProgress color="inherit" />
+    }
+
+    if (hasInvalidPassword) {
+        return (
+            <ContainerStyled>
+                <Typography color={getColorInMode('TEXT', mode)} variant="h3">
+                    Invalid Password
+                </Typography>
+                <Button
+                    variant="outlined"
+                    onClick={() => setHasInvalidPassword(false)}
+                >
+                    Try again
+                </Button>
+            </ContainerStyled>
+        )
     }
 
     return (

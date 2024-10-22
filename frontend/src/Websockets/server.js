@@ -1,8 +1,18 @@
 const WebSocket = require('ws')
+const crypto = require('crypto')
 
 const wss = new WebSocket.Server({ port: 8080 })
 const rooms = new Map()
 const users = new Map()
+
+/**
+ * Helper function to create a random ID
+ * @param {number} length - The length of the generated ID.
+ * @returns {string} - The generated ID.
+ */
+function generateId(length) {
+    return crypto.randomBytes(length).toString('hex')
+}
 
 wss.on('connection', (ws) => {
     ws.on('message', (message) => {
@@ -56,63 +66,91 @@ function handleMessage(message, ws) {
 }
 
 /**
- * Helper function to create a new chatroom
+ * Helper function to create a new chatroom with auto-generated roomId, password, and cipherKey
  * @param {MessageEvent} message - messageSent from the client.
  * @param {WebSocket} ws - The websocket connection which created the room.
  */
 function handleCreateRoom(message, ws) {
-    const { roomId } = message
+    const roomId = generateId(4)
+    const password = generateId(4)
 
     if (!rooms.has(roomId)) {
-        rooms.set(roomId, new Set())
-        rooms.get(roomId).add(ws)
-        console.log('Creating room with id: ', roomId)
+        rooms.set(roomId, {
+            users: new Set([ws]),
+            chatroomName: message.chatroomName || 'Untitled Room',
+            isOpen: message.isOpen ?? true,
+            password, // Store the generated password
+        })
+
+        console.log(
+            `Creating room with id: ${roomId}, name: ${message.chatroomName}, password: ${password}`,
+        )
+
+        // Send back the roomId, password, and cipherKey to the user who created the room
+        ws.send(
+            JSON.stringify({
+                activity: 'ROOM CREATED',
+                roomId,
+                password,
+            }),
+        )
     } else {
         console.log(
-            `Unable to create room with id : ${roomId} - Room already exists`,
+            `Unable to create room with id: ${roomId} - Room already exists`,
         )
-        console.log('Current rooms: ', rooms)
     }
 }
 
 /**
  * Helper function to handle user joining a room
  * @param {MessageEvent} message - messageSent from the client.
+ * @param {WebSocket} ws - The websocket connection trying to join.
  */
 function handleUserJoinedRoom(message, ws) {
-    const { roomId, username } = message
+    const { roomId, username, password } = message
 
-    const joinNotification = {
-        activity: 'USER JOINED ROOM',
-        roomId,
-        username,
-        timestamp: Date.now(),
-        message: `${username} has joined the room.`,
-    }
     if (rooms.has(roomId)) {
-        rooms.get(roomId).add(ws)
+        const room = rooms.get(roomId)
+
+        // Check if the room is password protected
+        if (room.password && room.password !== password) {
+            ws.send(
+                JSON.stringify({
+                    activity: 'INVALID AUTHENTICATION',
+                }),
+            )
+            return
+        }
+
+        const joinNotification = {
+            activity: 'USER JOINED ROOM',
+            roomId,
+            username,
+            timestamp: Date.now(),
+            message: `${username} has joined the room.`,
+        }
+
+        room.users.add(ws) // Add the user to the room
         broadcastToRoom(roomId, joinNotification)
     } else {
         console.log(
-            `${username} is unable to join room with id : ${roomId} - Room does not exist`,
+            `${username} is unable to join room with id: ${roomId} - Room does not exist`,
         )
     }
 }
 
 /**
  * Helper function to handle user leaving a room
- * @param {MessageEvent} message - messageSent from the client.
+ * @param {WebSocket} ws - The websocket connection leaving the room.
  */
-function handleUserLeftRoom(message, ws) {
-    const { roomId, username } = message
-
-    rooms.forEach((clients, roomId) => {
-        if (clients.has(ws)) {
-            clients.delete(ws)
+function handleUserLeftRoom(ws) {
+    rooms.forEach((room, roomId) => {
+        if (room.users.has(ws)) {
+            room.users.delete(ws)
 
             const disconnectNotification = {
                 activity: 'USER LEFT ROOM',
-                roomId: roomId,
+                roomId,
                 username: users.get(ws),
                 timestamp: Date.now(),
                 message: 'A user has left the room.',
@@ -148,7 +186,9 @@ function handleUserSendChatMessage(message) {
  */
 function broadcastToRoom(roomId, message) {
     if (rooms.has(roomId)) {
-        rooms.get(roomId).forEach((client) => {
+        const room = rooms.get(roomId) // Get the room object
+        room.users.forEach((client) => {
+            // Access the users set
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(message), (err) => {
                     if (err) {
