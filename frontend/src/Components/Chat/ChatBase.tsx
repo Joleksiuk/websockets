@@ -8,9 +8,11 @@ import UserList from '../UserList/UserList'
 import { Typography } from '@mui/material'
 import { getColorInMode } from '../../Colors'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
+import ChatroomAuth from '../ChatroomAuth/ChatroomAuth'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
+    const { isAuthenticated } = useChatroomContext()
 
     const { mode } = useModeContext()
     const { chatroomId } = useChatroomContext()
@@ -20,6 +22,14 @@ export default function ChatBase(): JSX.Element {
             squareRef.current.scrollTop = squareRef.current.scrollHeight
         }
     }, [])
+
+    if (!isAuthenticated) {
+        return (
+            <Container mode={mode}>
+                <ChatroomAuth />
+            </Container>
+        )
+    }
 
     return (
         <Container mode={mode}>

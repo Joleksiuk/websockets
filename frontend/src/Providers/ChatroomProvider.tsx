@@ -8,7 +8,7 @@ import React, {
 import { ClientMessage, ServerMessage } from './Models'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useWebsocketContext } from './WebsocketProvider'
-import { join } from 'path'
+import { useAuthContext } from './AuthProvider'
 
 interface ChatroomContextType {
     chatroomId: string | undefined
@@ -21,6 +21,9 @@ interface ChatroomContextType {
     isLoading: boolean
     hasInvalidPassword: boolean
     setHasInvalidPassword: (hasInvalidPassword: boolean) => void
+    password?: string
+    setPassword: (password: string) => void
+    isAuthenticated: boolean
 }
 
 const ChatroomContext = createContext<ChatroomContextType | undefined>(
@@ -40,9 +43,10 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     const [isLoading, setIsLoading] = useState(false)
     const { ws } = useWebsocketContext()
     const [password, setPassword] = useState<string>()
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     const { chatroomId } = useParams()
-
+    const { user } = useAuthContext()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -69,11 +73,15 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                         message.username,
                         password,
                     )
+                    setIsAuthenticated(true)
                     break
                 case 'USER SENT MESSAGE':
                     setMessages((prevMessages) => [...prevMessages, message])
                     break
                 case 'USER JOINED ROOM':
+                    if (message.username === user) {
+                        setIsAuthenticated(true)
+                    }
                     setChatroomUsers((prevUsers) => [
                         ...prevUsers,
                         message.username,
@@ -197,6 +205,9 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 isLoading,
                 hasInvalidPassword,
                 setHasInvalidPassword,
+                password,
+                setPassword,
+                isAuthenticated,
             }}
         >
             {children}

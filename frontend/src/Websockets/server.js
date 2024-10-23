@@ -44,7 +44,6 @@ function handleMessage(message, ws) {
 
         switch (activity) {
             case 'JOIN ROOM':
-                console.log('Joining room')
                 handleUserJoinedRoom(chatMessage, ws)
                 break
             // case 'LEAVE ROOM':
