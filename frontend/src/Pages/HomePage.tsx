@@ -1,11 +1,10 @@
-import React from 'react'
-import { ChatroomProvider } from '../Providers/ChatroomProvider'
 import StartPage from './StartPage'
+import { HomepageProvider } from './HomePageProvider'
 
 export default function HomePage() {
     return (
-        <ChatroomProvider>
+        <HomepageProvider>
             <StartPage />
-        </ChatroomProvider>
+        </HomepageProvider>
     )
 }

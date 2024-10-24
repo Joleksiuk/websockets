@@ -9,13 +9,14 @@ import { Typography } from '@mui/material'
 import { getColorInMode } from '../../Colors'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
 import ChatroomAuth from '../ChatroomAuth/ChatroomAuth'
+import { useParams } from 'react-router-dom'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
     const { isAuthenticated } = useChatroomContext()
 
     const { mode } = useModeContext()
-    const { chatroomId } = useChatroomContext()
+    const { chatroomId } = useParams()
 
     useEffect(() => {
         if (squareRef.current) {

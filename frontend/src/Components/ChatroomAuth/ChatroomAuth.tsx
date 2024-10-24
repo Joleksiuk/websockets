@@ -1,21 +1,18 @@
 import { Alert, Button, TextField, ThemeProvider } from '@mui/material'
-import { useChatroomContext } from '../../Providers/ChatroomProvider'
 import { ChatroomAuthStyled } from './ChatroomAuth.styled'
 import { useParams } from 'react-router-dom'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import { theme } from '../../Pages/StartPage.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { useState } from 'react'
+import { useChatroomContext } from '../../Providers/ChatroomProvider'
 
 export default function ChatroomAuth() {
-    const { password, setPassword, hasInvalidPassword, joinChatroom } =
-        useChatroomContext()
-
     const [currentPassword, setCurrentPassword] = useState('')
     const { chatroomId } = useParams()
     const { user } = useAuthContext()
     const { mode } = useModeContext()
-
+    const { joinChatroom, hasInvalidPassword } = useChatroomContext()
     const handlePasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
@@ -23,9 +20,8 @@ export default function ChatroomAuth() {
     }
 
     const handleSubmit = () => {
-        setPassword(currentPassword)
-        if (password && chatroomId && user) {
-            joinChatroom(chatroomId, user)
+        if (chatroomId && user) {
+            joinChatroom(chatroomId, user, currentPassword)
         }
     }
 

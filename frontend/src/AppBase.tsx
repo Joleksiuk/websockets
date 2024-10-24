@@ -5,6 +5,7 @@ import { BasePageStyled } from './AppBase.styled'
 import { useModeContext } from './Providers/ModeProvider'
 import ErrorPage from './Pages/ErrorPage'
 import Navbar from './Components/Navbar/Navbar'
+import { ChatroomProvider } from './Providers/ChatroomProvider'
 
 export default function AppBase() {
     const { mode } = useModeContext()
@@ -15,7 +16,11 @@ export default function AppBase() {
                 <Route path="/" element={<HomePage />} />
                 <Route
                     path="/chatroom/:chatroomId"
-                    element={<ChatroomPage />}
+                    element={
+                        <ChatroomProvider>
+                            <ChatroomPage />
+                        </ChatroomProvider>
+                    }
                 />
                 <Route path="*" element={<ErrorPage />} />
             </Routes>

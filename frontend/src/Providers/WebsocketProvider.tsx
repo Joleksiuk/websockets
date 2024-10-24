@@ -5,15 +5,18 @@ import React, {
     ReactNode,
     useEffect,
 } from 'react'
+import { ClientMessage } from './Models'
 
 interface WebsocketContextType {
     ws: WebSocket
     isConnected: boolean
+    sendWebsocketMessageToServer: (message: ClientMessage) => void
 }
 
 export const WebsocketContext = createContext<WebsocketContextType>({
     ws: new WebSocket('ws://localhost:8080'),
     isConnected: false,
+    sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
 })
 
 interface WebsocketProviderProps {
@@ -54,8 +57,30 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
     }, [])
 
+    const sleep = (ms: number) => {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    const sendWebsocketMessageToServer = async (message: ClientMessage) => {
+        let messageSent = false
+        let currentAttempts = 0
+        const maxAttempts = 2
+        while (!messageSent && currentAttempts < maxAttempts) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(message))
+                messageSent = true
+            } else {
+                console.log('Connection is not open')
+                currentAttempts++
+                await sleep(1000)
+            }
+        }
+    }
+
     return (
-        <WebsocketContext.Provider value={{ ws, isConnected }}>
+        <WebsocketContext.Provider
+            value={{ ws, isConnected, sendWebsocketMessageToServer }}
+        >
             {children}
         </WebsocketContext.Provider>
     )

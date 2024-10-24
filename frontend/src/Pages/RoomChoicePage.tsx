@@ -9,8 +9,8 @@ import React from 'react'
 import { getColorInMode } from '../Colors'
 import { HorizontalContainerStyled, ContainerStyled } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
-import { useChatroomContext } from '../Providers/ChatroomProvider'
 import { useAuthContext } from '../Providers/AuthProvider'
+import { useHomepageContext } from './HomePageProvider'
 
 export default function RoomChoicePage() {
     const { mode } = useModeContext()
@@ -22,10 +22,10 @@ export default function RoomChoicePage() {
     const {
         joinChatroom,
         createChatroom,
+        setHadInvalidPassword,
         isLoading,
         hasInvalidPassword,
-        setHasInvalidPassword,
-    } = useChatroomContext()
+    } = useHomepageContext()
 
     const handleChatroomChange = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -41,7 +41,7 @@ export default function RoomChoicePage() {
 
     const handleJoinChatroom = () => {
         if (user && chatroomId.trim() !== '' && password.trim() !== '') {
-            joinChatroom(chatroomId, user)
+            joinChatroom(chatroomId, user, password)
         }
     }
 
@@ -69,7 +69,7 @@ export default function RoomChoicePage() {
                 </Typography>
                 <Button
                     variant="outlined"
-                    onClick={() => setHasInvalidPassword(false)}
+                    onClick={() => setHadInvalidPassword(false)}
                 >
                     Try again
                 </Button>
@@ -90,6 +90,7 @@ export default function RoomChoicePage() {
                     variant="outlined"
                     value={chatroomId}
                     onChange={handleChatroomIdChange}
+                    autoComplete="off"
                 />
                 <TextField
                     id="outlined-basic"
@@ -98,6 +99,7 @@ export default function RoomChoicePage() {
                     value={password}
                     onChange={handlePasswordChange}
                     type="password"
+                    autoComplete="off"
                 />
                 <Button
                     variant="contained"

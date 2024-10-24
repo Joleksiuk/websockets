@@ -1,7 +1,7 @@
 export type ClientMessage = {
     activity: 'CREATE ROOM' | 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
     roomId: string
-    password: string
+    password: string | null
     username: string
     timestamp: number
     message: string
