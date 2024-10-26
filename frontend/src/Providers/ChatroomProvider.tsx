@@ -53,7 +53,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     }, [ws])
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!chatroomId || !getPassword(chatroomId)) {
             return
         }
 
@@ -79,10 +79,12 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                     setMessages((prevMessages) => [...prevMessages, message])
                     break
                 case 'USER JOINED ROOM':
-                    setChatroomUsers((prevUsers) => [
-                        ...prevUsers,
-                        message.username,
-                    ])
+                    setChatroomUsers((prevUsers) => {
+                        if (!prevUsers.includes(message.username)) {
+                            return [...prevUsers, message.username]
+                        }
+                        return prevUsers
+                    })
                     setIsAuthenticated(true)
                     break
                 case 'USER LEFT ROOM':

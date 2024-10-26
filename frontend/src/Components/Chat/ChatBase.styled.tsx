@@ -46,18 +46,15 @@ export const ChatStyled = muiStyled('div')(({ theme, mode }: MUIProps) => ({
 
 export const Container = styled.div<MUIProps>`
     display: flex;
+    width: 100%;
+    height: 100%;
+`
+
+export const ChatroomContentStyled = styled.div`
+    display: flex;
     flex-direction: column;
     gap: 40px;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background: ${({ mode }) =>
-        mode &&
-        `linear-gradient(135deg, 
-        ${getColorInMode('BACKGROUND_GRADIENT_1', mode)}, 
-        ${getColorInMode('BACKGROUND_GRADIENT_2', mode)}, 
-        ${getColorInMode('BACKGROUND_GRADIENT_3', mode)}, 
-        ${getColorInMode('BACKGROUND_GRADIENT_4', mode)}, 
-        ${getColorInMode('BACKGROUND_GRADIENT_5', mode)})`};
+    width: 100%;
 `

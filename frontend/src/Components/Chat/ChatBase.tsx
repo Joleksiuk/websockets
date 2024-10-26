@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react'
-import { ChatStyled, Container, Square } from './ChatBase.styled'
+import {
+    ChatroomContentStyled,
+    ChatStyled,
+    Container,
+    Square,
+} from './ChatBase.styled'
 
 import MessageList from '../../Messages/MessageList'
 import TextInput from '../Inputs/TextInput'
@@ -27,23 +32,27 @@ export default function ChatBase(): JSX.Element {
     if (!isAuthenticated) {
         return (
             <Container mode={mode}>
-                <ChatroomAuth />
+                <ChatroomContentStyled>
+                    <ChatroomAuth />
+                </ChatroomContentStyled>
             </Container>
         )
     }
 
     return (
         <Container mode={mode}>
-            <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
-                Chatroom : {chatroomId}
-            </Typography>
             <UserList />
-            <Square ref={squareRef} mode={mode}>
-                <ChatStyled mode={mode}>
-                    <MessageList />
-                </ChatStyled>
-                <TextInput />
-            </Square>
+            <ChatroomContentStyled>
+                <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
+                    Chatroom : {chatroomId}
+                </Typography>
+                <Square ref={squareRef} mode={mode}>
+                    <ChatStyled mode={mode}>
+                        <MessageList />
+                    </ChatStyled>
+                    <TextInput />
+                </Square>
+            </ChatroomContentStyled>
         </Container>
     )
 }

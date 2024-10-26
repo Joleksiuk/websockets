@@ -6,6 +6,8 @@ type Props = {
 }
 
 export const BasePageStyled = styled.div<Props>`
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100vh;
     background: ${({ mode }) =>

@@ -1,14 +1,11 @@
 import styled from 'styled-components'
 import { getColorInMode, ThemeType } from '../../Colors'
 
-export const UserListStyled = styled.div<{ mode: ThemeType }>`
+export const UserListContainerStyled = styled.div<{ mode: ThemeType }>`
     display: flex;
     flex-direction: column;
-    position: absolute;
-    left: 0;
     gap: 20px;
-    width: 10%;
-    min-width: 200px;
+    display: flex;
     height: 100%;
     background: ${({ mode }) => getColorInMode('SIDEBAR_BACKGROUND', mode)};
     padding: 20px;
