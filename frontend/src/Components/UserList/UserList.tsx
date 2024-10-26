@@ -1,8 +1,4 @@
-import {
-    UserListContainerStyled,
-    UserListStyled,
-    UserStyled,
-} from './UserList.styled'
+import { UserListContainerStyled, UserStyled } from './UserList.styled'
 import { IconButton, ThemeProvider, Typography } from '@mui/material'
 import { getColorInMode } from '../../Colors'
 import { useModeContext } from '../../Providers/ModeProvider'
