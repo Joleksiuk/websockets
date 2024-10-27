@@ -1,17 +1,19 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-import { login } from "@services/AuthService";
+import { env } from "./common/utils/envConfig";
+import { app, logger } from "./server";
 
-dotenv.config();
-
-const app: Express = express();
-const port = process.env.PORT || 3000;
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+const server = app.listen(env.PORT, () => {
+  const { NODE_ENV, HOST, PORT } = env;
+  logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port} edited`);
-  login("email", "password");
-});
+const onCloseSignal = () => {
+  logger.info("sigint received, shutting down");
+  server.close(() => {
+    logger.info("server closed");
+    process.exit();
+  });
+  setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+};
+
+process.on("SIGINT", onCloseSignal);
+process.on("SIGTERM", onCloseSignal);
