@@ -6,6 +6,7 @@ import React, {
     ReactNode,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 export type Room = {
     roomId: string
@@ -16,7 +17,7 @@ interface AuthContextType {
     user: string | null
     login: (username: string) => void
     logout: () => void
-    getUser: () => string | null
+    getUser: () => string | undefined
     rooms: Room[]
     setRooms: (rooms: Room[]) => void
     getPassword: (roomId: string) => string | null
@@ -28,41 +29,64 @@ interface AuthProviderProps {
     children: ReactNode
 }
 
-export const LOCAL_STORAGE_KEY = 'chat-app-logged-user'
+export const USER_COOKIE_KEY = 'chat-app-logged-user'
+export const ROOMS_COOKIE_KEY = 'chat-app-rooms'
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<string | null>(null)
     const [rooms, setRooms] = useState<Room[]>([])
 
     const navigate = useNavigate()
+
     useEffect(() => {
-        const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY)
+        const storedUser = Cookies.get(USER_COOKIE_KEY)
         if (storedUser) {
-            setUser(storedUser)
+            setUser(storedUser) // Set the user if the cookie exists
+        }
+
+        const storedRooms = Cookies.get(ROOMS_COOKIE_KEY)
+        if (storedRooms) {
+            try {
+                setRooms(JSON.parse(storedRooms)) // Parse JSON if it exists
+            } catch (error) {
+                console.error('Failed to parse rooms from cookies:', error)
+            }
         }
     }, [])
 
     const login = (username: string) => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, username)
+        Cookies.set(USER_COOKIE_KEY, username, {
+            expires: 7,
+            secure: true,
+            sameSite: 'strict',
+        })
         setUser(username)
     }
 
     const logout = () => {
-        localStorage.removeItem(LOCAL_STORAGE_KEY)
+        Cookies.remove(USER_COOKIE_KEY)
         setUser(null)
         navigate(`/`)
     }
 
     const getUser = () => {
         if (user === null) {
-            const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY)
+            const storedUser = Cookies.get(USER_COOKIE_KEY)
             if (storedUser) {
                 setUser(storedUser)
             }
-            console.log(storedUser)
             return storedUser
         }
-        return null
+        return user
+    }
+
+    const handleSetRooms = (rooms: Room[]) => {
+        Cookies.set(ROOMS_COOKIE_KEY, JSON.stringify(rooms), {
+            expires: 7,
+            secure: true,
+            sameSite: 'strict',
+        })
+        setRooms(rooms)
     }
 
     const getPassword = (roomId: string) => {
@@ -78,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 login,
                 logout,
                 rooms,
-                setRooms,
+                setRooms: handleSetRooms,
                 getPassword,
             }}
         >

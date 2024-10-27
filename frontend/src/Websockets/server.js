@@ -40,16 +40,15 @@ wss.on('connection', (ws) => {
 function handleMessage(message, ws) {
     try {
         const chatMessage = JSON.parse(message)
-        const { activity } = chatMessage
+        const { roomId, username, activity } = chatMessage
 
         switch (activity) {
             case 'JOIN ROOM':
                 handleUserJoinedRoom(chatMessage, ws)
                 break
-            // case 'LEAVE ROOM':
-            //     console.log('Leaving room')
-            //     handleUserLeftRoom(roomId, username)
-            //     break
+            case 'LEAVE ROOM':
+                handleUserLeftRoom(roomId, username)
+                break
             case 'CREATE ROOM':
                 handleCreateRoom(chatMessage, ws)
                 break

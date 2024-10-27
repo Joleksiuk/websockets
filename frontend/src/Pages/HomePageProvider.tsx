@@ -67,6 +67,7 @@ export const HomepageProvider: React.FC<HomepageProviderProps> = ({
                         message.username,
                         message.password,
                     )
+                    console.log('Room created:', message)
                     break
                 default:
                     console.log('Unknown message type:', message)
@@ -108,6 +109,16 @@ export const HomepageProvider: React.FC<HomepageProviderProps> = ({
             timestamp: Date.now(),
             message: 'User has joined the chatroom',
         }
+        const updatedRooms = rooms.map((room) =>
+            room.roomId === roomId ? { ...room, password } : room,
+        )
+
+        if (!updatedRooms.some((room) => room.roomId === roomId)) {
+            updatedRooms.push({ roomId, password })
+        }
+
+        setRooms(updatedRooms)
+        console.log(updatedRooms)
         setIsLoading(true)
         sendWebsocketMessageToServer(chatMessage)
         navigate(`/chatroom/${roomId}`)

@@ -24,6 +24,8 @@ interface ChatroomContextType {
         username: string,
         password: string,
     ) => void
+    isLoading: boolean
+    setIsLoading: (isLoading: boolean) => void
 }
 
 const ChatroomContext = createContext<ChatroomContextType | undefined>(
@@ -41,9 +43,10 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     const [chatroomUsers, setChatroomUsers] = useState<string[]>([])
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
     const [hasInvalidPassword, setHasInvalidPassword] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const { chatroomId } = useParams()
-    const { getPassword, user } = useAuthContext()
+    const { getPassword, user, rooms, setRooms } = useAuthContext()
     const { ws, sendWebsocketMessageToServer } = useWebsocketContext()
 
     useEffect(() => {
@@ -68,7 +71,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             }
             sendWebsocketMessageToServer(chatMessage)
         }
-    }, [])
+    }, [user, chatroomId, getPassword, sendWebsocketMessageToServer])
 
     const handleMessageFromWebsocketServer = (event: MessageEvent) => {
         try {
@@ -117,6 +120,16 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             timestamp: Date.now(),
             message: 'User has joined the chatroom',
         }
+
+        const updatedRooms = rooms.map((room) =>
+            room.roomId === roomId ? { ...room, password } : room,
+        )
+
+        if (!updatedRooms.some((room) => room.roomId === roomId)) {
+            updatedRooms.push({ roomId, password })
+        }
+
+        setRooms(updatedRooms)
         sendWebsocketMessageToServer(chatMessage)
     }
 
@@ -150,6 +163,8 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 setIsAuthenticated,
                 setHasInvalidPassword,
                 joinChatroom,
+                isLoading,
+                setIsLoading,
             }}
         >
             {children}
