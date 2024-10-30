@@ -1,15 +1,17 @@
-import { AppDataSource } from "../data-source";
+import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
+
 import { User } from "../entity/User";
+import { AppDataSource } from "../data-source";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
-  async all(request: Request, response: Response, next: NextFunction) {
+  async getAll(request: Request, response: Response, next: NextFunction) {
     return this.userRepository.find();
   }
 
-  async one(request: Request, response: Response, next: NextFunction) {
+  async getById(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
 
     const user = await this.userRepository.findOne({
@@ -22,29 +24,42 @@ export class UserController {
     return user;
   }
 
-  async save(request: Request, response: Response, next: NextFunction) {
-    const { firstName, lastName, age } = request.body;
+  async createNewUser(req: Request, res: Response) {
+    let { username, password, role } = req.body;
+    let user = new User();
+    user.username = username;
+    user.password = password;
+    user.role = role;
 
-    const user = Object.assign(new User(), {
-      firstName,
-      lastName,
-      age,
-    });
-
-    return this.userRepository.save(user);
-  }
-
-  async remove(request: Request, response: Response, next: NextFunction) {
-    const id = parseInt(request.params.id);
-
-    let userToRemove = await this.userRepository.findOneBy({ id });
-
-    if (!userToRemove) {
-      throw new Error("user not found");
+    const errors = await validate(user);
+    if (errors.length > 0) {
+      res.status(400).send(errors);
+      return;
     }
 
-    await this.userRepository.remove(userToRemove);
+    user.hashPassword();
 
-    return "user has been removed";
+    try {
+      await this.userRepository.save(user);
+    } catch (e) {
+      res.status(409).send("username already in use");
+      return;
+    }
+    res.status(201).send("User created");
+  }
+
+  async deleteUser(req: Request, res: Response) {
+    const id = req.params.id;
+
+    let user: User;
+    try {
+      user = await this.userRepository.findOneOrFail(id);
+    } catch (error) {
+      res.status(404).send("User not found");
+      return;
+    }
+    this.userRepository.delete(id);
+
+    res.status(204).send();
   }
 }

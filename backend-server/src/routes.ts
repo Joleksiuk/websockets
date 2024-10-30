@@ -1,36 +1,62 @@
 import { body, param } from "express-validator";
 import { UserController } from "./controller/UserController";
+import { AuthController } from "./controller/AuthController";
 
 export const Routes = [
   {
     method: "get",
     route: "/users",
     controller: UserController,
-    action: "all",
+    action: "getAll",
     validation: [],
   },
   {
     method: "get",
     route: "/users/:id",
     controller: UserController,
-    action: "one",
+    action: "getById",
     validation: [param("id").isInt().withMessage("id must be a number")],
   },
   {
     method: "post",
     route: "/users",
     controller: UserController,
-    action: "save",
+    action: "createNewUser",
     validation: [
-      body("firstName").isString().withMessage("firstName must be a string"),
-      body("lastName").isString().withMessage("lastName must be a string"),
-      body("age").isInt().withMessage("age must be a number"),
+      body("username").isString().withMessage("username must be a string"),
+      body("password").isString().withMessage("password must be a string"),
+      body("role").isString().withMessage("role must be a string"),
     ],
   },
   {
     method: "delete",
     route: "/users/:id",
     controller: UserController,
-    action: "remove",
+    action: "deleteUser",
+    validation: [param("id").isInt().withMessage("id must be a number")],
+  },
+  {
+    method: "post",
+    route: "/login",
+    controller: AuthController,
+    action: "login",
+    validation: [
+      body("username").isString().withMessage("username must be a string"),
+      body("password").isString().withMessage("password must be a string"),
+    ],
+  },
+  {
+    method: "post",
+    route: "/changePassword",
+    controller: AuthController,
+    action: "changePassword",
+    validation: [
+      body("oldPassword")
+        .isString()
+        .withMessage("oldPassword must be a string"),
+      body("newPassword")
+        .isString()
+        .withMessage("newPassword must be a string"),
+    ],
   },
 ];
