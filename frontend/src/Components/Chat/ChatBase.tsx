@@ -48,7 +48,7 @@ export default function ChatBase(): JSX.Element {
                 </Typography>
                 <Square ref={squareRef} mode={mode}>
                     <ChatStyled mode={mode}>
-                        <MessageList />
+                        <MessageList key="message-list" />
                     </ChatStyled>
                     <TextInput />
                 </Square>

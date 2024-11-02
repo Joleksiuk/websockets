@@ -52,7 +52,6 @@ export default function TextInput() {
             <FilledInput
                 value={text}
                 onChange={(text) => setText(text.target.value)}
-                defaultValue="Write you message here"
                 onKeyDown={handleKeyDown}
                 endAdornment={
                     <InputAdornment position="end">

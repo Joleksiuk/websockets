@@ -23,21 +23,21 @@ function ping(ws: Websocket) {
 }
 
 export default function initializeWebSocketServer(server: any) {
-  const wss: WebsocketServer = new WebSocketServer({ server }); // Pass the server option
+  const wss: WebsocketServer = new WebSocketServer({ noServer: true }); // Pass the server option
 
-  // server.on("upgrade", (request, socket, head) => {
-  //   socket.on("error", onSocketPreError);
+  server.on("upgrade", (request, socket, head) => {
+    socket.on("error", onSocketPreError);
 
-  //   // authenticate(request, socket);
+    // authenticate(request, socket);
 
-  //   wss.handleUpgrade(request, socket, head, (ws) => {
-  //     socket.removeListener("error", onSocketPreError);
-  //     wss.emit("connection", ws, request);
-  //   });
-  // });
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      socket.removeListener("error", onSocketPreError);
+      wss.emit("connection", ws, request);
+    });
+  });
 
   wss.on("connection", (ws, req) => {
-    ws.isAlive = true;
+    (ws as any).isAlive = true;
 
     ws.on("error", onSocketPostError);
     ws.on("message", (message: RawData, isBinary) => {

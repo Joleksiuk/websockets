@@ -26,9 +26,7 @@ interface WebsocketProviderProps {
 export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     children,
 }) => {
-    const [ws, setWs] = useState<WebSocket>(
-        new WebSocket('ws://localhost:8080'),
-    )
+    const [ws, setWs] = useState<WebSocket | null>(null)
     const [isConnected, setIsConnected] = useState<boolean>(false)
 
     useEffect(() => {
@@ -36,7 +34,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
             console.log('WebSocket connection already open')
             return
         }
-        console.log(ws)
         console.log('Connecting to WebSocket server...')
 
         const socket = new WebSocket('ws://localhost:8080')
