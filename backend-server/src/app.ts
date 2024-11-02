@@ -1,18 +1,28 @@
-import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-import { Request, Response } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import { Routes } from "./routes";
 import { validationResult } from "express-validator";
 
-function handleError(err, req, res, next) {
+function handleError(
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   console.error(err.stack);
   const errorStatus = err.status || 500;
   const errorMessage = { message: err.message || "Internal Server Error" };
   res.status(errorStatus).send(errorMessage);
 }
 
-const app = express();
+// Load SSL certificates
+// const server = https.createServer({
+//   cert: fs.readFileSync("cert.pem"), // Path to your cert.pem file
+//   key: fs.readFileSync("key.pem"), // Path to your key.pem file
+// });
+
+const app: Application = express();
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
 
@@ -20,7 +30,7 @@ Routes.forEach((route) => {
   (app as any)[route.method](
     route.route,
     ...(route.validation || []),
-    async (req: Request, res: Response, next: Function) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

@@ -47,13 +47,16 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
 
     const { chatroomId } = useParams()
     const { getPassword, user, rooms, setRooms } = useAuthContext()
-    const { ws, sendWebsocketMessageToServer } = useWebsocketContext()
+    const { ws, isConnected, sendWebsocketMessageToServer } =
+        useWebsocketContext()
 
     useEffect(() => {
-        ws.onmessage = (event: MessageEvent) => {
-            handleMessageFromWebsocketServer(event)
+        if (isConnected && ws) {
+            ws.onmessage = (event: MessageEvent) => {
+                handleMessageFromWebsocketServer(event)
+            }
         }
-    }, [ws])
+    }, [isConnected, ws])
 
     useEffect(() => {
         if (!chatroomId || !getPassword(chatroomId)) {

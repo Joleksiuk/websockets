@@ -36,15 +36,18 @@ export const HomepageProvider: React.FC<HomepageProviderProps> = ({
     const [hasInvalidPassword, setHadInvalidPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const { ws, sendWebsocketMessageToServer } = useWebsocketContext()
+    const { ws, isConnected, sendWebsocketMessageToServer } =
+        useWebsocketContext()
     const { rooms, setRooms, getPassword } = useAuthContext()
     const navigate = useNavigate()
 
     useEffect(() => {
-        ws.onmessage = (event: MessageEvent) => {
-            handleMessageFromWebsocketServer(event)
+        if (isConnected && ws) {
+            ws.onmessage = (event: MessageEvent) => {
+                handleMessageFromWebsocketServer(event)
+            }
         }
-    }, [ws])
+    }, [isConnected, ws])
 
     const handleMessageFromWebsocketServer = (event: MessageEvent) => {
         try {

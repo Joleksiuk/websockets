@@ -8,13 +8,13 @@ import React, {
 import { ClientMessage } from './Models'
 
 interface WebsocketContextType {
-    ws: WebSocket
+    ws: WebSocket | null
     isConnected: boolean
     sendWebsocketMessageToServer: (message: ClientMessage) => void
 }
 
 export const WebsocketContext = createContext<WebsocketContextType>({
-    ws: new WebSocket('ws://localhost:8080'),
+    ws: null,
     isConnected: false,
     sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
 })

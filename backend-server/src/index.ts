@@ -5,10 +5,11 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import rateLimiter from "./utils/rateLimiter";
+import initializeWebSocketServer from "./websocket/WebsocketServer";
 
 AppDataSource.initialize()
   .then(async () => {
-    app.listen(port, () => {
+    const appServer = app.listen(port, () => {
       console.log(
         `Express server has started. Open http://localhost:${port}/users to see results`
       );
@@ -19,5 +20,7 @@ AppDataSource.initialize()
     app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
     app.use(helmet());
     app.use(rateLimiter);
+
+    initializeWebSocketServer(appServer);
   })
   .catch((error) => console.log(error));
