@@ -16,17 +16,18 @@ export default function Navbar() {
     const { mode } = useModeContext()
     const { user } = useAuthContext()
     const { isConnected } = useWebsocketContext()
+
     return (
         <NavbarStyled>
             {user ? (
                 <HorizontalContainerStyled>
                     <ConnectionCircleStyled connected={isConnected} />
-                    <Avatar username={user} />
+                    <Avatar username={user.username} />
                     <Typography
                         variant="h4"
                         color={getColorInMode('TEXT', mode)}
                     >
-                        {user}
+                        {user.username}
                     </Typography>
                     <ModeSwitch />
                     <NavbarDropdown />

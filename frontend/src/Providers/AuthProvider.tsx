@@ -13,12 +13,16 @@ export type Room = {
     password: string
 }
 
+export type User = {
+    username: string
+    jwt: string
+}
+
 export type AuthPageType = 'signin' | 'signup'
 interface AuthContextType {
-    user: string | null
-    login: (username: string) => void
+    user: User | null
+    login: (username: string, jwt: string) => void
     logout: () => void
-    getUser: () => string | undefined
     rooms: Room[]
     setRooms: (rooms: Room[]) => void
     getPassword: (roomId: string) => string | null
@@ -36,7 +40,7 @@ export const USER_COOKIE_KEY = 'chat-app-logged-user'
 export const ROOMS_COOKIE_KEY = 'chat-app-rooms'
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<string | null>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [rooms, setRooms] = useState<Room[]>([])
 
     const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
@@ -48,43 +52,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         const storedUser = Cookies.get(USER_COOKIE_KEY)
         if (storedUser) {
-            setUser(storedUser) // Set the user if the cookie exists
+            const user: User = JSON.parse(storedUser)
+            setUser(user)
         }
 
         const storedRooms = Cookies.get(ROOMS_COOKIE_KEY)
         if (storedRooms) {
             try {
-                setRooms(JSON.parse(storedRooms)) // Parse JSON if it exists
+                setRooms(JSON.parse(storedRooms))
             } catch (error) {
                 console.error('Failed to parse rooms from cookies:', error)
             }
         }
     }, [])
 
-    const login = (username: string) => {
-        Cookies.set(USER_COOKIE_KEY, username, {
+    const login = (username: string, jwt: string) => {
+        const user = { username, jwt }
+        Cookies.set(USER_COOKIE_KEY, JSON.stringify(user), {
             expires: 7,
             secure: true,
             sameSite: 'strict',
         })
-        setUser(username)
+        setUser(user)
     }
 
     const logout = () => {
         Cookies.remove(USER_COOKIE_KEY)
         setUser(null)
         navigate(`/`)
-    }
-
-    const getUser = () => {
-        if (user === null) {
-            const storedUser = Cookies.get(USER_COOKIE_KEY)
-            if (storedUser) {
-                setUser(storedUser)
-            }
-            return storedUser
-        }
-        return user
     }
 
     const handleSetRooms = (rooms: Room[]) => {
@@ -105,7 +100,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
-                getUser,
                 login,
                 logout,
                 rooms,

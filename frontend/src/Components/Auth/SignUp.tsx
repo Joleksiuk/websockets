@@ -1,10 +1,11 @@
-import { Typography, TextField, Button } from '@mui/material'
+import { Typography, TextField, Button, Alert } from '@mui/material'
 import React, { useState } from 'react'
 import { getColorInMode } from '../../Colors'
 import { SingInWrapper } from './SignIn.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import { sendRegisterRequest } from '../../Services/AuthService'
+import ValidationService, { CustomValidationError } from './ValidationService'
 
 export default function SignUp() {
     const { mode } = useModeContext()
@@ -13,33 +14,47 @@ export default function SignUp() {
     const [username, setUsername] = useState<string>('')
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [error, setError] = useState<CustomValidationError | null>(null)
 
     const handleUsernameChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
+        setError(null)
         setUsername(event.target.value)
     }
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setError(null)
         setEmail(event.target.value)
     }
 
     const handlePasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
+        setError(null)
         setPassword(event.target.value)
     }
 
-    const handleSignUp = async () => {
+    const validateInputs = () => {
         try {
-            if (username.trim() !== '' || password.trim() !== '') {
-                await sendRegisterRequest(username, password)
-                setCurrentPage('signin')
-            }
+            ValidationService.validateUsername(username)
+            ValidationService.validatePassword(password)
+            ValidationService.validateEmail(email)
         } catch (e: unknown) {
-            const error = e as Error
-            console.error(error.message)
-            return
+            if (e instanceof CustomValidationError) {
+                setError(e)
+            }
+        }
+    }
+
+    const handleSignUp = async () => {
+        validateInputs()
+
+        try {
+            await sendRegisterRequest(username, password)
+            setCurrentPage('signin')
+        } catch (e: unknown) {
+            console.error(e)
         }
     }
 
@@ -49,6 +64,7 @@ export default function SignUp() {
 
     return (
         <SingInWrapper>
+            {error && <Alert severity="error">{error.message}</Alert>}
             <Typography color={getColorInMode('TEXT', mode)} variant="h3">
                 Sign Up
             </Typography>
@@ -64,6 +80,7 @@ export default function SignUp() {
                         handleSignUp()
                     }
                 }}
+                error={error?.element === 'username'}
             />
             <TextField
                 variant="outlined"
@@ -73,6 +90,7 @@ export default function SignUp() {
                 sx={{ width: '25%' }}
                 onChange={handleEmailChange}
                 type="email"
+                error={error?.element === 'email'}
             />
             <TextField
                 placeholder="Enter password"
@@ -82,6 +100,7 @@ export default function SignUp() {
                 onChange={handlePasswordChange}
                 sx={{ width: '25%' }}
                 type="password"
+                error={error?.element === 'password'}
             />
             <Button
                 variant="outlined"

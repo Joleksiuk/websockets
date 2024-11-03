@@ -21,7 +21,7 @@ export default function TextInput() {
 
     const handleSendMessage = () => {
         if (text.trim() !== '' && user !== null) {
-            sendMessage(text, user)
+            sendMessage(text, user.username)
             setText('')
         }
     }

@@ -21,7 +21,7 @@ export default function ChatroomAuth() {
 
     const handleSubmit = () => {
         if (chatroomId && user) {
-            joinChatroom(chatroomId, user, currentPassword)
+            joinChatroom(chatroomId, user.username, currentPassword)
         }
     }
 

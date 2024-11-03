@@ -60,6 +60,8 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
         }
     }, [wsMessages])
 
+    if (chatroomId) console.log('getPassword', getPassword(chatroomId))
+
     useEffect(() => {
         if (!chatroomId || !getPassword(chatroomId)) {
             return
@@ -70,7 +72,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 activity: 'JOIN ROOM',
                 roomId: chatroomId,
                 password: getPassword(chatroomId),
-                username: user,
+                username: user.username,
                 timestamp: Date.now(),
                 message: '',
             }

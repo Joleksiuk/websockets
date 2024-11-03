@@ -16,11 +16,13 @@ export default function MessageList(): JSX.Element {
     return (
         <MessagesWrapperStyled>
             {messages.map((msg, index) => (
-                <MessageContainerStyled isRight={msg.username === user}>
+                <MessageContainerStyled
+                    isRight={msg.username === user?.username}
+                >
                     <Avatar key={`avatar-${index}`} username={msg.username} />
                     <MessageStyled
                         key={`message-${index}`}
-                        isRight={msg.username === user}
+                        isRight={msg.username === user?.username}
                         mode={mode}
                     >
                         {msg.message}

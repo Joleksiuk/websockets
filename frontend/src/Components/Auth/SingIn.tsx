@@ -1,44 +1,64 @@
-import { Button, TextField, Typography } from '@mui/material'
+import { Alert, Button, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { getColorInMode } from '../../Colors'
 import { SingInWrapper } from './SignIn.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import { sendLoginRequest } from '../../Services/AuthService'
+import ValidationService, { CustomValidationError } from './ValidationService'
 
 export type Error = {
     message: string
     status: number
 }
+
+export type AuthForm = 'username' | 'password' | 'email'
+
+export type ValidationError = {
+    message: string
+    element: AuthForm
+}
+
 export default function SingIn() {
     const { mode } = useModeContext()
     const { login } = useAuthContext()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [error, setError] = useState<CustomValidationError | null>(null)
 
     const { setCurrentPage } = useAuthContext()
     const handleSignIn = async () => {
         try {
-            if (username.trim() !== '' || password.trim() !== '') {
-                await sendLoginRequest(username, password)
-                login(username)
-            }
+            validateInputs()
+            const response = await sendLoginRequest(username, password)
+            login(username, response.data)
         } catch (e: unknown) {
-            const error = e as Error
-            console.error(error.message)
-            return
+            if (e instanceof CustomValidationError) {
+                const error = e as CustomValidationError
+                setError(error)
+                return
+            } else {
+                console.error(e)
+            }
         }
+    }
+
+    const validateInputs = () => {
+        ValidationService.validateUsername(username)
+        ValidationService.validatePassword(password)
     }
 
     const handleUsernameChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
+        setError(null)
         setUsername(event.target.value)
     }
 
     const handlePasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
+        setError(null)
         setPassword(event.target.value)
     }
 
@@ -48,6 +68,7 @@ export default function SingIn() {
 
     return (
         <SingInWrapper>
+            {error && <Alert severity="error">{error.message}</Alert>}
             <Typography color={getColorInMode('TEXT', mode)} variant="h3">
                 Sign In
             </Typography>
@@ -62,6 +83,7 @@ export default function SingIn() {
                         handleSignIn()
                     }
                 }}
+                error={error?.element === 'username'}
             />
             <TextField
                 placeholder="Enter password"
@@ -70,6 +92,7 @@ export default function SingIn() {
                 sx={{ width: '25%' }}
                 onChange={handlePasswordChange}
                 type="password"
+                error={error?.element === 'password'}
             />
             <Button
                 variant="outlined"

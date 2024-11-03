@@ -41,13 +41,13 @@ export default function RoomChoicePage() {
 
     const handleJoinChatroom = () => {
         if (user && chatroomId.trim() !== '' && password.trim() !== '') {
-            joinChatroom(chatroomId, user, password)
+            joinChatroom(chatroomId, user.username, password)
         }
     }
 
     const handleCreateChatroom = async () => {
         if (user && chatroomName.trim() !== '') {
-            createChatroom(chatroomName, user)
+            createChatroom(chatroomName, user.username)
         }
     }
 

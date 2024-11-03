@@ -12,7 +12,7 @@ export default function Avatar({
     otherUser = false,
 }: Props): JSX.Element {
     const { user } = useAuthContext()
-    const currentUser = user ? user : username
+    const currentUser = user ? user.username : username
     const avatarSeed = otherUser ? currentUser : username
     return <AvatarStyled>{AvatarUtils.getAvatar(avatarSeed)}</AvatarStyled>
 }
