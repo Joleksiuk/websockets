@@ -13,6 +13,7 @@ export type Room = {
     password: string
 }
 
+export type AuthPageType = 'signin' | 'signup'
 interface AuthContextType {
     user: string | null
     login: (username: string) => void
@@ -21,6 +22,8 @@ interface AuthContextType {
     rooms: Room[]
     setRooms: (rooms: Room[]) => void
     getPassword: (roomId: string) => string | null
+    currentPage: AuthPageType
+    setCurrentPage: (page: AuthPageType) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -36,7 +39,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<string | null>(null)
     const [rooms, setRooms] = useState<Room[]>([])
 
+    const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
+
     const navigate = useNavigate()
+
+    useEffect(() => {}, [user])
 
     useEffect(() => {
         const storedUser = Cookies.get(USER_COOKIE_KEY)
@@ -104,6 +111,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 rooms,
                 setRooms: handleSetRooms,
                 getPassword,
+                currentPage,
+                setCurrentPage,
             }}
         >
             {children}

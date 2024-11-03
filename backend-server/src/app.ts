@@ -3,6 +3,7 @@ import morgan from "morgan";
 import express, { Application, Request, Response, NextFunction } from "express";
 import { Routes } from "./routes";
 import { validationResult } from "express-validator";
+import cors from "cors";
 
 function handleError(
   err: any,
@@ -22,9 +23,15 @@ function handleError(
 //   key: fs.readFileSync("key.pem"), // Path to your key.pem file
 // });
 
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
 const app: Application = express();
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
 Routes.forEach((route) => {
   (app as any)[route.method](

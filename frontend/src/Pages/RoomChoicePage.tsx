@@ -85,7 +85,6 @@ export default function RoomChoicePage() {
                 </Typography>
 
                 <TextField
-                    id="outlined-basic"
                     label="Chatroom ID"
                     variant="outlined"
                     value={chatroomId}
@@ -93,7 +92,6 @@ export default function RoomChoicePage() {
                     autoComplete="off"
                 />
                 <TextField
-                    id="outlined-basic"
                     label="Chatroom Password"
                     variant="outlined"
                     value={password}
@@ -118,7 +116,6 @@ export default function RoomChoicePage() {
                 </Typography>
 
                 <TextField
-                    id="outlined-basic"
                     label="Chatroom name"
                     variant="outlined"
                     value={chatroomName}

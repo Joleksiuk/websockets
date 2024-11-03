@@ -1,45 +1,25 @@
-import { Typography, TextField } from '@mui/material'
-import { useState } from 'react'
-import { getColorInMode } from '../Colors'
+import SingIn from '../Components/Auth/SingIn'
+import SignUp from '../Components/Auth/SignUp'
 import { useAuthContext } from '../Providers/AuthProvider'
+import { ThemeProvider } from '@mui/material'
+import { theme } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
-import { VerticalContainerStyled } from './StartPage.styled'
+import Navbar from '../Components/Navbar/Navbar'
 
 export default function AuthPage() {
-    const [username, setUsername] = useState('')
-    const { login } = useAuthContext()
+    const { currentPage } = useAuthContext()
     const { mode } = useModeContext()
-
-    const handleUsernameChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        setUsername(event.target.value)
-    }
-
-    const handleLogin = () => {
-        if (username.trim() !== '') {
-            login(username)
+    const getContent = () => {
+        if (currentPage === 'signin') {
+            return <SingIn />
         }
+        return <SignUp />
     }
 
     return (
-        <VerticalContainerStyled mode={mode}>
-            <Typography color={getColorInMode('TEXT', mode)} variant="h3">
-                Please enter your username
-            </Typography>
-            <TextField
-                id="outlined-basic"
-                label="Username"
-                variant="outlined"
-                value={username}
-                onChange={handleUsernameChange}
-                sx={{ width: '25%' }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        handleLogin()
-                    }
-                }}
-            />
-        </VerticalContainerStyled>
+        <ThemeProvider theme={theme(mode)}>
+            <Navbar />
+            {getContent()}
+        </ThemeProvider>
     )
 }

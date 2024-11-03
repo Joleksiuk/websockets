@@ -36,23 +36,25 @@ export const HomepageProvider: React.FC<HomepageProviderProps> = ({
     const [hasInvalidPassword, setHadInvalidPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const { ws, isConnected, sendWebsocketMessageToServer } =
+    const { wsMessages, setWsMessages, sendWebsocketMessageToServer } =
         useWebsocketContext()
     const { rooms, setRooms, getPassword } = useAuthContext()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (isConnected && ws) {
-            ws.onmessage = (event: MessageEvent) => {
-                handleMessageFromWebsocketServer(event)
+        if (wsMessages.length > 0) {
+            const lastMessage = wsMessages.pop()
+            setWsMessages([...wsMessages])
+
+            if (lastMessage) {
+                handleMessageFromWebsocketServer(lastMessage)
             }
         }
-    }, [isConnected, ws])
+    }, [wsMessages])
 
     const handleMessageFromWebsocketServer = (event: MessageEvent) => {
         try {
             const message: ServerMessage = JSON.parse(event.data)
-            console.log('Received message:', message)
 
             switch (message.activity) {
                 case 'INVALID AUTHENTICATION':
