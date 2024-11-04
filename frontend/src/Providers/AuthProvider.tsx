@@ -25,7 +25,7 @@ interface AuthContextType {
     logout: () => void
     rooms: Room[]
     setRooms: (rooms: Room[]) => void
-    getPassword: (roomId: string) => string | null
+    getPassword: (roomId: string | undefined) => string
     currentPage: AuthPageType
     setCurrentPage: (page: AuthPageType) => void
 }
@@ -91,9 +91,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setRooms(rooms)
     }
 
-    const getPassword = (roomId: string) => {
+    const getPassword = (roomId: string | undefined) => {
+        if (!roomId) {
+            return 'wrong room id'
+        }
         const room = rooms.find((room) => room.roomId === roomId)
-        return room ? room.password : null
+        return room ? room.password : 'wrong room id'
     }
 
     return (

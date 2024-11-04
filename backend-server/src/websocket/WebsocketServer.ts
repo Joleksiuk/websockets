@@ -5,7 +5,7 @@ import {
   handleUserLeftRoom,
 } from "./WebsocketService";
 
-const HEARTBEAT_INTERVAL: number = 50000;
+const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
 
 // Error handling pre connection errors
@@ -54,17 +54,17 @@ export default function initializeWebSocketServer(server: any) {
     });
   });
 
-  // const interval = setInterval(() => {
-  //   console.log("firing interval");
-  //   wss.clients.forEach((client) => {
-  //     if (!client.isAlive) return client.terminate();
+  const interval = setInterval(() => {
+    console.log("firing interval");
+    wss.clients.forEach((client) => {
+      if (!client.isAlive) return client.terminate();
 
-  //     client.isAlive = false;
-  //     ping(client);
-  //   });
-  // }, HEARTBEAT_INTERVAL);
+      client.isAlive = false;
+      ping(client);
+    });
+  }, HEARTBEAT_INTERVAL);
 
-  // wss.on("close", () => {
-  //   clearInterval(interval);
-  // });
+  wss.on("close", () => {
+    clearInterval(interval);
+  });
 }

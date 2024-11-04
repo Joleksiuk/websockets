@@ -56,6 +56,8 @@ export function authenticate(ws: WebSocket, request): any {
 export function handleMessage(message: string, ws: WebSocket): void {
   try {
     const chatMessage: ChatMessage = JSON.parse(message);
+
+    console.log("Received message: ", chatMessage);
     const { activity } = chatMessage;
 
     switch (activity) {

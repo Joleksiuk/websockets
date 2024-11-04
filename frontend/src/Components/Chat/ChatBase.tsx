@@ -15,11 +15,13 @@ import { getColorInMode } from '../../Colors'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
 import ChatroomAuth from '../ChatroomAuth/ChatroomAuth'
 import { useParams } from 'react-router-dom'
+import ChatroomPassword from './ChatroomPassword'
+import { useAuthContext } from '../../Providers/AuthProvider'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
     const { isAuthenticated } = useChatroomContext()
-
+    const { getPassword } = useAuthContext()
     const { mode } = useModeContext()
     const { chatroomId } = useParams()
 
@@ -46,6 +48,7 @@ export default function ChatBase(): JSX.Element {
                 <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
                     Chatroom : {chatroomId}
                 </Typography>
+                <ChatroomPassword password={getPassword(chatroomId)} />
                 <Square ref={squareRef} mode={mode}>
                     <ChatStyled mode={mode}>
                         <MessageList key="message-list" />

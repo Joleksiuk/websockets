@@ -17,12 +17,6 @@ function handleError(
   res.status(errorStatus).send(errorMessage);
 }
 
-// Load SSL certificates
-// const server = https.createServer({
-//   cert: fs.readFileSync("cert.pem"), // Path to your cert.pem file
-//   key: fs.readFileSync("key.pem"), // Path to your key.pem file
-// });
-
 const corsOptions = {
   origin: "http://localhost:3000",
   credentials: true,

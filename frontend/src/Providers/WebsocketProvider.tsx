@@ -82,7 +82,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
         console.log('Connecting to WebSocket server...')
 
-        const socket: WebSocketExt = new WebSocket('ws://localhost:8080')
+        const socket: WebSocketExt = new WebSocket('wss://localhost:8080')
 
         socket.onopen = () => {
             console.log('Successfuly Connected to WebSocket server!')

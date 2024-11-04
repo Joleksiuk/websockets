@@ -123,7 +123,6 @@ export const HomepageProvider: React.FC<HomepageProviderProps> = ({
         }
 
         setRooms(updatedRooms)
-        console.log(updatedRooms)
         setIsLoading(true)
         sendWebsocketMessageToServer(chatMessage)
         navigate(`/chatroom/${roomId}`)

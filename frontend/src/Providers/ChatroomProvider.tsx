@@ -78,7 +78,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             }
             sendWebsocketMessageToServer(chatMessage)
         }
-    }, [user, chatroomId, getPassword, sendWebsocketMessageToServer])
+    }, [chatroomId])
 
     const handleMessageFromWebsocketServer = (event: MessageEvent) => {
         try {
@@ -89,6 +89,13 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                     setMessages((prevMessages) => [...prevMessages, message])
                     break
                 case 'USER JOINED ROOM':
+                    if (
+                        message.username === null ||
+                        message.username === undefined ||
+                        message.username.trim() === ''
+                    ) {
+                        return
+                    }
                     setChatroomUsers((prevUsers) => {
                         if (!prevUsers.includes(message.username)) {
                             return [...prevUsers, message.username]
