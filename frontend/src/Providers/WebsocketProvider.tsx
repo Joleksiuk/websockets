@@ -6,6 +6,8 @@ import React, {
     useEffect,
 } from 'react'
 import { ClientMessage } from './Models'
+import { User, USER_COOKIE_KEY } from './AuthProvider'
+import Cookies from 'js-cookie'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1
@@ -47,7 +49,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const [ws, setWs] = useState<WebSocketExt | null>(null)
     const [isConnected, setIsConnected] = useState<boolean>(false)
     const [wsMessages, setWsMessages] = useState<any[]>([])
-
     const addMessage = (message: MessageEvent) => {
         const updatedMessages = [...wsMessages, message]
         setWsMessages(updatedMessages)
@@ -75,6 +76,14 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         ws.send(data)
     }
 
+    const getJwt = () => {
+        const storedUser = Cookies.get(USER_COOKIE_KEY)
+        if (storedUser) {
+            const user: User = JSON.parse(storedUser)
+            return user.jwt
+        }
+    }
+
     useEffect(() => {
         if (ws && ws.readyState === WebSocket.OPEN) {
             console.log('WebSocket connection already open')
@@ -82,7 +91,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
         console.log('Connecting to WebSocket server...')
 
-        const socket: WebSocketExt = new WebSocket('wss://localhost:8080')
+        const socket: WebSocketExt = new WebSocket(
+            `wss://localhost:8080?token=${getJwt()}`,
+        )
 
         socket.onopen = () => {
             console.log('Successfuly Connected to WebSocket server!')
@@ -120,12 +131,13 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
+        const messageWithToken = { ...message, token: getJwt() }
         let messageSent = false
         let currentAttempts = 0
         const maxAttempts = 2
         while (!messageSent && currentAttempts < maxAttempts) {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(message))
+                ws.send(JSON.stringify(messageWithToken))
                 messageSent = true
             } else {
                 console.log('Connection is not open')

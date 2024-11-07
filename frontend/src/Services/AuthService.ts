@@ -1,44 +1,34 @@
 import axios from 'axios'
 import { BACKEND_URL } from '../config'
+import { request } from './APIService'
 
 export async function sendLoginRequest(
     username: string,
     password: string,
 ): Promise<any> {
-    const response = await axios.post(
-        `${BACKEND_URL}/login`,
-        {
+    try {
+        const response = await request(`${BACKEND_URL}/login`, 'post', {
             username,
             password,
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        },
-    )
-    return response
+        })
+        console.log('Login response:', response)
+        return response
+    } catch (error) {
+        console.error('Error during login request:', error)
+    }
 }
 
 export async function sendRegisterRequest(username: string, password: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/users`,
-            {
-                username,
-                password,
-                role: 'user',
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
-        )
-        return response.data
+        const data = {
+            username,
+            password,
+            role: 'user',
+        }
+        const response = await request(`${BACKEND_URL}/users`, 'post', data)
+        return response
     } catch (error) {
-        console.error('Error during register request:', error)
-        throw error
+        console.error('Error during sign up request:', error)
     }
 }
 

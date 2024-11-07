@@ -28,11 +28,17 @@ export default function initializeWebSocketServer(server: any) {
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
 
-    // authenticate(request, socket);
+    authenticate(request, socket, (error, user) => {
+      if (error) {
+        return;
+      }
 
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      socket.removeListener("error", onSocketPreError);
-      wss.emit("connection", ws, request);
+      (request as any).user = user;
+
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        socket.removeListener("error", onSocketPreError);
+        wss.emit("connection", ws, request);
+      });
     });
   });
 

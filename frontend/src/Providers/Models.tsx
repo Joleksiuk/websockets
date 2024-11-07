@@ -7,6 +7,16 @@ export type ClientMessage = {
     message: string
 }
 
+export type ClientMessageWithToken = {
+    activity: 'CREATE ROOM' | 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
+    roomId: string
+    password: string | null
+    username: string
+    timestamp: number
+    message: string
+    token: string
+}
+
 export type ServerMessage = {
     activity:
         | 'USER JOINED ROOM'

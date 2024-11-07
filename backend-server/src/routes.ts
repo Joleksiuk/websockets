@@ -1,6 +1,7 @@
 import { body, param } from "express-validator";
 import { UserController } from "./controller/UserController";
 import { AuthController } from "./controller/AuthController";
+import { RoomController } from "./controller/RoomController";
 
 export const Routes = [
   {
@@ -58,5 +59,26 @@ export const Routes = [
         .isString()
         .withMessage("newPassword must be a string"),
     ],
+  },
+  {
+    method: "post",
+    route: "/rooms",
+    controller: RoomController,
+    action: "createRoom",
+    validation: [body("name").isString().withMessage("name must be a string")],
+  },
+  {
+    method: "delete",
+    route: "/rooms/:id",
+    controller: RoomController,
+    action: "deleteRoom",
+    validation: [param("id").isInt().withMessage("id must be a number")],
+  },
+  {
+    method: "get",
+    route: "/rooms/:id",
+    controller: RoomController,
+    action: "findRoomById",
+    validation: [param("id").isInt().withMessage("id must be a number")],
   },
 ];

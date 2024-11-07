@@ -42,7 +42,9 @@ Routes.forEach((route) => {
           res,
           next
         );
-        res.json(result);
+        if (!res.headersSent && result !== undefined) {
+          res.json(result);
+        }
       } catch (error) {
         next(error);
       }

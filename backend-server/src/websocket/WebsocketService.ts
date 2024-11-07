@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
+import * as url from "url";
 
 const rooms: Map<string, Room> = new Map();
 const users: Map<WebSocket, string> = new Map();
@@ -30,22 +31,50 @@ function authenticateToken(token: string): any {
 }
 
 /**
- * Helper function to authenticate a websocket connection
- * @param ws - The websocket connection.
- * @param request - The request object.
+ * Helper function to authenticate a WebSocket connection
+ * @param request - The HTTP request object.
+ * @param socket - The raw socket.
+ * @param callback - The callback function.
  */
-export function authenticate(ws: WebSocket, request): any {
-  const token = request.url?.split("token=")[1];
+export function authenticate(
+  request: any,
+  socket: any,
+  callback: (error: boolean, user?: any) => void
+) {
+  const parsedUrl = url.parse(request.url, true);
+  const token = parsedUrl.query.token as string;
+
   if (!token) {
-    ws.close(1008, "Token not provided");
-    return;
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    socket.destroy();
+    return callback(true);
   }
 
-  const user = authenticateToken(token);
-  if (!user) {
-    ws.close(1008, "Invalid token");
-    return;
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
+      return callback(true);
+    }
+
+    callback(false, decoded);
+  });
+}
+
+/**
+ * Helper function to authenticate a WebSocket connection
+ * @param request - The HTTP request object.
+ * @param socket - The raw socket.
+ * @param callback - The callback function.
+ */
+export function isAuthenticated(chatMessage: ChatMessage) {
+  const { token } = chatMessage;
+
+  if (!token) {
+    return false;
   }
+
+  return authenticateToken(token);
 }
 
 /**
@@ -56,6 +85,11 @@ export function authenticate(ws: WebSocket, request): any {
 export function handleMessage(message: string, ws: WebSocket): void {
   try {
     const chatMessage: ChatMessage = JSON.parse(message);
+
+    if (!isAuthenticated(chatMessage)) {
+      ws.send(JSON.stringify({ activity: "INVALID AUTHENTICATION" }));
+      return;
+    }
 
     console.log("Received message: ", chatMessage);
     const { activity } = chatMessage;
@@ -187,6 +221,7 @@ export function handleUserSendChatMessage(message: ChatMessage): void {
     username,
     timestamp: Date.now(),
     message: message.message,
+    token: message.token,
   };
   broadcastToRoom(roomId, chatMessage);
 }
@@ -196,7 +231,7 @@ export function handleUserSendChatMessage(message: ChatMessage): void {
  * @param roomId - The ID of the room to send the message to.
  * @param message - The message to broadcast.
  */
-export function broadcastToRoom(roomId: string, message: ChatMessage): void {
+export function broadcastToRoom(roomId: string, message: any): void {
   if (rooms.has(roomId)) {
     const room = rooms.get(roomId)!;
     room.users.forEach((client) => {

@@ -30,8 +30,8 @@ export default function SingIn() {
     const handleSignIn = async () => {
         try {
             validateInputs()
-            const response = await sendLoginRequest(username, password)
-            login(username, response.data)
+            const jwt = await sendLoginRequest(username, password)
+            login(username, jwt)
         } catch (e: unknown) {
             if (e instanceof CustomValidationError) {
                 const error = e as CustomValidationError

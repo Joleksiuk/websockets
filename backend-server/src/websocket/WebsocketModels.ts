@@ -15,4 +15,5 @@ export interface ChatMessage {
   chatroomName?: string;
   isOpen?: boolean;
   password?: string;
+  token: string;
 }
