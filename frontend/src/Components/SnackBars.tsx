@@ -55,7 +55,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
                         onClose={handleClose(snackbar.id)}
                         anchorOrigin={{
                             vertical: 'bottom',
-                            horizontal: 'center',
+                            horizontal: 'left',
                         }}
                         style={{ bottom: 20 + index * 60 }}
                     >
