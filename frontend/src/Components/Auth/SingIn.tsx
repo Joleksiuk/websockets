@@ -21,7 +21,7 @@ export type ValidationError = {
 
 export default function SingIn() {
     const { mode } = useModeContext()
-    const { login } = useAuthContext()
+    const { login, setIsAuthorized } = useAuthContext()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<CustomValidationError | null>(null)
@@ -31,6 +31,7 @@ export default function SingIn() {
         try {
             validateInputs()
             const jwt = await sendLoginRequest(username, password)
+            setIsAuthorized(true)
             login(username, jwt)
         } catch (e: unknown) {
             if (e instanceof CustomValidationError) {

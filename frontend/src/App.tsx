@@ -12,22 +12,22 @@ import { SnackbarProvider } from './Components/SnackBars'
 function App() {
     return (
         <SnackbarProvider>
-            <WebsocketProvider>
-                <BrowserRouter>
-                    <ModeProvider>
-                        <ModeContext.Consumer>
-                            {({ mode }) => (
-                                <ThemeProvider theme={DefaultTheme(mode)}>
-                                    <CssBaseline />
-                                    <AuthProvider>
+            <AuthProvider>
+                <WebsocketProvider>
+                    <BrowserRouter>
+                        <ModeProvider>
+                            <ModeContext.Consumer>
+                                {({ mode }) => (
+                                    <ThemeProvider theme={DefaultTheme(mode)}>
+                                        <CssBaseline />
                                         <AppBase />
-                                    </AuthProvider>
-                                </ThemeProvider>
-                            )}
-                        </ModeContext.Consumer>
-                    </ModeProvider>
-                </BrowserRouter>
-            </WebsocketProvider>
+                                    </ThemeProvider>
+                                )}
+                            </ModeContext.Consumer>
+                        </ModeProvider>
+                    </BrowserRouter>
+                </WebsocketProvider>
+            </AuthProvider>
         </SnackbarProvider>
     )
 }

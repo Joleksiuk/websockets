@@ -4,9 +4,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { theme } from '../Inputs/TextInput.styled'
+import { useNavigate } from 'react-router-dom'
 
 export default function NavbarDropdown() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+    const navigate = useNavigate()
 
     const { logout } = useAuthContext()
     const { mode } = useModeContext()
@@ -20,6 +22,7 @@ export default function NavbarDropdown() {
 
     const handleLogout = () => {
         logout()
+        navigate(`/`)
     }
 
     return (

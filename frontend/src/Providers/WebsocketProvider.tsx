@@ -6,8 +6,9 @@ import React, {
     useEffect,
 } from 'react'
 import { ClientMessage } from './Models'
-import { User, USER_COOKIE_KEY } from './AuthProvider'
+import { useAuthContext, User, USER_COOKIE_KEY } from './AuthProvider'
 import Cookies from 'js-cookie'
+import { useSnackbar } from '../Components/SnackBars'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1
@@ -54,6 +55,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         setWsMessages(updatedMessages)
     }
 
+    const { addMessage: AddSnackbarMessage } = useSnackbar()
+    const { isAuthorized, user } = useAuthContext()
     const reconnect = () => {}
 
     const heartbeat = () => {
@@ -76,23 +79,20 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         ws.send(data)
     }
 
-    const getJwt = () => {
-        const storedUser = Cookies.get(USER_COOKIE_KEY)
-        if (storedUser) {
-            const user: User = JSON.parse(storedUser)
-            return user.jwt
-        }
-    }
-
     useEffect(() => {
+        if (!isAuthorized || !user?.jwt) {
+            AddSnackbarMessage('User not authorized', 'error')
+            return
+        }
+        //TODO: Handle disconnecting after logout and reconnecting after login
         if (ws && ws.readyState === WebSocket.OPEN) {
             console.log('WebSocket connection already open')
             return
         }
-        console.log('Connecting to WebSocket server...')
+        console.log('Connecting to WebSocket server...', isAuthorized, user)
 
         const socket: WebSocketExt = new WebSocket(
-            `wss://localhost:8080?token=${getJwt()}`,
+            `wss://localhost:8080?token=${user.jwt}`,
         )
 
         socket.onopen = () => {
@@ -106,6 +106,10 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         socket.onmessage = (event) => {
+            AddSnackbarMessage(
+                `Received message from server -${event.data} `,
+                'info',
+            )
             if (isBinary(event.data)) {
                 console.log('Received binary data:', event.data)
                 heartbeat()
@@ -124,14 +128,20 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         return () => {
             socket.close()
         }
-    }, [])
+    }, [isAuthorized])
 
     const sleep = (ms: number) => {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
-        const messageWithToken = { ...message, token: getJwt() }
+        if (!user) {
+            AddSnackbarMessage(
+                'User not authorized to send messages to server',
+                'error',
+            )
+        }
+        const messageWithToken = { ...message, token: user?.jwt }
         let messageSent = false
         let currentAttempts = 0
         const maxAttempts = 2

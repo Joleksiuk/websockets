@@ -5,7 +5,6 @@ import React, {
     useEffect,
     ReactNode,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 
 export type Room = {
@@ -28,6 +27,8 @@ interface AuthContextType {
     getPassword: (roomId: string | undefined) => string
     currentPage: AuthPageType
     setCurrentPage: (page: AuthPageType) => void
+    isAuthorized: boolean
+    setIsAuthorized: (isAuthorized: boolean) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -40,14 +41,11 @@ export const USER_COOKIE_KEY = 'chat-app-logged-user'
 export const ROOMS_COOKIE_KEY = 'chat-app-rooms'
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+    //TODO: handle refresh token
     const [user, setUser] = useState<User | null>(null)
     const [rooms, setRooms] = useState<Room[]>([])
-
+    const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
-
-    const navigate = useNavigate()
-
-    useEffect(() => {}, [user])
 
     useEffect(() => {
         const storedUser = Cookies.get(USER_COOKIE_KEY)
@@ -79,7 +77,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = () => {
         Cookies.remove(USER_COOKIE_KEY)
         setUser(null)
-        navigate(`/`)
     }
 
     const handleSetRooms = (rooms: Room[]) => {
@@ -110,6 +107,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 getPassword,
                 currentPage,
                 setCurrentPage,
+                isAuthorized,
+                setIsAuthorized,
             }}
         >
             {children}
