@@ -5,7 +5,6 @@ import express from "express";
 import helmet from "helmet";
 import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
-import fs from "fs";
 import * as https from "https";
 import { loadSSLCertificates } from "./utils/LoadSSL";
 

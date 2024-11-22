@@ -48,6 +48,12 @@ export const Routes = [
   },
   {
     method: "post",
+    route: "/logout",
+    controller: AuthController,
+    action: "logout",
+  },
+  {
+    method: "post",
     route: "/changePassword",
     controller: AuthController,
     action: "changePassword",

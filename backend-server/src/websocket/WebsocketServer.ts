@@ -1,9 +1,10 @@
 import { WebSocketServer, WebsocketServer, Websocket, RawData } from "ws";
+import { handleMessage, handleUserLeftRoom } from "./WebsocketService";
+import { COOKIE_AT_KEY, COOKIE_SECRET } from "../config";
 import {
-  authenticate,
-  handleMessage,
-  handleUserLeftRoom,
-} from "./WebsocketService";
+  extractJwtFromRequest,
+  isValidToken,
+} from "../middlewares/cookieService";
 
 const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
@@ -28,17 +29,23 @@ export default function initializeWebSocketServer(server: any) {
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
 
-    authenticate(request, socket, (error, user) => {
-      if (error) {
-        return;
-      }
+    const authorizationToken = extractJwtFromRequest(
+      request,
+      COOKIE_SECRET,
+      COOKIE_AT_KEY
+    );
 
-      (request as any).user = user;
+    console.log("Extracted JWT: ", authorizationToken);
 
-      wss.handleUpgrade(request, socket, head, (ws) => {
-        socket.removeListener("error", onSocketPreError);
-        wss.emit("connection", ws, request);
-      });
+    if (!isValidToken(authorizationToken)) {
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
+      return;
+    }
+
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      socket.removeListener("error", onSocketPreError);
+      wss.emit("connection", ws, request);
     });
   });
 

@@ -60,8 +60,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
         }
     }, [wsMessages])
 
-    if (chatroomId) console.log('getPassword', getPassword(chatroomId))
-
     useEffect(() => {
         if (!chatroomId || !getPassword(chatroomId)) {
             return

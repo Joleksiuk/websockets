@@ -3,7 +3,9 @@ import morgan from "morgan";
 import express, { Application, Request, Response, NextFunction } from "express";
 import { Routes } from "./routes";
 import { validationResult } from "express-validator";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
+import cookieParser from "cookie-parser";
+import { COOKIE_SECRET } from "./config";
 
 function handleError(
   err: any,
@@ -17,15 +19,18 @@ function handleError(
   res.status(errorStatus).send(errorMessage);
 }
 
-const corsOptions = {
+const corsOptions: CorsOptions = {
   origin: "http://localhost:3000",
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 const app: Application = express();
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
+app.use(cookieParser(COOKIE_SECRET));
 
 Routes.forEach((route) => {
   (app as any)[route.method](

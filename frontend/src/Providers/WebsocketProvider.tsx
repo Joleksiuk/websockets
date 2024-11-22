@@ -6,12 +6,13 @@ import React, {
     useEffect,
 } from 'react'
 import { ClientMessage } from './Models'
-import { useAuthContext, User, USER_COOKIE_KEY } from './AuthProvider'
-import Cookies from 'js-cookie'
+import { useAuthContext } from './AuthProvider'
 import { useSnackbar } from '../Components/SnackBars'
+import { USE_SSL } from '../config'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1
+const COOKIE_AT_KEY = 'at'
 
 interface WebsocketContextType {
     ws: WebSocket | null
@@ -91,8 +92,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
         console.log('Connecting to WebSocket server...', isAuthorized, user)
 
+        const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
-            `wss://localhost:8080?token=${user.jwt}`,
+            `${protocole}://localhost:8080?${COOKIE_AT_KEY}=${user.jwt}`,
         )
 
         socket.onopen = () => {

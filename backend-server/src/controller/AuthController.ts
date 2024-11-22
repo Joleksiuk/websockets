@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { validate } from "class-validator";
 
 import { User } from "../entity/User";
-import { JWT_SECRET } from "../config";
+import { COOKIE_AT_KEY, JWT_SECRET } from "../config";
 import { AppDataSource } from "../data-source";
 
 export class AuthController {
@@ -33,7 +33,18 @@ export class AuthController {
       { expiresIn: "1h" }
     );
 
+    res.cookie(COOKIE_AT_KEY, token, {
+      httpOnly: true,
+      signed: true,
+      secure: false, // Disable secure for local development
+      sameSite: "lax", // Recommended for additional security
+    });
     res.send(token);
+  }
+
+  async logout(req: Request, res: Response) {
+    res.clearCookie(COOKIE_AT_KEY);
+    res.status(204).send();
   }
 
   async changePassword(req: Request, res: Response) {
