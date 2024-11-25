@@ -70,7 +70,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const { addMessage: AddSnackbarMessage } = useSnackbar()
-    const { isAuthorized, user } = useAuthContext()
+    const { user } = useAuthContext()
 
     const heartbeat = () => {
         if (!ws) {
@@ -91,6 +91,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const connectToWebsocketServer = () => {
         if (ws && ws.readyState === WebSocket.OPEN) {
             console.log('WebSocket connection already open')
+            setIsConnected(true)
+            setIsDisconnected(false)
             return
         }
 
@@ -137,17 +139,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
     }
 
-    // useEffect(() => {
-    //     console.log()
-    //     if (!isConnected) {
-    //         connectToWebsocketServer()
-    //     }
-    // }, [isAuthorized])
-
     let dupa = false
     useEffect(() => {
         if (!isConnected && !dupa) {
-            console.log('di[a')
             connectToWebsocketServer()
         }
         dupa = true
@@ -169,11 +163,12 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const reconnect = () => {
-        reconnectWS({
-            connectToWebsocketServer,
-            setIsDisconnected,
-            ws,
-        })
+        // reconnectWS({
+        //     connectToWebsocketServer,
+        //     setIsDisconnected,
+        //     ws,
+        // })
+        connectToWebsocketServer()
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
