@@ -89,13 +89,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const connectToWebsocketServer = () => {
-        console.log('Authorizing...')
-        if (!isAuthorized || !user?.jwt) {
-            AddSnackbarMessage('User not authorized', 'error')
-            return
-        }
-
-        console.log('Connecting to WebSocket server...')
         if (ws && ws.readyState === WebSocket.OPEN) {
             console.log('WebSocket connection already open')
             return
@@ -103,7 +96,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
         const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://localhost:8080?${COOKIE_AT_KEY}=${user.jwt}`,
+            `${protocole}://localhost:8080?${COOKIE_AT_KEY}=${user?.jwt}`,
         )
         console.log('Connecting to WebSocket server...')
 
@@ -144,20 +137,21 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
     }
 
-    useEffect(() => {
-        console.log()
-        if (!isConnected) {
-            connectToWebsocketServer()
-        }
-    }, [isAuthorized])
-
     // useEffect(() => {
-    //     if (!isConnected && isMounted) {
-    //         console.log('di[a')
+    //     console.log()
+    //     if (!isConnected) {
     //         connectToWebsocketServer()
     //     }
-    //     setIsMounted(true)
-    // }, [])
+    // }, [isAuthorized])
+
+    let dupa = false
+    useEffect(() => {
+        if (!isConnected && !dupa) {
+            console.log('di[a')
+            connectToWebsocketServer()
+        }
+        dupa = true
+    }, [])
 
     const closeWebsocketConnection = () => {
         if (ws) {
