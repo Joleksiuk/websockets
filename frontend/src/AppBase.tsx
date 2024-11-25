@@ -8,10 +8,17 @@ import Navbar from './Components/Navbar/Navbar'
 import { ChatroomProvider } from './Providers/ChatroomProvider'
 import AuthPage from './Pages/AuthPage'
 import { useAuthContext } from './Providers/AuthProvider'
+import { useWebsocketContext } from './Providers/WebsocketProvider'
+import ReconnectPage from './Components/Reconnect/ReconnectPage'
 
 export default function AppBase() {
     const { mode } = useModeContext()
     const { user } = useAuthContext()
+    const { isDisconnected } = useWebsocketContext()
+
+    if (isDisconnected) {
+        return <ReconnectPage />
+    }
 
     if (!user) {
         return (

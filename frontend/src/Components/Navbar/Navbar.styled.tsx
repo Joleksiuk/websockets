@@ -15,10 +15,16 @@ export const HorizontalContainerStyled = styled.div`
     gap: 1vw;
     padding: 0 1vw;
 `
+type Props = {
+    isConnected: boolean
+}
 
-export const ConnectionCircleStyled = styled.div<{ connected: boolean }>`
+export const ConnectionCircleStyled = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== 'isConnected',
+})<Props>`
     height: 16px;
     width: 16px;
     border-radius: 16px;
-    background-color: ${({ connected }) => (connected ? '#00ff00' : '#ff0000')};
+    background-color: ${({ isConnected }) =>
+        isConnected ? '#00ff00' : '#ff0000'};
 `

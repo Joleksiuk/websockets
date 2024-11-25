@@ -9,6 +9,7 @@ import { ClientMessage } from './Models'
 import { useAuthContext } from './AuthProvider'
 import { useSnackbar } from '../Components/SnackBars'
 import { USE_SSL } from '../config'
+import { reconnectWS } from './ws/ReconnectService'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1
@@ -20,6 +21,11 @@ interface WebsocketContextType {
     sendWebsocketMessageToServer: (message: ClientMessage) => void
     wsMessages: Array<MessageEvent>
     setWsMessages: (messages: Array<MessageEvent>) => void
+    isDisconnected: boolean
+    setIsDisconnected: (isDisconnected: boolean) => void
+    reconnect: () => void
+    closeWebsocketConnection: () => void
+    connectToWebsocketServer: () => void
 }
 
 export const WebsocketContext = createContext<WebsocketContextType>({
@@ -28,16 +34,22 @@ export const WebsocketContext = createContext<WebsocketContextType>({
     sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
     wsMessages: [],
     setWsMessages: () => undefined,
+    isDisconnected: false,
+    setIsDisconnected: () => undefined,
+    reconnect: () => undefined,
+    closeWebsocketConnection: () => undefined,
+    connectToWebsocketServer: () => undefined,
 })
 
 interface WebsocketProviderProps {
     children: ReactNode
 }
 
-function isBinary(obj: any) {
+function isBinary(data: any) {
     return (
-        typeof obj === 'object' &&
-        Object.prototype.toString.call(obj) === '[object Blob]'
+        data instanceof ArrayBuffer ||
+        data instanceof Uint8Array ||
+        Object.prototype.toString.call(data) === '[object Blob]'
     )
 }
 
@@ -51,6 +63,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const [ws, setWs] = useState<WebSocketExt | null>(null)
     const [isConnected, setIsConnected] = useState<boolean>(false)
     const [wsMessages, setWsMessages] = useState<any[]>([])
+    const [isDisconnected, setIsDisconnected] = useState<boolean>(false)
     const addMessage = (message: MessageEvent) => {
         const updatedMessages = [...wsMessages, message]
         setWsMessages(updatedMessages)
@@ -58,7 +71,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     const { addMessage: AddSnackbarMessage } = useSnackbar()
     const { isAuthorized, user } = useAuthContext()
-    const reconnect = () => {}
 
     const heartbeat = () => {
         if (!ws) {
@@ -66,45 +78,45 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         } else if (!!ws.pingTimeout) {
             clearTimeout(ws.pingTimeout)
         }
-
         ws.pingTimeout = setTimeout(() => {
             console.log('Terminating connection due to heartbeat timeout')
             ws.close()
             reconnect()
         }, HEARTBEAT_TIMEOUT)
-
         const data = new Uint8Array(1)
-
         data[0] = HEARTBEAT_VALUE
-
         ws.send(data)
     }
 
-    useEffect(() => {
+    const connectToWebsocketServer = () => {
+        console.log('Authorizing...')
         if (!isAuthorized || !user?.jwt) {
             AddSnackbarMessage('User not authorized', 'error')
             return
         }
-        //TODO: Handle disconnecting after logout and reconnecting after login
+
+        console.log('Connecting to WebSocket server...')
         if (ws && ws.readyState === WebSocket.OPEN) {
             console.log('WebSocket connection already open')
             return
         }
-        console.log('Connecting to WebSocket server...', isAuthorized, user)
 
         const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
             `${protocole}://localhost:8080?${COOKIE_AT_KEY}=${user.jwt}`,
         )
+        console.log('Connecting to WebSocket server...')
 
         socket.onopen = () => {
             console.log('Successfuly Connected to WebSocket server!')
             setIsConnected(true)
+            setIsDisconnected(false)
         }
 
         socket.onclose = () => {
             console.log('WebSocket connection closed')
             setIsConnected(false)
+            setIsDisconnected(true)
         }
 
         socket.onmessage = (event) => {
@@ -130,10 +142,44 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         return () => {
             socket.close()
         }
+    }
+
+    useEffect(() => {
+        console.log()
+        if (!isConnected) {
+            connectToWebsocketServer()
+        }
     }, [isAuthorized])
 
-    const sleep = (ms: number) => {
-        return new Promise((resolve) => setTimeout(resolve, ms))
+    // useEffect(() => {
+    //     if (!isConnected && isMounted) {
+    //         console.log('di[a')
+    //         connectToWebsocketServer()
+    //     }
+    //     setIsMounted(true)
+    // }, [])
+
+    const closeWebsocketConnection = () => {
+        if (ws) {
+            ws.onopen = null
+            ws.onclose = null
+            ws.onmessage = null
+            if (ws.pingTimeout) {
+                clearTimeout(ws.pingTimeout)
+            }
+            ws.close()
+            setWs(null)
+            setIsConnected(false)
+            setIsDisconnected(true)
+        }
+    }
+
+    const reconnect = () => {
+        reconnectWS({
+            connectToWebsocketServer,
+            setIsDisconnected,
+            ws,
+        })
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
@@ -143,19 +189,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
                 'error',
             )
         }
-        const messageWithToken = { ...message, token: user?.jwt }
-        let messageSent = false
-        let currentAttempts = 0
-        const maxAttempts = 2
-        while (!messageSent && currentAttempts < maxAttempts) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(messageWithToken))
-                messageSent = true
-            } else {
-                console.log('Connection is not open')
-                currentAttempts++
-                await sleep(1000)
-            }
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ ...message, token: user?.jwt }))
         }
     }
 
@@ -167,6 +202,11 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
                 wsMessages,
                 sendWebsocketMessageToServer,
                 setWsMessages,
+                isDisconnected,
+                setIsDisconnected,
+                reconnect,
+                closeWebsocketConnection,
+                connectToWebsocketServer,
             }}
         >
             {children}

@@ -18,6 +18,7 @@ export default function MessageList(): JSX.Element {
             {messages.map((msg, index) => (
                 <MessageContainerStyled
                     isRight={msg.username === user?.username}
+                    key={`message-container-${index}`}
                 >
                     <Avatar key={`avatar-${index}`} username={msg.username} />
                     <MessageStyled

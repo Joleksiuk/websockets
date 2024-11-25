@@ -29,7 +29,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
         message: string,
         severity: SnackBarProps['severity'] = 'success',
     ) => {
-        setSnackbars((prev) => [...prev, { id: Date.now(), message, severity }])
+        //setSnackbars((prev) => [...prev, { id: Date.now(), message, severity }])
     }
 
     const handleClose =
@@ -54,7 +54,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
                         autoHideDuration={6000}
                         onClose={handleClose(snackbar.id)}
                         anchorOrigin={{
-                            vertical: 'bottom',
+                            vertical: 'top',
                             horizontal: 'left',
                         }}
                         style={{ bottom: 20 + index * 60 }}

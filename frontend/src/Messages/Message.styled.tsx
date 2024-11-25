@@ -26,7 +26,14 @@ export const MessageStyled = muiStyled('div')<Props>(
         borderBottomRightRadius: isRight ? '0' : '12px',
     }),
 )
-export const MessageContainerStyled = styled.div<{ isRight: boolean }>`
+
+type MessageContainerStyledProps = {
+    isRight: boolean
+}
+
+export const MessageContainerStyled = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== 'isRight',
+})<MessageContainerStyledProps>`
     display: flex;
     align-items: center;
     gap: 10px;

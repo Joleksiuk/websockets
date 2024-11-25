@@ -36,8 +36,8 @@ export class AuthController {
     res.cookie(COOKIE_AT_KEY, token, {
       httpOnly: true,
       signed: true,
-      secure: false, // Disable secure for local development
-      sameSite: "lax", // Recommended for additional security
+      secure: false,
+      sameSite: "lax",
     });
     res.send(token);
   }

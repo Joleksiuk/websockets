@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import {
     ConnectionCircleStyled,
     HorizontalContainerStyled,
@@ -16,12 +16,14 @@ export default function Navbar() {
     const { mode } = useModeContext()
     const { user } = useAuthContext()
     const { isConnected } = useWebsocketContext()
-
+    const { closeWebsocketConnection, reconnect } = useWebsocketContext()
     return (
         <NavbarStyled>
             {user ? (
                 <HorizontalContainerStyled>
-                    <ConnectionCircleStyled connected={isConnected} />
+                    <ConnectionCircleStyled
+                        isConnected={isConnected.valueOf()}
+                    />
                     <Avatar username={user.username} />
                     <Typography
                         variant="h4"
@@ -31,6 +33,10 @@ export default function Navbar() {
                     </Typography>
                     <ModeSwitch />
                     <NavbarDropdown />
+                    <Button onClick={() => closeWebsocketConnection()}>
+                        Disconnect
+                    </Button>
+                    <Button onClick={() => reconnect()}>Connect</Button>
                 </HorizontalContainerStyled>
             ) : (
                 <ModeSwitch />

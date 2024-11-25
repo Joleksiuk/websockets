@@ -20,7 +20,8 @@ function onSocketPostError(error: Error) {
 }
 
 function ping(ws: Websocket) {
-  ws.send(HEARTBEAT_VALUE), { binary: true };
+  console.log("ping");
+  ws.send(Buffer.from([HEARTBEAT_VALUE]), { binary: true });
 }
 
 export default function initializeWebSocketServer(server: any) {
@@ -56,7 +57,7 @@ export default function initializeWebSocketServer(server: any) {
     ws.on("message", (message: RawData, isBinary) => {
       if (isBinary && (message as any)[0] === HEARTBEAT_VALUE) {
         ws.isAlive = true;
-        return;
+        console.log("pong");
       } else {
         handleMessage(message, ws);
       }
