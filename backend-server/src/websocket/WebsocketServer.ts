@@ -30,6 +30,9 @@ export default function initializeWebSocketServer(server: any) {
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
 
+    console.log("Cookies header: ", request.headers);
+
+    console.log("Upgrading connection...");
     const authorizationToken = extractJwtFromRequest(
       request,
       COOKIE_SECRET,

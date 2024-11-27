@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-export const USE_SSL = true;
+export const USE_SSL = false;
 
 export const port = process.env.PORT || 8080;
 export const testPort = process.env.TEST_PORT || 8081;

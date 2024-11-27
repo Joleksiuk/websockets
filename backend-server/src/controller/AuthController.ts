@@ -37,8 +37,9 @@ export class AuthController {
       httpOnly: true,
       signed: true,
       secure: false,
-      sameSite: "lax",
+      sameSite: "none",
     });
+
     res.send(token);
   }
 

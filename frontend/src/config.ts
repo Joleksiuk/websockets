@@ -1,4 +1,4 @@
-export const USE_SSL = true
+export const USE_SSL = false
 export const HOST_NAME = 'localhost'
 export const BACKEND_PORT = '8080'
 export const PROTOCOLE = USE_SSL ? 'https' : 'http'

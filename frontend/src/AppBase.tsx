@@ -16,9 +16,9 @@ export default function AppBase() {
     const { user } = useAuthContext()
     const { isDisconnected } = useWebsocketContext()
 
-    if (isDisconnected) {
-        return <ReconnectPage />
-    }
+    // if (isDisconnected) {
+    //     return <ReconnectPage />
+    // }
 
     if (!user) {
         return (
