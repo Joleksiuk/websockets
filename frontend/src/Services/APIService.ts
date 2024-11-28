@@ -11,15 +11,12 @@ export async function request(
             'Content-Type': 'application/json',
         }
 
-        if (jwt) {
-            headers['Authorization'] = `Bearer ${jwt}`
-        }
-
-        const config = {
+        let config = {
             method,
             url,
             headers,
-            data,
+            withCredentials: true,
+            ...(data && { data }),
         }
 
         const response = await axios(config)

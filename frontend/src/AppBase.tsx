@@ -10,11 +10,20 @@ import AuthPage from './Pages/AuthPage'
 import { useAuthContext } from './Providers/AuthProvider'
 import { useWebsocketContext } from './Providers/WebsocketProvider'
 import ReconnectPage from './Components/Reconnect/ReconnectPage'
+import { LinearProgress } from '@mui/material'
 
 export default function AppBase() {
     const { mode } = useModeContext()
-    const { user } = useAuthContext()
+    const { user, isAuthenticating } = useAuthContext()
     const { isDisconnected } = useWebsocketContext()
+
+    if (isAuthenticating) {
+        return (
+            <BasePageStyled mode={mode}>
+                <LinearProgress color="inherit" />
+            </BasePageStyled>
+        )
+    }
 
     // if (isDisconnected) {
     //     return <ReconnectPage />

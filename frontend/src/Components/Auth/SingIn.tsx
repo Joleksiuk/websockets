@@ -4,7 +4,6 @@ import { getColorInMode } from '../../Colors'
 import { SingInWrapper } from './SignIn.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { useAuthContext } from '../../Providers/AuthProvider'
-import { sendLoginRequest } from '../../Services/AuthService'
 import ValidationService, { CustomValidationError } from './ValidationService'
 
 export type Error = {
@@ -21,18 +20,15 @@ export type ValidationError = {
 
 export default function SingIn() {
     const { mode } = useModeContext()
-    const { login, setIsAuthorized } = useAuthContext()
+    const { login, setCurrentPage } = useAuthContext()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<CustomValidationError | null>(null)
 
-    const { setCurrentPage } = useAuthContext()
     const handleSignIn = async () => {
         try {
             validateInputs()
-            const jwt = await sendLoginRequest(username, password)
-            setIsAuthorized(true)
-            login(username, jwt)
+            await login(username, password)
         } catch (e: unknown) {
             if (e instanceof CustomValidationError) {
                 const error = e as CustomValidationError

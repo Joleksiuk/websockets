@@ -47,6 +47,18 @@ export const Routes = [
     ],
   },
   {
+    method: "get",
+    route: "/myself",
+    controller: AuthController,
+    action: "myself",
+  },
+  {
+    method: "post",
+    route: "/refreshToken",
+    controller: AuthController,
+    action: "refreshToken",
+  },
+  {
     method: "post",
     route: "/logout",
     controller: AuthController,

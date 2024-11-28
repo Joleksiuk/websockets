@@ -5,12 +5,14 @@ import { useAuthContext } from '../../Providers/AuthProvider'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { theme } from '../Inputs/TextInput.styled'
 import { useNavigate } from 'react-router-dom'
+import { useWebsocketContext } from '../../Providers/WebsocketProvider'
 
 export default function NavbarDropdown() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const navigate = useNavigate()
 
     const { logout } = useAuthContext()
+    const { closeWebsocketConnection } = useWebsocketContext()
     const { mode } = useModeContext()
     const open = Boolean(anchorEl)
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -20,8 +22,10 @@ export default function NavbarDropdown() {
         setAnchorEl(null)
     }
 
-    const handleLogout = () => {
-        logout()
+    const handleLogout = async () => {
+        console.log('Logging out...')
+        closeWebsocketConnection()
+        await logout()
         navigate(`/`)
     }
 

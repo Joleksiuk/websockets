@@ -9,11 +9,9 @@ import { ClientMessage } from './Models'
 import { useAuthContext } from './AuthProvider'
 import { useSnackbar } from '../Components/SnackBars'
 import { USE_SSL } from '../config'
-import { reconnectWS } from './ws/ReconnectService'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1
-const COOKIE_AT_KEY = 'at'
 
 interface WebsocketContextType {
     ws: WebSocket | null
@@ -98,7 +96,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
         const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://localhost:8080?${COOKIE_AT_KEY}=${user?.jwt}`,
+            `${protocole}://localhost:8080?`,
         )
         console.log('Connecting to WebSocket server...')
 
@@ -172,6 +170,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
+        console.log('Sending message to server:', message, user)
         if (!user) {
             AddSnackbarMessage(
                 'User not authorized to send messages to server',

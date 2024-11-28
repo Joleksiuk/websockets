@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config";
-import { signedCookies } from "cookie-parser"; // For signed cookie validation
+import { COOKIET_JWT_KEY, JWT_SECRET } from "../config";
+import { signedCookies } from "cookie-parser";
 
 export const isValidToken = (token: string | undefined): boolean => {
   if (!token) {
@@ -17,27 +17,26 @@ export const isValidToken = (token: string | undefined): boolean => {
 
 export function extractJwtFromRequest(
   request: any,
-  cookieSecret: string,
-  cookieKey: string
+  cookieSecret: string
 ): string | null {
   const cookiesHeader = request.headers.cookie || "";
 
-  console.log("Cookies header: ", cookiesHeader);
   const cookies = signedCookies(
     Object.fromEntries(
-      cookiesHeader.split("; ").map((cookieStr) => {
-        const [key, value] = cookieStr.split("=");
-        return [key, value];
+      cookiesHeader.split("; ").map((cookie) => {
+        const [key, value] = cookie.split("=");
+        return [key, decodeURIComponent(value)];
       })
     ),
     cookieSecret
   );
+  console.log(cookies);
 
-  let jwt = cookies[cookieKey];
+  let jwt = cookies.access_token;
 
   if (!jwt && request.url) {
     const url = new URL(request.url, `http://${request.headers.host}`);
-    jwt = url.searchParams.get(cookieKey);
+    jwt = url.searchParams.get(COOKIET_JWT_KEY);
   }
 
   return jwt || null;

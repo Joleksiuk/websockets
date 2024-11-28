@@ -7,6 +7,7 @@ import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
 import * as https from "https";
 import { loadSSLCertificates } from "./utils/LoadSSL";
+import http from "http";
 
 const sslOptions = loadSSLCertificates();
 
@@ -28,9 +29,11 @@ AppDataSource.initialize()
 
       initializeWebSocketServer(httpsServer);
     } else {
-      app.listen(port, () => {
+      const httpServer = http.createServer(app); // Correctly use http here
+
+      httpServer.listen(port, () => {
         console.log(
-          `Secure Express server has started. Open https://localhost:${port}/users to see results`
+          `Express server has started. Open http://localhost:${port}/users to see results`
         );
       });
 
@@ -39,7 +42,8 @@ AppDataSource.initialize()
       app.use(helmet());
       app.use(rateLimiter);
 
-      initializeWebSocketServer(app);
+      // Initialize WebSocket server
+      initializeWebSocketServer(httpServer);
     }
   })
   .catch((error) => console.log("Error initializing data source:", error));

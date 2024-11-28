@@ -1,6 +1,6 @@
 import { WebSocketServer, WebsocketServer, Websocket, RawData } from "ws";
 import { handleMessage, handleUserLeftRoom } from "./WebsocketService";
-import { COOKIE_AT_KEY, COOKIE_SECRET } from "../config";
+import { COOKIE_SECRET } from "../config";
 import {
   extractJwtFromRequest,
   isValidToken,
@@ -25,19 +25,15 @@ function ping(ws: Websocket) {
 }
 
 export default function initializeWebSocketServer(server: any) {
-  const wss: WebsocketServer = new WebSocketServer({ noServer: true }); // Pass the server option
+  const wss: WebsocketServer = new WebSocketServer({ noServer: true });
 
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
 
-    console.log("Cookies header: ", request.headers);
+    console.log("Cookies header: ", request.Cookies);
 
     console.log("Upgrading connection...");
-    const authorizationToken = extractJwtFromRequest(
-      request,
-      COOKIE_SECRET,
-      COOKIE_AT_KEY
-    );
+    const authorizationToken = extractJwtFromRequest(request, COOKIE_SECRET);
 
     console.log("Extracted JWT: ", authorizationToken);
 

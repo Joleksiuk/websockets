@@ -6,6 +6,11 @@ import React, {
     ReactNode,
 } from 'react'
 import Cookies from 'js-cookie'
+import {
+    getMyself,
+    sendLoginRequest,
+    sendLogoutRequest,
+} from '../Services/AuthService'
 
 export type Room = {
     roomId: string
@@ -13,6 +18,7 @@ export type Room = {
 }
 
 export type User = {
+    userId: string
     username: string
     jwt: string
 }
@@ -27,8 +33,7 @@ interface AuthContextType {
     getPassword: (roomId: string | undefined) => string
     currentPage: AuthPageType
     setCurrentPage: (page: AuthPageType) => void
-    isAuthorized: boolean
-    setIsAuthorized: (isAuthorized: boolean) => void
+    isAuthenticating: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -41,18 +46,23 @@ export const USER_COOKIE_KEY = 'chat-app-logged-user'
 export const ROOMS_COOKIE_KEY = 'chat-app-rooms'
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    //TODO: handle refresh token
     const [user, setUser] = useState<User | null>(null)
     const [rooms, setRooms] = useState<Room[]>([])
-    const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
+    const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false)
+
+    const initializeAuth = async () => {
+        try {
+            const user: User = await getMyself()
+            setUser(user)
+        } catch (error) {
+            console.error('Failed to get myself:', error)
+        }
+    }
 
     useEffect(() => {
-        const storedUser = Cookies.get(USER_COOKIE_KEY)
-        if (storedUser) {
-            const user: User = JSON.parse(storedUser)
-            setUser(user)
-        }
+        setIsAuthenticating(true)
+        initializeAuth()
 
         const storedRooms = Cookies.get(ROOMS_COOKIE_KEY)
         if (storedRooms) {
@@ -62,20 +72,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 console.error('Failed to parse rooms from cookies:', error)
             }
         }
+        setIsAuthenticating(false)
     }, [])
 
-    const login = (username: string, jwt: string) => {
-        const user = { username, jwt }
-        Cookies.set(USER_COOKIE_KEY, JSON.stringify(user), {
-            expires: 7,
-            secure: true,
-            sameSite: 'strict',
-        })
+    const login = async (username: string, password: string) => {
+        const user = await sendLoginRequest(username, password)
         setUser(user)
     }
 
-    const logout = () => {
-        Cookies.remove(USER_COOKIE_KEY)
+    const logout = async () => {
+        await sendLogoutRequest()
         setUser(null)
     }
 
@@ -107,8 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 getPassword,
                 currentPage,
                 setCurrentPage,
-                isAuthorized,
-                setIsAuthorized,
+                isAuthenticating,
             }}
         >
             {children}

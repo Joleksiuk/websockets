@@ -1,6 +1,15 @@
-import axios from 'axios'
 import { BACKEND_URL } from '../config'
 import { request } from './APIService'
+
+export async function getMyself(): Promise<any> {
+    try {
+        const response = await request(`${BACKEND_URL}/myself`, 'get', null)
+        console.log('get myself response:', response)
+        return response
+    } catch (error) {
+        console.error('Error during get myself request:', error)
+    }
+}
 
 export async function sendLoginRequest(
     username: string,
@@ -18,6 +27,15 @@ export async function sendLoginRequest(
     }
 }
 
+export async function sendLogoutRequest() {
+    try {
+        await request(`${BACKEND_URL}/logout`, 'post')
+    } catch (error) {
+        console.error('Error during logout request:', error)
+        throw error
+    }
+}
+
 export async function sendRegisterRequest(username: string, password: string) {
     try {
         const data = {
@@ -29,23 +47,5 @@ export async function sendRegisterRequest(username: string, password: string) {
         return response
     } catch (error) {
         console.error('Error during sign up request:', error)
-    }
-}
-
-export async function sendLogoutRequest() {
-    try {
-        const response = await axios.post(
-            `${BACKEND_URL}/logout`,
-            {},
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
-        )
-        return response.data
-    } catch (error) {
-        console.error('Error during logout request:', error)
-        throw error
     }
 }
