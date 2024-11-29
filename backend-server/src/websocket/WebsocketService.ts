@@ -234,6 +234,7 @@ export function handleUserSendChatMessage(message: ChatMessage): void {
 export function broadcastToRoom(roomId: string, message: any): void {
   if (rooms.has(roomId)) {
     const room = rooms.get(roomId)!;
+    console.log("Broadcasting message to room: ", room);
     room.users.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(message), (err) => {

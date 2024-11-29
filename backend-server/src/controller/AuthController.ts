@@ -77,7 +77,7 @@ export class AuthController {
   }
 
   async refreshToken(req, res) {
-    const refresh_token = req.cookies[COOKIE_RT_KEY];
+    const refresh_token = req.signedCookies[COOKIE_RT_KEY];
     if (!refresh_token) {
       return res.status(401).send("Access Denied. No refresh token provided.");
     }
@@ -92,6 +92,7 @@ export class AuthController {
         .cookie(COOKIET_JWT_KEY, newAccessToken, {
           httpOnly: true,
           sameSite: "strict",
+          signed: true,
         })
         .status(200);
     } catch (error) {
@@ -123,7 +124,7 @@ export class AuthController {
   }
 
   async authenticateTokenFromCookies(req: Request, res: Response) {
-    const access_token = req.cookies[COOKIET_JWT_KEY];
+    const access_token = req.signedCookies[COOKIET_JWT_KEY];
 
     if (!access_token) {
       throw new Error("Unauthorized");
@@ -133,6 +134,7 @@ export class AuthController {
       const decoded = jwt.verify(access_token, JWT_SECRET);
       res.locals.jwtPayload = decoded;
     } catch (error) {
+      console.log(error);
       if (error.name === "TokenExpiredError") {
         try {
           await this.refreshToken(req, res);

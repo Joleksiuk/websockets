@@ -47,8 +47,13 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
 
     const { chatroomId } = useParams()
     const { getPassword, user, rooms, setRooms } = useAuthContext()
-    const { wsMessages, setWsMessages, sendWebsocketMessageToServer } =
-        useWebsocketContext()
+    const {
+        wsMessages,
+        setWsMessages,
+        sendWebsocketMessageToServer,
+        connectToWebsocketServer,
+        isConnected,
+    } = useWebsocketContext()
 
     useEffect(() => {
         if (wsMessages.length > 0) {
@@ -61,10 +66,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     }, [wsMessages])
 
     useEffect(() => {
-        if (!chatroomId || !getPassword(chatroomId)) {
-            return
-        }
-
         if (chatroomId && user) {
             const chatMessage: ClientMessage = {
                 activity: 'JOIN ROOM',
@@ -75,6 +76,15 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 message: '',
             }
             sendWebsocketMessageToServer(chatMessage)
+        }
+    }, [isConnected])
+
+    useEffect(() => {
+        if (!isConnected) {
+            connectToWebsocketServer()
+        }
+        if (!chatroomId || !getPassword(chatroomId)) {
+            return
         }
     }, [chatroomId])
 

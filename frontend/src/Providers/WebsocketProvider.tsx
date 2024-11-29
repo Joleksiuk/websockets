@@ -101,9 +101,10 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         console.log('Connecting to WebSocket server...')
 
         socket.onopen = () => {
-            console.log('Successfuly Connected to WebSocket server!')
+            console.log('Successfully Connected to WebSocket server!')
             setIsConnected(true)
             setIsDisconnected(false)
+            //heartbeat() // Start the heartbeat mechanism
         }
 
         socket.onclose = () => {
@@ -113,6 +114,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         socket.onmessage = (event) => {
+            console.log('Received message from server:', event.data)
             AddSnackbarMessage(
                 `Received message from server -${event.data} `,
                 'info',
@@ -126,7 +128,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         socket.addEventListener('close', () => {
-            if (!!socket.pingTimeout) {
+            if (socket.pingTimeout) {
                 clearTimeout(socket.pingTimeout)
             }
         })
@@ -147,9 +149,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     const closeWebsocketConnection = () => {
         if (ws) {
-            ws.onopen = null
-            ws.onclose = null
-            ws.onmessage = null
             if (ws.pingTimeout) {
                 clearTimeout(ws.pingTimeout)
             }
@@ -166,6 +165,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         //     setIsDisconnected,
         //     ws,
         // })
+        if (ws) {
+            ws.close()
+        }
         connectToWebsocketServer()
     }
 
