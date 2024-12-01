@@ -5,9 +5,11 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { Room } from "./Room";
 
 @Entity()
 @Unique(["username"])
@@ -34,6 +36,9 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToMany(() => Room, (room) => room.authorizedUsers)
+  rooms: Room[];
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);

@@ -1,25 +1,19 @@
-import React, {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-    useEffect,
-} from 'react'
+import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClientMessage, ServerMessage } from '../Providers/Models'
-import { useWebsocketContext } from '../Providers/WebsocketProvider'
-import { Room, useAuthContext } from '../Providers/AuthProvider'
+import { sendCreateRoomRequest } from '../Services/ChatroomService'
+
+type RoomCreateResponse = {
+    id: number
+    name: string
+    owner: string
+    createdAt: Date
+}
 
 interface HomepageContextType {
     isLoading: boolean
     hasInvalidPassword: boolean
     setHadInvalidPassword: (hasInvalidPassword: boolean) => void
     createChatroom: (name: string, username: string) => void
-    joinChatroom: (
-        chatroomId: string,
-        username: string,
-        password: string,
-    ) => void
 }
 
 const HomepageContext = createContext<HomepageContextType | undefined>(
@@ -30,111 +24,40 @@ interface HomepageProviderProps {
     children: ReactNode
 }
 
+const generatePassword = (): string => {
+    return Math.random().toString(36).slice(2)
+}
+
 export const HomepageProvider: React.FC<HomepageProviderProps> = ({
     children,
 }) => {
     const [hasInvalidPassword, setHadInvalidPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const { wsMessages, setWsMessages, sendWebsocketMessageToServer } =
-        useWebsocketContext()
-    const { rooms, setRooms, getPassword } = useAuthContext()
     const navigate = useNavigate()
 
-    useEffect(() => {
-        if (wsMessages.length > 0) {
-            const lastMessage = wsMessages.pop()
-            setWsMessages([...wsMessages])
-
-            if (lastMessage) {
-                handleMessageFromWebsocketServer(lastMessage)
-            }
-        }
-    }, [wsMessages])
-
-    const handleMessageFromWebsocketServer = (event: MessageEvent) => {
+    const createChatroom = async (name: string) => {
+        const password = generatePassword()
         try {
-            const message: ServerMessage = JSON.parse(event.data)
-
-            switch (message.activity) {
-                case 'INVALID AUTHENTICATION':
-                    setHadInvalidPassword(true)
-                    break
-
-                case 'ROOM CREATED':
-                    const newRoom: Room = {
-                        roomId: message.roomId,
-                        password: message.password,
-                    }
-                    setRooms([...rooms, newRoom])
-                    joinChatroom(
-                        message.roomId,
-                        message.username,
-                        message.password,
-                    )
-                    console.log('Room created:', message)
-                    break
-                default:
-                    console.log('Unknown message type:', message)
-            }
+            setIsLoading(true)
+            const newRoom: RoomCreateResponse = await sendCreateRoomRequest(
+                name,
+                password,
+            )
+            navigate(`/chatroom/${newRoom.id}`)
         } catch (error) {
-            console.error('Error processing WebSocket message', error)
+            console.error('Error creating chatroom:', error)
+        } finally {
+            setIsLoading(false)
         }
-    }
-
-    const createChatroom = async (name: string, username: string) => {
-        const roomId = Math.random().toString(36).substr(2, 16)
-
-        const chatMessage: ClientMessage = {
-            activity: 'CREATE ROOM',
-            roomId: roomId,
-            username: username,
-            timestamp: Date.now(),
-            password: getPassword(roomId),
-            message: 'User has created the chatroom',
-        }
-        setIsLoading(true)
-        sendWebsocketMessageToServer(chatMessage)
-    }
-
-    const joinChatroom = (
-        roomId: string,
-        username: string,
-        password: string,
-    ) => {
-        if (!password) {
-            console.error('No password set! Cannot join chatroom.')
-            return
-        }
-        const chatMessage: ClientMessage = {
-            activity: 'JOIN ROOM',
-            password,
-            roomId,
-            username,
-            timestamp: Date.now(),
-            message: 'User has joined the chatroom',
-        }
-        const updatedRooms = rooms.map((room) =>
-            room.roomId === roomId ? { ...room, password } : room,
-        )
-
-        if (!updatedRooms.some((room) => room.roomId === roomId)) {
-            updatedRooms.push({ roomId, password })
-        }
-
-        setRooms(updatedRooms)
-        setIsLoading(true)
-        sendWebsocketMessageToServer(chatMessage)
-        navigate(`/chatroom/${roomId}`)
     }
 
     return (
         <HomepageContext.Provider
             value={{
                 createChatroom,
-                joinChatroom,
-                setHadInvalidPassword,
                 isLoading,
+                setHadInvalidPassword,
                 hasInvalidPassword,
             }}
         >

@@ -139,14 +139,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
     }
 
-    let dupa = false
-    useEffect(() => {
-        if (!isConnected && !dupa) {
-            connectToWebsocketServer()
-        }
-        dupa = true
-    }, [])
-
     const closeWebsocketConnection = () => {
         if (ws) {
             if (ws.pingTimeout) {

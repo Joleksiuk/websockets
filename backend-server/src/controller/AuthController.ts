@@ -11,13 +11,20 @@ import {
   JWT_SECRET,
 } from "../config";
 import { AppDataSource } from "../data-source";
-
-type AuthCookiePayload = {
-  accessToken: string;
-  refreshToken: string;
-};
 export class AuthController {
   private userRepository = AppDataSource.getRepository(User);
+
+  async getLoggedUser(res: Response): Promise<User> {
+    const jwtPayload = res.locals.jwtPayload;
+
+    const owner: User = await this.userRepository.findOne({
+      where: { id: jwtPayload.userId },
+    });
+    if (!owner) {
+      res.status(401).send("Unauthorized user");
+    }
+    return owner;
+  }
 
   async login(req: Request, res: Response) {
     let { username, password } = req.body;
@@ -76,38 +83,11 @@ export class AuthController {
       .send();
   }
 
-  async refreshToken(req, res) {
-    const refresh_token = req.signedCookies[COOKIE_RT_KEY];
-    if (!refresh_token) {
-      return res.status(401).send("Access Denied. No refresh token provided.");
-    }
-
-    try {
-      const decoded = jwt.verify(refresh_token, JWT_SECRET);
-      const newAccessToken = jwt.sign({ user: decoded.user }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRATION,
-      });
-
-      res
-        .cookie(COOKIET_JWT_KEY, newAccessToken, {
-          httpOnly: true,
-          sameSite: "strict",
-          signed: true,
-        })
-        .status(200);
-    } catch (error) {
-      return res.status(400).send("Invalid refresh token.");
-    }
-  }
-
   async myself(req: Request, res: Response) {
     try {
-      await this.authenticateTokenFromCookies(req, res);
       const userId = res.locals.jwtPayload.userId;
 
-      const user = await this.userRepository.findOneOrFail({
-        where: { id: userId },
-      });
+      const user = await this.getLoggedUser(res);
 
       if (!user) {
         return res.status(404).send("User not found");
@@ -120,30 +100,6 @@ export class AuthController {
       });
     } catch (error) {
       return res.status(401).send("Unauthorized");
-    }
-  }
-
-  async authenticateTokenFromCookies(req: Request, res: Response) {
-    const access_token = req.signedCookies[COOKIET_JWT_KEY];
-
-    if (!access_token) {
-      throw new Error("Unauthorized");
-    }
-
-    try {
-      const decoded = jwt.verify(access_token, JWT_SECRET);
-      res.locals.jwtPayload = decoded;
-    } catch (error) {
-      console.log(error);
-      if (error.name === "TokenExpiredError") {
-        try {
-          await this.refreshToken(req, res);
-        } catch (refreshError) {
-          throw new Error("Unauthorized");
-        }
-      } else {
-        throw new Error("Unauthorized");
-      }
     }
   }
 

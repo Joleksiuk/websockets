@@ -7,13 +7,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 
 @Entity()
-@Unique(["name"])
+@Unique(["id"])
 export class Room {
   @PrimaryGeneratedColumn()
   id: number;
@@ -33,6 +35,14 @@ export class Room {
   @ManyToOne(() => User)
   @JoinColumn({ name: "ownerId" })
   owner: User;
+
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: "room_authorized_users",
+    joinColumn: { name: "roomId", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "userId", referencedColumnName: "id" },
+  })
+  authorizedUsers: User[];
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);

@@ -58,3 +58,11 @@ export const ChatroomContentStyled = styled.div`
     align-items: center;
     width: 100%;
 `
+
+export const NoPermissionContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+`

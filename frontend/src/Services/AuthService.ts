@@ -1,9 +1,9 @@
-import { BACKEND_URL } from '../config'
+import { SECURE_BACKEND_URL, BACKEND_URL } from '../config'
 import { request } from './APIService'
 
 export async function getMyself(): Promise<any> {
     try {
-        const response = await request(`${BACKEND_URL}/myself`, 'get', null)
+        const response = await request(`${SECURE_BACKEND_URL}/myself`, 'get')
         console.log('get myself response:', response)
         return response
     } catch (error) {
@@ -29,7 +29,7 @@ export async function sendLoginRequest(
 
 export async function sendLogoutRequest() {
     try {
-        await request(`${BACKEND_URL}/logout`, 'post')
+        await request(`${SECURE_BACKEND_URL}/logout`, 'post')
     } catch (error) {
         console.error('Error during logout request:', error)
         throw error

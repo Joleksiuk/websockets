@@ -29,9 +29,9 @@ const colors: ColorsType = {
         CHAT_BACKGROUND: '#F5EBFF',
 
         TEXT_INPUT_BACKGORUND: '#efddffd6',
-        TEXT_INPUT_BORDER: '#E0C2FF',
-        TEXT_INPUT_BORDER_HOVER: '#7018c9',
-        TEXT_INPUT_BORDER_FOCUS: '#570aaf6e',
+        TEXT_INPUT_BORDER: '#c5bfca',
+        TEXT_INPUT_BORDER_HOVER: '#6f6f70',
+        TEXT_INPUT_BORDER_FOCUS: '#2e2e2e6d',
         TEXT_INPUT_BACKGROUND_FOCUS: '#f5ebff',
 
         USERNAME_INPUT_BACKGROUND: '#f0f4f8',
@@ -63,9 +63,9 @@ const colors: ColorsType = {
         CHAT_MESSAGE_TEXT_2: '#eaeaead6',
         CHAT_BACKGROUND: '#21212cd1',
         TEXT_INPUT_BACKGORUND: '#3b2a4fd6',
-        TEXT_INPUT_BORDER: '#5c3a75',
-        TEXT_INPUT_BORDER_HOVER: '#a564f0',
-        TEXT_INPUT_BORDER_FOCUS: '#834bbf6e',
+        TEXT_INPUT_BORDER: '#b8b5bb',
+        TEXT_INPUT_BORDER_HOVER: '#cac6cf',
+        TEXT_INPUT_BORDER_FOCUS: '#6e6c70d5',
         TEXT_INPUT_BACKGROUND_FOCUS: '#3a22531c',
 
         USERNAME_INPUT_BACKGROUND: '#1c1f2649',

@@ -6,6 +6,7 @@ import { validationResult } from "express-validator";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
 import { COOKIE_SECRET } from "./config";
+import { authenticateRequest } from "./middlewares/authentication";
 
 function handleError(
   err: any,
@@ -31,6 +32,7 @@ app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser(COOKIE_SECRET));
+app.use("/secure", authenticateRequest);
 
 Routes.forEach((route) => {
   (app as any)[route.method](

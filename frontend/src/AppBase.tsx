@@ -28,7 +28,6 @@ export default function AppBase() {
     // if (isDisconnected) {
     //     return <ReconnectPage />
     // }
-
     if (!user) {
         return (
             <BasePageStyled mode={mode}>

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { time } from 'console'
 
 export async function request(
     url: string,
@@ -11,10 +12,15 @@ export async function request(
             'Content-Type': 'application/json',
         }
 
+        if (jwt) {
+            headers['Authorization'] = `Bearer ${jwt}`
+        }
+
         let config = {
             method,
             url,
             headers,
+            timeout: 5000,
             withCredentials: true,
             ...(data && { data }),
         }

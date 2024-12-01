@@ -101,9 +101,6 @@ export function handleMessage(message: string, ws: WebSocket): void {
       case "LEAVE ROOM":
         handleUserLeftRoom(ws);
         break;
-      case "CREATE ROOM":
-        handleCreateRoom(chatMessage, ws);
-        break;
       case "MESSAGE":
         handleUserSendChatMessage(chatMessage);
         break;
@@ -113,41 +110,6 @@ export function handleMessage(message: string, ws: WebSocket): void {
     }
   } catch (error) {
     console.error("Error parsing message: ", error);
-  }
-}
-
-/**
- * Helper function to create a new chatroom with auto-generated roomId and password
- * @param message - messageSent from the client.
- * @param ws - The websocket connection which created the room.
- */
-export function handleCreateRoom(message: ChatMessage, ws: WebSocket): void {
-  const roomId = generateId(4);
-  const password = generateId(4);
-
-  if (!rooms.has(roomId)) {
-    rooms.set(roomId, {
-      users: new Set([ws]),
-      chatroomName: message.chatroomName || "Untitled Room",
-      isOpen: message.isOpen ?? true,
-      password,
-    });
-
-    console.log(
-      `Creating room with id: ${roomId}, name: ${message.chatroomName}, password: ${password}`
-    );
-
-    ws.send(
-      JSON.stringify({
-        activity: "ROOM CREATED",
-        roomId,
-        password,
-      })
-    );
-  } else {
-    console.log(
-      `Unable to create room with id: ${roomId} - Room already exists`
-    );
   }
 }
 

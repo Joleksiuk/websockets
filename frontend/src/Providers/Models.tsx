@@ -1,16 +1,14 @@
 export type ClientMessage = {
-    activity: 'CREATE ROOM' | 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
+    activity: 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
     roomId: string
-    password: string | null
     username: string
     timestamp: number
     message: string
 }
 
 export type ClientMessageWithToken = {
-    activity: 'CREATE ROOM' | 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
+    activity: 'JOIN ROOM' | 'LEAVE ROOM' | 'MESSAGE'
     roomId: string
-    password: string | null
     username: string
     timestamp: number
     message: string
@@ -23,14 +21,12 @@ export type ServerMessage = {
         | 'USER LEFT ROOM'
         | 'USER SENT MESSAGE'
         | 'ROOM CLOSED'
-        | 'ROOM CREATED'
         | 'INVALID AUTHENTICATION'
 
     roomId: string
     username: string
     timestamp: number
     message: string
-    password: string
 }
 
 export type ServerActivity =
@@ -38,7 +34,6 @@ export type ServerActivity =
     | 'USER LEFT ROOM'
     | 'USER SENT MESSAGE'
     | 'ROOM CLOSED'
-    | 'ROOM CREATED'
     | 'INVALID AUTHENTICATION'
 
 export type ServerMessageBase = {

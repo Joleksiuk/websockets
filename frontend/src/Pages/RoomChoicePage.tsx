@@ -11,21 +11,23 @@ import { HorizontalContainerStyled, ContainerStyled } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
 import { useAuthContext } from '../Providers/AuthProvider'
 import { useHomepageContext } from './HomePageProvider'
+import { useNavigate } from 'react-router-dom'
+import UserSearch from '../Components/UserSearch/UserSearch'
 
 export default function RoomChoicePage() {
     const { mode } = useModeContext()
-
     const { user } = useAuthContext()
     const [chatroomName, setChatroomName] = React.useState('')
     const [chatroomId, setChatroomId] = React.useState('')
     const [password, setPassword] = React.useState('')
     const {
-        joinChatroom,
         createChatroom,
         setHadInvalidPassword,
         isLoading,
         hasInvalidPassword,
     } = useHomepageContext()
+
+    const navigate = useNavigate()
 
     const handleChatroomChange = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -41,7 +43,7 @@ export default function RoomChoicePage() {
 
     const handleJoinChatroom = () => {
         if (user && chatroomId.trim() !== '' && password.trim() !== '') {
-            joinChatroom(chatroomId, user.username, password)
+            navigate(`/chatroom/${chatroomId}`)
         }
     }
 
@@ -80,6 +82,7 @@ export default function RoomChoicePage() {
     return (
         <HorizontalContainerStyled>
             <ContainerStyled>
+                <UserSearch />
                 <Typography color={getColorInMode('TEXT', mode)} variant="h3">
                     Join room
                 </Typography>

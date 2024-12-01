@@ -2,28 +2,23 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
-import { checkJwt } from "../middlewares/checkJwt";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
   async getAll(request: Request, response: Response, next: NextFunction) {
-    checkJwt(request, response, async () => {
-      const users = await this.userRepository.find();
-      response.send(users);
-    });
+    const users = await this.userRepository.find();
+    response.send(users);
   }
 
   async getById(request: Request, response: Response, next: NextFunction) {
-    checkJwt(request, response, async () => {
-      const id = parseInt(request.params.id);
-      const user = await this.userRepository.findOne({ where: { id } });
-      if (!user) {
-        response.status(404).send("Unregistered user");
-        return;
-      }
-      response.send(user);
-    });
+    const id = parseInt(request.params.id);
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      response.status(404).send("Unregistered user");
+      return;
+    }
+    response.send(user);
   }
 
   async createNewUser(req: Request, res: Response) {
@@ -51,16 +46,29 @@ export class UserController {
   }
 
   async deleteUser(req: Request, res: Response) {
-    checkJwt(req, res, async () => {
-      const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
 
-      try {
-        const user = await this.userRepository.findOneOrFail({ where: { id } });
-        await this.userRepository.delete(id);
-        res.status(204).send();
-      } catch (error) {
-        res.status(404).send("User not found");
-      }
+    try {
+      const user = await this.userRepository.findOneOrFail({ where: { id } });
+      await this.userRepository.delete(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(404).send("User not found");
+    }
+  }
+
+  async getAllUsersByName(req: Request, res: Response) {
+    const name = req.query.name;
+    const users = await this.userRepository.find({
+      where: { username: name },
     });
+
+    const responseData = users.map((user) => {
+      return {
+        id: user.id,
+        username: user.username,
+      };
+    });
+    res.send(responseData);
   }
 }
