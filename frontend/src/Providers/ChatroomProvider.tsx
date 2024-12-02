@@ -56,7 +56,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     const { allUsers } = useUsersContext()
 
     const {
-        isConnected,
         wsMessages,
         setWsMessages,
         sendWebsocketMessageToServer,
@@ -66,19 +65,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     useEffect(() => {
         initializeRoom()
     }, [])
-
-    useEffect(() => {
-        if (isConnected && chatroomId && user) {
-            const chatMessage: ClientMessage = {
-                activity: 'JOIN ROOM',
-                roomId: chatroomId,
-                username: user.username,
-                timestamp: Date.now(),
-                message: 'User has joined the chatroom',
-            }
-            sendWebsocketMessageToServer(chatMessage)
-        }
-    }, [isConnected])
 
     useEffect(() => {
         if (wsMessages.length > 0) {

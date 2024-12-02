@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {
     ChatroomContentStyled,
     ChatStyled,
@@ -21,10 +21,12 @@ import { useAuthContext } from '../../Providers/AuthProvider'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
+    const [hasStarted, setHasStarted] = useState(false)
     const { isAuthenticated, isLoading, room } = useChatroomContext()
     const { mode } = useModeContext()
     const { user } = useAuthContext()
-    const { sendWebsocketMessageToServer } = useWebsocketContext()
+    const { sendWebsocketMessageToServer, connectToWebsocketServer } =
+        useWebsocketContext()
     if (isLoading) {
         return <LinearProgress />
     }
@@ -39,7 +41,7 @@ export default function ChatBase(): JSX.Element {
             </NoPermissionContainer>
         )
     }
-    const handleClickMe = () => {
+    const handleStartChatting = () => {
         if (room) {
             const chatMessage: ClientMessage = {
                 activity: 'JOIN ROOM',
@@ -48,8 +50,8 @@ export default function ChatBase(): JSX.Element {
                 timestamp: Date.now(),
                 message: 'User has joined the chatroom',
             }
-            console.log('Sending join room message:', chatMessage)
             sendWebsocketMessageToServer(chatMessage)
+            setHasStarted(true)
         }
     }
 
@@ -57,16 +59,26 @@ export default function ChatBase(): JSX.Element {
         <Container mode={mode}>
             <UserList />
             <ChatroomContentStyled>
-                <Button onClick={handleClickMe}>Click me</Button>
                 <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
                     Chatroom : {room?.name}
                 </Typography>
-                <Square ref={squareRef} mode={mode}>
-                    <ChatStyled mode={mode}>
-                        <MessageList key="message-list" />
-                    </ChatStyled>
-                    <TextInput />
-                </Square>
+                {hasStarted ? (
+                    <Square ref={squareRef} mode={mode}>
+                        <ChatStyled mode={mode}>
+                            <MessageList key="message-list" />
+                        </ChatStyled>
+                        <TextInput />
+                    </Square>
+                ) : (
+                    <Square ref={squareRef} mode={mode}>
+                        <Button
+                            sx={{ width: '100%', height: '100%' }}
+                            onClick={handleStartChatting}
+                        >
+                            Start chatting
+                        </Button>
+                    </Square>
+                )}
             </ChatroomContentStyled>
         </Container>
     )

@@ -6,7 +6,6 @@ import { extractJwtFromRequest } from "../middlewares/cookieService";
 import { findRoomById } from "./WebsocketRepository";
 
 const rooms: Map<string, Room> = new Map();
-const users: Map<WebSocket, string> = new Map();
 
 function authenticateToken(token: string): any {
   try {
@@ -85,54 +84,58 @@ export async function handleUserJoinedRoom(
   message: ChatMessage,
   ws: WebSocket
 ): Promise<void> {
-  const { roomId, username, password } = message;
+  const { roomId, username } = message;
+  const roomKey = String(roomId); // Normalize roomId to string
 
-  const roomFromDb = await findRoomById(roomId);
+  const roomFromDb = await findRoomById(roomKey);
+  const wsUser = { ws, id: 1, username };
 
   if (roomFromDb) {
-    if (!rooms.has(roomId)) {
-      rooms.set(roomId, { users: new Set() });
+    if (!rooms.has(roomKey)) {
+      rooms.set(roomKey, { users: [] });
     }
-    const room = rooms.get(roomId)!;
+
+    const room = rooms.get(roomKey)!;
+
+    if (!room.users.find((user) => user.username === username)) {
+      room.users.push(wsUser);
+    }
+
+    console.log("Updated room:", room);
 
     const joinNotification = {
       activity: "USER JOINED ROOM",
-      roomId,
+      roomId: roomKey,
       username,
       timestamp: Date.now(),
       message: `${username} has joined the room.`,
     };
 
-    room.users.add(ws);
-    console.log(room);
-    broadcastToRoom(roomId, joinNotification);
+    broadcastToRoom(roomKey, joinNotification);
   } else {
-    console.log(
-      `${username} is unable to join room with id: ${roomId} - Room does not exist`
+    console.warn(
+      `${username} is unable to join room with id: ${roomKey} - Room does not exist`
     );
   }
 }
 
 export function handleUserLeftRoom(ws: WebSocket): void {
-  rooms.forEach((room, roomId) => {
-    if (room.users.has(ws)) {
-      room.users.delete(ws);
-
-      const disconnectNotification = {
-        activity: "USER LEFT ROOM",
-        roomId,
-        username: users.get(ws),
-        timestamp: Date.now(),
-        message: "A user has left the room.",
-      };
-
-      broadcastToRoom(roomId, disconnectNotification);
-    }
-  });
+  // rooms.forEach((room, roomId) => {
+  //   if (room.users.has(ws)) {
+  //     room.users.delete(ws);
+  //     const disconnectNotification = {
+  //       activity: "USER LEFT ROOM",
+  //       roomId,
+  //       username: "Unknown",
+  //       timestamp: Date.now(),
+  //       message: "A user has left the room.",
+  //     };
+  //     broadcastToRoom(roomId, disconnectNotification);
+  //   }
+  // });
 }
 
 export function handleUserSendChatMessage(message: ChatMessage): void {
-  console.log("Handling chat message: ", message);
   const { roomId, username } = message;
   const chatMessage = {
     activity: "USER SENT MESSAGE",
@@ -145,19 +148,31 @@ export function handleUserSendChatMessage(message: ChatMessage): void {
   broadcastToRoom(roomId, chatMessage);
 }
 
-export function broadcastToRoom(roomId: string, message: any): void {
-  console.log("broadcastToRoom ", roomId);
-  if (rooms.has(roomId)) {
-    const room = rooms.get(roomId)!;
-    console.log("Broadcasting message to room: ", room);
+export function broadcastToRoom(roomId: string | number, message: any): void {
+  console.log("broadcastToRoom ", rooms);
+
+  const roomKey = String(roomId); // Normalize roomId to string
+  if (rooms.has(roomKey)) {
+    const room = rooms.get(roomKey)!;
     room.users.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(message), (err) => {
+      console.log(
+        `WebSocket state for ${client.username}:`,
+        client.ws.readyState
+      );
+      if (client.ws.readyState === WebSocket.OPEN) {
+        console.log(`Sending message to ${client.username}:`, message);
+        client.ws.send(JSON.stringify(message), (err) => {
           if (err) {
-            console.error("Error sending message: ", err);
+            console.error("Error sending message to client:", err);
           }
         });
+      } else {
+        console.warn(
+          `WebSocket for ${client.username} is not open. ReadyState: ${client.ws.readyState}`
+        );
       }
     });
+  } else {
+    console.warn(`Room with ID ${roomId} not found in rooms map.`);
   }
 }

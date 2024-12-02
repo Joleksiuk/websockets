@@ -57,6 +57,7 @@ export default function initializeWebSocketServer(server: any) {
     });
 
     ws.on("close", () => {
+      console.log(`WebSocket closed for user: ${ws.id}`);
       handleUserLeftRoom(ws);
     });
   });

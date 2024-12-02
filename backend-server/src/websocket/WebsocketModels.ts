@@ -1,7 +1,13 @@
 import WebSocket, { Server, WebSocket as WS } from "ws";
 
+export type WSUser = {
+  ws: WS;
+  id: number;
+  username: string;
+};
+
 export type Room = {
-  users: Set<WS>;
+  users: Array<WSUser>;
 };
 
 export interface ChatMessage {
