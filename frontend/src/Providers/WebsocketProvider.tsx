@@ -1,10 +1,4 @@
-import React, {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-    useEffect,
-} from 'react'
+import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { ClientMessage } from './Models'
 import { useAuthContext } from './AuthProvider'
 import { useSnackbar } from '../Components/SnackBars'
@@ -15,28 +9,28 @@ const HEARTBEAT_VALUE = 1
 
 interface WebsocketContextType {
     ws: WebSocket | null
-    isConnected: boolean
-    sendWebsocketMessageToServer: (message: ClientMessage) => void
     wsMessages: Array<MessageEvent>
-    setWsMessages: (messages: Array<MessageEvent>) => void
+    isConnected: boolean
     isDisconnected: boolean
-    setIsDisconnected: (isDisconnected: boolean) => void
     reconnect: () => void
+    setWsMessages: (messages: Array<MessageEvent>) => void
+    setIsDisconnected: (isDisconnected: boolean) => void
     closeWebsocketConnection: () => void
     connectToWebsocketServer: () => void
+    sendWebsocketMessageToServer: (message: ClientMessage) => void
 }
 
 export const WebsocketContext = createContext<WebsocketContextType>({
     ws: null,
-    isConnected: false,
-    sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
     wsMessages: [],
-    setWsMessages: () => undefined,
+    isConnected: false,
     isDisconnected: false,
-    setIsDisconnected: () => undefined,
     reconnect: () => undefined,
+    setWsMessages: () => undefined,
+    setIsDisconnected: () => undefined,
     closeWebsocketConnection: () => undefined,
     connectToWebsocketServer: () => undefined,
+    sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
 })
 
 interface WebsocketProviderProps {
@@ -152,11 +146,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const reconnect = () => {
-        // reconnectWS({
-        //     connectToWebsocketServer,
-        //     setIsDisconnected,
-        //     ws,
-        // })
         if (ws) {
             ws.close()
         }
@@ -164,13 +153,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
-        console.log('Sending message to server:', message, user)
-        if (!user) {
-            AddSnackbarMessage(
-                'User not authorized to send messages to server',
-                'error',
-            )
-        }
+        console.log('Sending message to server:', message)
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ ...message, token: user?.jwt }))
         }
@@ -180,15 +163,15 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         <WebsocketContext.Provider
             value={{
                 ws,
-                isConnected,
                 wsMessages,
-                sendWebsocketMessageToServer,
-                setWsMessages,
+                isConnected,
                 isDisconnected,
-                setIsDisconnected,
                 reconnect,
+                setWsMessages,
+                setIsDisconnected,
                 closeWebsocketConnection,
                 connectToWebsocketServer,
+                sendWebsocketMessageToServer,
             }}
         >
             {children}

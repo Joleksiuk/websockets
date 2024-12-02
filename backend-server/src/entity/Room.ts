@@ -10,8 +10,7 @@ import {
   ManyToMany,
   JoinTable,
 } from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
-import * as bcrypt from "bcryptjs";
+import { Length } from "class-validator";
 import { User } from "./User";
 
 @Entity()
@@ -23,10 +22,6 @@ export class Room {
   @Column()
   @Length(4, 20)
   name: string;
-
-  @Column()
-  @Length(4, 100)
-  password: string;
 
   @Column()
   @CreateDateColumn()
@@ -43,12 +38,4 @@ export class Room {
     inverseJoinColumn: { name: "userId", referencedColumnName: "id" },
   })
   authorizedUsers: User[];
-
-  hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 8);
-  }
-
-  checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-    return bcrypt.compareSync(unencryptedPassword, this.password);
-  }
 }

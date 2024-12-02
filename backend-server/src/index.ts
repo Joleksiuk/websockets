@@ -29,7 +29,7 @@ AppDataSource.initialize()
 
       initializeWebSocketServer(httpsServer);
     } else {
-      const httpServer = http.createServer(app); // Correctly use http here
+      const httpServer = http.createServer(app);
 
       httpServer.listen(port, () => {
         console.log(
@@ -42,8 +42,7 @@ AppDataSource.initialize()
       app.use(helmet());
       app.use(rateLimiter);
 
-      // Initialize WebSocket server
       initializeWebSocketServer(httpServer);
     }
   })
-  .catch((error) => console.log("Error initializing data source:", error));
+  .catch((error) => console.error("Error initializing data source:", error));

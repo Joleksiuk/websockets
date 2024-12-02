@@ -28,7 +28,7 @@ export const ModeProvider: React.FC<ChatProviderProps> = ({ children }) => {
 export const useModeContext = (): ModeContextType => {
     const context = useContext(ModeContext)
     if (!context) {
-        throw new Error('useChat must be used within a ChatProvider')
+        throw new Error('useMode must be used within a ChatProvider')
     }
     return context
 }

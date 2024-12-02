@@ -1,55 +1,47 @@
-import { UserListContainerStyled, UserStyled } from './UserList.styled'
-import { IconButton, ThemeProvider, Typography } from '@mui/material'
+import {
+    UserListContainerStyled,
+    UserListStyled,
+    AddUserContainerStyled,
+} from './UserList.styled'
+import { ThemeProvider, Typography } from '@mui/material'
 import { getColorInMode } from '../../Colors'
 import { useModeContext } from '../../Providers/ModeProvider'
-import Avatar from '../Avatar/Avatar'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
-import { useState } from 'react'
 import { theme } from '../Inputs/TextInput.styled'
+import UserSearch from '../UserSearch/UserSearch' // Import your UserSearch component
+import UserComponent from './UserComponent'
+import { useAuthContext } from '../../Providers/AuthProvider'
 
 export default function UserList() {
     const { mode } = useModeContext()
-    const { chatroomUsers } = useChatroomContext()
-    const [isExpanded, setIsExpanded] = useState(false)
-
-    const handleChangeExpanded = () => {
-        setIsExpanded(!isExpanded)
-    }
+    const { chatroomUsers, room } = useChatroomContext()
+    const { user } = useAuthContext()
 
     return (
         <ThemeProvider theme={theme(mode)}>
             <UserListContainerStyled mode={mode}>
-                <IconButton
-                    onClick={handleChangeExpanded}
-                    color="primary"
-                    sx={{
-                        width: '48px',
-                        height: '48px',
-                    }}
-                >
-                    {isExpanded ? (
-                        <ArrowBackIosIcon />
-                    ) : (
-                        <ArrowForwardIosIcon />
+                <UserListStyled>
+                    {chatroomUsers.length === 0 && (
+                        <Typography
+                            variant="h6"
+                            color={getColorInMode('TEXT', mode)}
+                        >
+                            No other users in chatroom
+                        </Typography>
                     )}
-                </IconButton>
-                {chatroomUsers.map((user, index) => {
-                    return (
-                        <UserStyled key={index}>
-                            <Avatar username={user} />
-                            {isExpanded && (
-                                <Typography
-                                    variant="h6"
-                                    color={getColorInMode('TEXT', mode)}
-                                >
-                                    {user}
-                                </Typography>
-                            )}
-                        </UserStyled>
-                    )
-                })}
+                    {chatroomUsers.map((user, index) => (
+                        <UserComponent
+                            key={`user-component-${index}`}
+                            user={user}
+                            index={index}
+                        />
+                    ))}
+                </UserListStyled>
+                {room?.ownerId === user?.userId && (
+                    <AddUserContainerStyled>
+                        <UserSearch />
+                    </AddUserContainerStyled>
+                )}
             </UserListContainerStyled>
         </ThemeProvider>
     )

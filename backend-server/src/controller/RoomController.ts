@@ -3,7 +3,6 @@ import { validate } from "class-validator";
 import { Room } from "../entity/Room";
 import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
-import { COOKIE_ROOMS_KEY } from "../config";
 
 export class RoomController {
   private roomRepository = AppDataSource.getRepository(Room);
@@ -27,14 +26,11 @@ export class RoomController {
 
   async createRoom(req: Request, res: Response, next: NextFunction) {
     const { name } = req.body;
-    const password = this.generatePassword();
     const room = new Room();
     room.name = name;
     room.owner = await this.getLoggedUser(res);
-    room.password = password;
     room.createdAt = new Date();
-
-    room.hashPassword();
+    room.authorizedUsers = [room.owner];
 
     const errors = await validate(room);
     if (errors.length > 0) {
@@ -49,14 +45,7 @@ export class RoomController {
         name: room.name,
         ownerId: room.owner.id,
       };
-      res
-        .cookie(
-          `${COOKIE_ROOMS_KEY}_${room.id}`,
-          { id: room.id, password },
-          { httpOnly: true, sameSite: "strict", signed: true }
-        )
-        .status(201)
-        .send(data);
+      res.status(201).send(data);
       return data;
     } catch (error) {
       res.status(500).send("Error creating room");
@@ -68,7 +57,7 @@ export class RoomController {
     const roomId = parseInt(req.params.id);
 
     try {
-      const room = await this.roomRepository.findOneOrFail({
+      await this.roomRepository.findOneOrFail({
         where: { id: roomId },
       });
       await this.roomRepository.delete(roomId);
@@ -147,7 +136,7 @@ export class RoomController {
           id: room.id,
           name: room.name,
           ownerId: room.owner.id,
-          users: room.authorizedUsers.map((user) => {
+          authorizedUsers: room.authorizedUsers.map((user) => {
             return {
               id: user.id,
               username: user.username,
@@ -160,7 +149,6 @@ export class RoomController {
         res.status(401).send("Unauthorized");
       }
     } catch (error) {
-      console.log(error);
       res.status(404).send("Room not found");
     }
   }

@@ -7,4 +7,3 @@ export const SECURE_BACKEND_URL = `${PROTOCOLE}://${HOST_NAME}:${BACKEND_PORT}/s
 
 export const JWT_EXPIRATION = '1d'
 export const JWT_REFRESH_EXPIRATION = '7d'
-export const COOKIE_ROOMS_KEY = 'room'

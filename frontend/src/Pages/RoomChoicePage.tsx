@@ -12,14 +12,12 @@ import { useModeContext } from '../Providers/ModeProvider'
 import { useAuthContext } from '../Providers/AuthProvider'
 import { useHomepageContext } from './HomePageProvider'
 import { useNavigate } from 'react-router-dom'
-import UserSearch from '../Components/UserSearch/UserSearch'
 
 export default function RoomChoicePage() {
     const { mode } = useModeContext()
     const { user } = useAuthContext()
     const [chatroomName, setChatroomName] = React.useState('')
     const [chatroomId, setChatroomId] = React.useState('')
-    const [password, setPassword] = React.useState('')
     const {
         createChatroom,
         setHadInvalidPassword,
@@ -42,7 +40,7 @@ export default function RoomChoicePage() {
     }
 
     const handleJoinChatroom = () => {
-        if (user && chatroomId.trim() !== '' && password.trim() !== '') {
+        if (user && chatroomId.trim() !== '') {
             navigate(`/chatroom/${chatroomId}`)
         }
     }
@@ -51,12 +49,6 @@ export default function RoomChoicePage() {
         if (user && chatroomName.trim() !== '') {
             createChatroom(chatroomName, user.username)
         }
-    }
-
-    const handlePasswordChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        setPassword(event.target.value)
     }
 
     if (isLoading) {
@@ -82,7 +74,6 @@ export default function RoomChoicePage() {
     return (
         <HorizontalContainerStyled>
             <ContainerStyled>
-                <UserSearch />
                 <Typography color={getColorInMode('TEXT', mode)} variant="h3">
                     Join room
                 </Typography>
@@ -92,14 +83,6 @@ export default function RoomChoicePage() {
                     variant="outlined"
                     value={chatroomId}
                     onChange={handleChatroomIdChange}
-                    autoComplete="off"
-                />
-                <TextField
-                    label="Chatroom Password"
-                    variant="outlined"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    type="password"
                     autoComplete="off"
                 />
                 <Button

@@ -23,7 +23,6 @@ export default function NavbarDropdown() {
     }
 
     const handleLogout = async () => {
-        console.log('Logging out...')
         closeWebsocketConnection()
         await logout()
         navigate(`/`)

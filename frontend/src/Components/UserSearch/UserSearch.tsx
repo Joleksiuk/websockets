@@ -1,62 +1,57 @@
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
-import { useEffect, useState } from 'react'
-import { getAllUsersByName, UserResponse } from '../../Services/UserService'
-import { useAuthContext } from '../../Providers/AuthProvider'
-import { CircularProgress, ThemeProvider } from '@mui/material'
+import { useState } from 'react'
+import { UserResponse } from '../../Services/UserService'
+import { Button, ThemeProvider } from '@mui/material'
 import { theme } from '../Inputs/TextInput.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
+import { UserSearchContainerStyled } from './UserSearch.styled'
+import { useChatroomContext } from '../../Providers/ChatroomProvider'
+import { useUsersContext } from '../../Providers/UserProvider'
 
 export default function UserSearch() {
-    const [users, setUsers] = useState<UserResponse[]>([])
-    const [isLoading, setIsLoading] = useState(false)
     const [inputValue, setInputValue] = useState('')
     const { mode } = useModeContext()
-    const { user } = useAuthContext()
+    const { chatroomUsers, addChatroomUser } = useChatroomContext()
+    const { allUsers, isLoadingAllUsers } = useUsersContext()
 
-    const fetchUsers = async () => {
-        if (!user) {
-            return
-        }
-        try {
-            setIsLoading(true)
-            const users: UserResponse[] = await getAllUsersByName('', user.jwt)
-            setUsers(users)
-        } catch (error) {
-            console.error('Error fetching users:', error)
-        } finally {
-            setIsLoading(false)
-        }
+    const mapUsersToOptions = (users: UserResponse[]): string[] => {
+        const usernames: string[] = users.map(
+            (user: UserResponse) => user.username,
+        )
+
+        const filteredUsernames: string[] = usernames.filter((username) => {
+            return !chatroomUsers.some((user) => user.username === username)
+        })
+
+        return filteredUsernames
     }
 
-    const mapUsersToOptions = (users: any) => {
-        const usernames: string[] = users.map((user: any) => user.username)
-        return usernames
-    }
-
-    useEffect(() => {
-        if (user !== null) {
-            fetchUsers()
+    const handleAddUser = () => {
+        const user = allUsers.find((user) => user.username === inputValue)
+        if (user) {
+            addChatroomUser(user.id)
         }
-    }, [user])
-
-    if (isLoading) {
-        return <CircularProgress />
     }
 
     return (
         <ThemeProvider theme={theme(mode)}>
-            <Autocomplete
-                inputValue={inputValue}
-                onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue)
-                }}
-                disablePortal
-                options={mapUsersToOptions(users)}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="User" />}
-                loading={isLoading}
-            />
+            <UserSearchContainerStyled>
+                <Autocomplete
+                    inputValue={inputValue}
+                    onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue)
+                    }}
+                    disablePortal
+                    options={mapUsersToOptions(allUsers)}
+                    sx={{ width: 200 }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="User" />
+                    )}
+                    loading={isLoadingAllUsers}
+                />
+                <Button onClick={handleAddUser}>Add</Button>
+            </UserSearchContainerStyled>
         </ThemeProvider>
     )
 }

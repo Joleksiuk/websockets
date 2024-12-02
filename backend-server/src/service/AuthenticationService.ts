@@ -21,7 +21,6 @@ export const authenticateTokenFromCookies = async (
     const decoded = jwt.verify(access_token, JWT_SECRET);
     res.locals.jwtPayload = decoded;
   } catch (error) {
-    console.log(error);
     if (error.name === "TokenExpiredError") {
       try {
         const newToken = await refreshToken(req, res);

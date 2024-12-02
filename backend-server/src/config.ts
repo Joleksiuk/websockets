@@ -16,4 +16,3 @@ export const JWT_REFRESH_EXPIRATION =
 export const COOKIE_SECRET = process.env.COOKIE_SECRET || "sddfdsfsdf";
 export const COOKIET_JWT_KEY = "access_token";
 export const COOKIE_RT_KEY = "refresh_token";
-export const COOKIE_ROOMS_KEY = "rooms";

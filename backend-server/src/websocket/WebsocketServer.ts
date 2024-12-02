@@ -9,12 +9,10 @@ import {
 const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
 
-// Error handling pre connection errors
 function onSocketPreError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
 }
 
-// Error handling any post connection errors
 function onSocketPostError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
 }
@@ -30,12 +28,8 @@ export default function initializeWebSocketServer(server: any) {
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
 
-    console.log("Cookies header: ", request.Cookies);
-
     console.log("Upgrading connection...");
     const authorizationToken = extractJwtFromRequest(request, COOKIE_SECRET);
-
-    console.log("Extracted JWT: ", authorizationToken);
 
     if (!isValidToken(authorizationToken)) {
       socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");

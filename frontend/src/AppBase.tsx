@@ -11,6 +11,7 @@ import { useAuthContext } from './Providers/AuthProvider'
 import { useWebsocketContext } from './Providers/WebsocketProvider'
 import ReconnectPage from './Components/Reconnect/ReconnectPage'
 import { LinearProgress } from '@mui/material'
+import { UsersProvider } from './Providers/UserProvider'
 
 export default function AppBase() {
     const { mode } = useModeContext()
@@ -44,9 +45,11 @@ export default function AppBase() {
                 <Route
                     path="/chatroom/:chatroomId"
                     element={
-                        <ChatroomProvider>
-                            <ChatroomPage />
-                        </ChatroomProvider>
+                        <UsersProvider>
+                            <ChatroomProvider>
+                                <ChatroomPage />
+                            </ChatroomProvider>
+                        </UsersProvider>
                     }
                 />
                 <Route path="*" element={<ErrorPage />} />

@@ -4,7 +4,6 @@ import { request } from './APIService'
 export async function getMyself(): Promise<any> {
     try {
         const response = await request(`${SECURE_BACKEND_URL}/myself`, 'get')
-        console.log('get myself response:', response)
         return response
     } catch (error) {
         console.error('Error during get myself request:', error)
@@ -20,7 +19,6 @@ export async function sendLoginRequest(
             username,
             password,
         })
-        console.log('Login response:', response)
         return response
     } catch (error) {
         console.error('Error during login request:', error)

@@ -30,8 +30,6 @@ export function extractJwtFromRequest(
     ),
     cookieSecret
   );
-  console.log(cookies);
-
   let jwt = cookies.access_token;
 
   if (!jwt && request.url) {

@@ -1,11 +1,8 @@
 import WebSocket, { Server, WebSocket as WS } from "ws";
 
-export interface Room {
+export type Room = {
   users: Set<WS>;
-  chatroomName: string;
-  isOpen: boolean;
-  password?: string;
-}
+};
 
 export interface ChatMessage {
   roomId: string;

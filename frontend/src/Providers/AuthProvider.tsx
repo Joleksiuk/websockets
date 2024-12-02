@@ -33,9 +33,6 @@ interface AuthProviderProps {
     children: ReactNode
 }
 
-export const USER_COOKIE_KEY = 'chat-app-logged-user'
-export const ROOMS_COOKIE_KEY = 'chat-app-rooms'
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
@@ -45,7 +42,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             setIsAuthenticating(true)
             const user: User = await getMyself()
-            console.log('User:', user)
             setUser(user)
         } catch (error) {
             console.error('Failed to get myself:', error)

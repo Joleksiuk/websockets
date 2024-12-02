@@ -10,7 +10,6 @@ export function loadSSLCertificates(): https.ServerOptions {
     const cert = fs.readFileSync(certPath);
     const key = fs.readFileSync(keyPath);
 
-    console.log("SSL certificates loaded successfully.");
     return { cert, key };
   } catch (error) {
     console.error("Error loading SSL certificates:", error);
