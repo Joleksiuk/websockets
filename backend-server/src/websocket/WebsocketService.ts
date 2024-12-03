@@ -1,79 +1,40 @@
-import { ChatMessage, Room } from "./WebsocketModels";
+import {
+  ChatMessage,
+  ClientMessage,
+  UserJoinedClientMessage,
+  WSRoom,
+  WSUser,
+} from "./WebsocketModels";
 import WebSocket from "ws";
-import jwt from "jsonwebtoken";
-import { COOKIE_SECRET, JWT_SECRET } from "../config";
-import { extractJwtFromRequest } from "../middlewares/cookieService";
-import { findRoomById } from "./WebsocketRepository";
 
-const rooms: Map<string, Room> = new Map();
-
-function authenticateToken(token: string): any {
-  try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return null;
-  }
-}
-
-export function authenticate(
-  request: any,
-  socket: any,
-  callback: (error: boolean, user?: any) => void
-) {
-  const token = extractJwtFromRequest(request, COOKIE_SECRET);
-
-  if (!token) {
-    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-    socket.destroy();
-    return callback(true);
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-      socket.destroy();
-      return callback(true);
-    }
-
-    callback(false, decoded);
-  });
-}
-
-export function isAuthenticated(chatMessage: ChatMessage) {
-  const { token } = chatMessage;
-
-  if (!token) {
-    return false;
-  }
-
-  return authenticateToken(token);
-}
+import { findRoomById, findUserById } from "./WebsocketRepository";
+import { rooms } from "./WebsocketServer";
 
 export function handleMessage(message: string, ws: WebSocket): void {
   try {
-    const chatMessage: ChatMessage = JSON.parse(message);
+    const clientMessage: ClientMessage = JSON.parse(message);
 
     // if (!isAuthenticated(chatMessage)) {
     //   ws.send(JSON.stringify({ activity: "INVALID AUTHENTICATION" }));
     //   return;
     // }
 
-    console.log("Received message: ", chatMessage);
-    const { activity } = chatMessage;
+    console.log("Received message from client: ", clientMessage);
+    const { eventName } = clientMessage;
 
-    switch (activity) {
-      case "JOIN ROOM":
-        handleUserJoinedRoom(chatMessage, ws);
+    switch (eventName) {
+      case "USER JOINED ROOM":
+        handleUserJoinedRoom(clientMessage, ws);
         break;
-      case "LEAVE ROOM":
-        handleUserLeftRoom(ws);
-        break;
-      case "MESSAGE":
-        handleUserSendChatMessage(chatMessage);
-        break;
-      default:
-        console.warn("Unknown activity: ", activity);
-        break;
+      // case "LEAVE ROOM":
+      //   handleUserLeftRoom(ws);
+      //   break;
+      // case "MESSAGE":
+      //   handleUserSendChatMessage(chatMessage);
+      //   break;
+      // default:
+      //   console.warn("Unknown activity: ", activity);
+      //   break;
     }
   } catch (error) {
     console.error("Error parsing message: ", error);
@@ -81,23 +42,25 @@ export function handleMessage(message: string, ws: WebSocket): void {
 }
 
 export async function handleUserJoinedRoom(
-  message: ChatMessage,
+  message: UserJoinedClientMessage,
   ws: WebSocket
 ): Promise<void> {
-  const { roomId, username } = message;
-  const roomKey = String(roomId); // Normalize roomId to string
+  const { roomId, userId } = message.payload;
 
+  const roomKey = String(roomId);
+
+  const user = await findUserById(Number(userId));
   const roomFromDb = await findRoomById(roomKey);
-  const wsUser = { ws, id: 1, username };
 
   if (roomFromDb) {
     if (!rooms.has(roomKey)) {
-      rooms.set(roomKey, { users: [] });
+      rooms.set(roomKey, { users: [], name: roomFromDb.name });
     }
 
     const room = rooms.get(roomKey)!;
 
-    if (!room.users.find((user) => user.username === username)) {
+    const wsUser = { ws, id: userId, username: user.username };
+    if (!room.users.find((user) => user.username === wsUser.username)) {
       room.users.push(wsUser);
     }
 
@@ -106,41 +69,45 @@ export async function handleUserJoinedRoom(
     const joinNotification = {
       activity: "USER JOINED ROOM",
       roomId: roomKey,
-      username,
+      username: wsUser.username,
       timestamp: Date.now(),
-      message: `${username} has joined the room.`,
+      message: `${wsUser.username} has joined the room.`,
     };
 
     broadcastToRoom(roomKey, joinNotification);
   } else {
     console.warn(
-      `${username} is unable to join room with id: ${roomKey} - Room does not exist`
+      `${user.username} is unable to join room with id: ${roomKey} - Room does not exist`
     );
   }
 }
 
 export function handleUserLeftRoom(ws: WebSocket): void {
-  // rooms.forEach((room, roomId) => {
-  //   if (room.users.has(ws)) {
-  //     room.users.delete(ws);
-  //     const disconnectNotification = {
-  //       activity: "USER LEFT ROOM",
-  //       roomId,
-  //       username: "Unknown",
-  //       timestamp: Date.now(),
-  //       message: "A user has left the room.",
-  //     };
-  //     broadcastToRoom(roomId, disconnectNotification);
-  //   }
-  // });
+  rooms.forEach((room, roomId) => {
+    const userIndex = room.users.findIndex((user) => user.ws === ws);
+    if (userIndex !== -1) {
+      const user = room.users[userIndex];
+      room.users.splice(userIndex, 1);
+
+      const leaveNotification = {
+        activity: "USER LEFT ROOM",
+        roomId,
+        username: user.username,
+        timestamp: Date.now(),
+        message: `${user.username} has left the room.`,
+      };
+
+      broadcastToRoom(roomId, leaveNotification);
+    }
+  });
 }
 
 export function handleUserSendChatMessage(message: ChatMessage): void {
-  const { roomId, username } = message;
+  const { roomId, token } = message;
+  console.log("handleUserSendChatMessage ", message.token);
   const chatMessage = {
     activity: "USER SENT MESSAGE",
     roomId,
-    username,
     timestamp: Date.now(),
     message: message.message,
     token: message.token,

@@ -177,20 +177,18 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     }
 
     const sendMessage = (content: string, username: string) => {
-        if (!chatroomId) {
-            console.error('No chatroomId set! Cannot send message.')
-            return
-        }
-
-        const chatMessage: ClientMessage = {
-            activity: 'MESSAGE',
-            roomId: chatroomId,
-            username: username,
-            timestamp: Date.now(),
-            message: content,
-        }
-
-        sendWebsocketMessageToServer(chatMessage)
+        // if (!chatroomId) {
+        //     console.error('No chatroomId set! Cannot send message.')
+        //     return
+        // }
+        // const chatMessage: ClientMessage = {
+        //     activity: 'MESSAGE',
+        //     roomId: chatroomId,
+        //     username: username,
+        //     timestamp: Date.now(),
+        //     message: content,
+        // }
+        // sendWebsocketMessageToServer(chatMessage)
     }
 
     return (

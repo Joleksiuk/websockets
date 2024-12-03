@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { ClientMessage } from './Models'
 import { useAuthContext } from './AuthProvider'
 import { useSnackbar } from '../Components/SnackBars'
 import { USE_SSL } from '../config'
+import { ClientMessage } from './ws/WebsocketDataModels'
 
 const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
 const HEARTBEAT_VALUE = 1

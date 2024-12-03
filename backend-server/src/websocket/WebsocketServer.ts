@@ -5,9 +5,12 @@ import {
   extractJwtFromRequest,
   isValidToken,
 } from "../middlewares/cookieService";
+import { WSRoom, WSUser } from "./WebsocketModels";
 
 const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
+export const rooms: Map<string, WSRoom> = new Map();
+export const users: Map<string, WSUser> = new Map();
 
 function onSocketPreError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
@@ -40,6 +43,7 @@ export default function initializeWebSocketServer(server: any) {
     wss.handleUpgrade(request, socket, head, (ws) => {
       socket.removeListener("error", onSocketPreError);
       wss.emit("connection", ws, request);
+      users.set(ws.id, wss);
     });
   });
 
