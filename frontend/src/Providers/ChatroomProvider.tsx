@@ -4,8 +4,8 @@ import React, {
     useState,
     ReactNode,
     useEffect,
+    act,
 } from 'react'
-import { ClientMessage, ServerMessage } from './Models'
 import { useParams } from 'react-router-dom'
 import { useWebsocketContext } from './WebsocketProvider'
 import { useAuthContext } from './AuthProvider'
@@ -15,14 +15,23 @@ import {
     Room,
 } from '../Services/ChatroomService'
 import { useUsersContext } from './UserProvider'
+import {
+    ClientMessage,
+    ServerMessage,
+    UserChatMessageServerMessagePayload,
+    UserJoinedServerMessage,
+    UserLeftServerMessage,
+    UserSentChatMessageClientMessage,
+} from './ws/WebsocketDataModels'
 
 interface ChatroomContextType {
     room: Room | undefined
-    messages: ServerMessage[]
+    messages: ChatroomMessage[]
     isLoading: boolean
     chatroomUsers: ChatroomUser[]
     isAuthenticated: boolean
     sendMessage: (content: string, username: string) => void
+    joinChatroom: () => void
     addChatroomUser: (userId: number) => void
     removeChatroomUser: (username: string) => void
     setIsAuthenticated: (isAuthenticated: boolean) => void
@@ -42,11 +51,13 @@ export type ChatroomUser = {
     isActive: boolean
 }
 
+type ChatroomMessage = UserChatMessageServerMessagePayload
+
 export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     children,
 }) => {
     const [room, setRoom] = useState<Room>()
-    const [messages, setMessages] = useState<ServerMessage[]>([])
+    const [messages, setMessages] = useState<ChatroomMessage[]>([])
     const [chatroomUsers, setChatroomUsers] = useState<ChatroomUser[]>([])
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -58,8 +69,8 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     const {
         wsMessages,
         setWsMessages,
-        sendWebsocketMessageToServer,
         connectToWebsocketServer,
+        sendWebsocketMessageToServer,
     } = useWebsocketContext()
 
     useEffect(() => {
@@ -75,6 +86,19 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
             }
         }
     }, [wsMessages])
+
+    const joinChatroom = () => {
+        if (user && chatroomId) {
+            const clientMessage: ClientMessage = {
+                eventName: 'JOIN ROOM',
+                payload: {
+                    roomId: Number(chatroomId),
+                    userId: user.userId,
+                },
+            }
+            sendWebsocketMessageToServer(clientMessage)
+        }
+    }
 
     const initializeRoom = async () => {
         if (chatroomId && user) {
@@ -106,14 +130,16 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
         }
     }
 
-    const setActivityStatusForUser = (username: string, isActive: boolean) => {
+    const setActivityStatusForUser = (userId: number, isActive: boolean) => {
+        console.log('Setting activity status for user:', userId, isActive)
         setChatroomUsers((prevUsers) => {
             const updatedUsers = prevUsers.map((user) => {
-                if (user.username === username) {
+                if (user.id === userId) {
                     return { ...user, isActive }
                 }
                 return user
             })
+            console.log('Updated users:', updatedUsers)
             return updatedUsers
         })
     }
@@ -151,22 +177,28 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
         try {
             const message: ServerMessage = JSON.parse(event.data)
 
-            switch (message.activity) {
-                case 'USER SENT MESSAGE':
-                    setMessages((prevMessages) => [...prevMessages, message])
+            switch (message.eventName) {
+                case 'USER SENT CHAT MESSAGE':
+                    const chatroomMessage =
+                        message.payload as UserChatMessageServerMessagePayload
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        chatroomMessage,
+                    ])
                     break
                 case 'USER JOINED ROOM':
-                    if (
-                        message.username === null ||
-                        message.username === undefined ||
-                        message.username.trim() === ''
-                    ) {
-                        return
-                    }
-                    setActivityStatusForUser(message.username, true)
+                    handleUserJoinedRoom(message as UserJoinedServerMessage)
                     break
                 case 'USER LEFT ROOM':
-                    setActivityStatusForUser(message.username, false)
+                    const userLeftMessage = message as UserLeftServerMessage
+                    console.log('User left room:', userLeftMessage.payload)
+                    setActivityStatusForUser(
+                        userLeftMessage.payload.userId,
+                        false,
+                    )
+                    break
+                case 'SERVER CLOSED':
+                    console.log('Server closed the connection')
                     break
                 default:
                     console.error('Unknown message type:', message)
@@ -176,19 +208,30 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
         }
     }
 
+    const handleUserJoinedRoom = (message: UserJoinedServerMessage) => {
+        const { roomId, activeUsers } = message.payload
+        console.log('activeUsers:', activeUsers)
+        if (roomId === Number(chatroomId)) {
+            activeUsers.forEach((user) => {
+                setActivityStatusForUser(user.userId, true)
+            })
+        }
+    }
+
     const sendMessage = (content: string, username: string) => {
-        // if (!chatroomId) {
-        //     console.error('No chatroomId set! Cannot send message.')
-        //     return
-        // }
-        // const chatMessage: ClientMessage = {
-        //     activity: 'MESSAGE',
-        //     roomId: chatroomId,
-        //     username: username,
-        //     timestamp: Date.now(),
-        //     message: content,
-        // }
-        // sendWebsocketMessageToServer(chatMessage)
+        if (!chatroomId || !user) {
+            console.error('No chatroomId set! Cannot send message.')
+            return
+        }
+        const chatMessage: UserSentChatMessageClientMessage = {
+            eventName: 'SEND CHAT MESSAGE',
+            payload: {
+                roomId: Number(chatroomId),
+                userId: user.userId,
+                message: content,
+            },
+        }
+        sendWebsocketMessageToServer(chatMessage)
     }
 
     return (
@@ -200,6 +243,7 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 chatroomUsers,
                 isAuthenticated,
                 sendMessage,
+                joinChatroom,
                 addChatroomUser,
                 removeChatroomUser,
                 setIsAuthenticated,

@@ -7,7 +7,7 @@ export type RoomUser = {
 }
 
 export type Room = {
-    id: string
+    id: number
     name: string
     ownerId: number
     authorizedUsers: RoomUser[]

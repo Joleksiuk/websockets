@@ -1,14 +1,16 @@
 import {
-  ChatMessage,
   ClientMessage,
+  ServerMessage,
   UserJoinedClientMessage,
-  WSRoom,
-  WSUser,
+  UserJoinedServerMessage,
+  UserLeftServerMessage,
+  UserSentChatMessageClientMessage,
+  UserSentChatMessageServerMessage,
 } from "./WebsocketModels";
 import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
-import { rooms } from "./WebsocketServer";
+import { rooms, users } from "./WebsocketServer";
 
 export function handleMessage(message: string, ws: WebSocket): void {
   try {
@@ -23,18 +25,20 @@ export function handleMessage(message: string, ws: WebSocket): void {
     const { eventName } = clientMessage;
 
     switch (eventName) {
-      case "USER JOINED ROOM":
+      case "JOIN ROOM":
         handleUserJoinedRoom(clientMessage, ws);
         break;
-      // case "LEAVE ROOM":
-      //   handleUserLeftRoom(ws);
-      //   break;
-      // case "MESSAGE":
-      //   handleUserSendChatMessage(chatMessage);
-      //   break;
-      // default:
-      //   console.warn("Unknown activity: ", activity);
-      //   break;
+      case "LEAVE ROOM":
+        handleUserLeftRoom(ws);
+        break;
+      case "SEND CHAT MESSAGE":
+        handleUserSendChatMessage(
+          clientMessage as UserSentChatMessageClientMessage
+        );
+        break;
+      default:
+        console.warn("Unknown eventName: ", eventName);
+        break;
     }
   } catch (error) {
     console.error("Error parsing message: ", error);
@@ -66,15 +70,21 @@ export async function handleUserJoinedRoom(
 
     console.log("Updated room:", room);
 
-    const joinNotification = {
-      activity: "USER JOINED ROOM",
-      roomId: roomKey,
-      username: wsUser.username,
-      timestamp: Date.now(),
-      message: `${wsUser.username} has joined the room.`,
+    const serverMessage: UserJoinedServerMessage = {
+      eventName: "USER JOINED ROOM",
+      payload: {
+        roomId: Number(roomId),
+        userId: user.id,
+        activeUsers: room.users.map((wsUser) => {
+          return {
+            userId: wsUser.id,
+            username: wsUser.username,
+          };
+        }),
+      },
     };
 
-    broadcastToRoom(roomKey, joinNotification);
+    broadcastToRoom(roomId, serverMessage);
   } else {
     console.warn(
       `${user.username} is unable to join room with id: ${roomKey} - Room does not exist`
@@ -89,35 +99,37 @@ export function handleUserLeftRoom(ws: WebSocket): void {
       const user = room.users[userIndex];
       room.users.splice(userIndex, 1);
 
-      const leaveNotification = {
-        activity: "USER LEFT ROOM",
-        roomId,
-        username: user.username,
-        timestamp: Date.now(),
-        message: `${user.username} has left the room.`,
+      const serverMessage: UserLeftServerMessage = {
+        eventName: "USER LEFT ROOM",
+        payload: {
+          roomId: Number(roomId),
+          userId: user.id,
+        },
       };
-
-      broadcastToRoom(roomId, leaveNotification);
+      broadcastToRoom(Number(roomId), serverMessage);
     }
   });
 }
 
-export function handleUserSendChatMessage(message: ChatMessage): void {
-  const { roomId, token } = message;
-  console.log("handleUserSendChatMessage ", message.token);
-  const chatMessage = {
-    activity: "USER SENT MESSAGE",
-    roomId,
-    timestamp: Date.now(),
-    message: message.message,
-    token: message.token,
+export async function handleUserSendChatMessage(
+  clientMessage: UserSentChatMessageClientMessage
+): Promise<void> {
+  const { roomId, message, userId } = clientMessage.payload;
+
+  const user = await findUserById(userId);
+  const serverChatMessage: UserSentChatMessageServerMessage = {
+    eventName: "USER SENT CHAT MESSAGE",
+    payload: {
+      roomId: Number(roomId),
+      userId: Number(userId),
+      username: user.username,
+      message: message,
+    },
   };
-  broadcastToRoom(roomId, chatMessage);
+  broadcastToRoom(roomId, serverChatMessage);
 }
 
-export function broadcastToRoom(roomId: string | number, message: any): void {
-  console.log("broadcastToRoom ", rooms);
-
+export function broadcastToRoom(roomId: number, message: ServerMessage): void {
   const roomKey = String(roomId); // Normalize roomId to string
   if (rooms.has(roomKey)) {
     const room = rooms.get(roomKey)!;
@@ -142,4 +154,16 @@ export function broadcastToRoom(roomId: string | number, message: any): void {
   } else {
     console.warn(`Room with ID ${roomId} not found in rooms map.`);
   }
+}
+
+export function broadcastToAllUsers(message: ServerMessage): void {
+  users.forEach((client) => {
+    if (client.ws.readyState === WebSocket.OPEN) {
+      client.ws.send(JSON.stringify(message), (err) => {
+        if (err) {
+          console.error("Error sending message to client:", err);
+        }
+      });
+    }
+  });
 }

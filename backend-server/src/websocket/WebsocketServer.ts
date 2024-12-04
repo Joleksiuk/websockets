@@ -9,6 +9,7 @@ import { WSRoom, WSUser } from "./WebsocketModels";
 
 const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
+
 export const rooms: Map<string, WSRoom> = new Map();
 export const users: Map<string, WSUser> = new Map();
 

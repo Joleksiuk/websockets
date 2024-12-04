@@ -90,7 +90,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
         const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://localhost:8080?`,
+            `${protocole}://localhost:8082?`,
         )
         console.log('Connecting to WebSocket server...')
 
@@ -102,7 +102,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         socket.onclose = () => {
-            console.log('WebSocket connection closed')
             setIsConnected(false)
             setIsDisconnected(true)
         }

@@ -16,18 +16,26 @@ import { getColorInMode } from '../../Colors'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
 import LinearProgress from '@mui/material/LinearProgress'
 import { useWebsocketContext } from '../../Providers/WebsocketProvider'
-import { useAuthContext } from '../../Providers/AuthProvider'
-import { ClientMessage } from '../../Providers/ws/WebsocketDataModels'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
     const [hasStarted, setHasStarted] = useState(false)
-    const { isAuthenticated, isLoading, room } = useChatroomContext()
+    const { isAuthenticated, isLoading, room, joinChatroom } =
+        useChatroomContext()
     const { mode } = useModeContext()
-    const { user } = useAuthContext()
-    const { sendWebsocketMessageToServer } = useWebsocketContext()
+
+    const { isDisconnected } = useWebsocketContext()
     if (isLoading) {
         return <LinearProgress />
+    }
+    if (isDisconnected) {
+        return (
+            <NoPermissionContainer>
+                <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
+                    You are disconnected from the server.
+                </Typography>
+            </NoPermissionContainer>
+        )
     }
 
     if (!isAuthenticated) {
@@ -41,17 +49,8 @@ export default function ChatBase(): JSX.Element {
         )
     }
     const handleStartChatting = () => {
-        if (room && user) {
-            const clientMessage: ClientMessage = {
-                eventName: 'USER JOINED ROOM',
-                payload: {
-                    roomId: room.id,
-                    userId: user.userId,
-                },
-            }
-            sendWebsocketMessageToServer(clientMessage)
-            setHasStarted(true)
-        }
+        joinChatroom()
+        setHasStarted(true)
     }
 
     return (

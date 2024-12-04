@@ -2,7 +2,7 @@ require("dotenv").config();
 
 export const USE_SSL = false;
 
-export const port = process.env.PORT || 8080;
+export const port = process.env.PORT || 8082;
 export const testPort = process.env.TEST_PORT || 8081;
 export const COMMON_RATE_LIMIT_MAX_REQUESTS =
   process.env.COMMON_RATE_LIMIT_MAX_REQUESTS || 1000;

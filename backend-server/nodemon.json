@@ -1,0 +1,4 @@
+{
+    "watch": ["src", ".env"],
+    "ignore": ["node_modules", "logs"]
+}

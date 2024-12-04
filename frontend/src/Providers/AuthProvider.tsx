@@ -12,7 +12,7 @@ import {
 } from '../Services/AuthService'
 
 export type User = {
-    userId: string
+    userId: number
     username: string
     jwt: string
 }
