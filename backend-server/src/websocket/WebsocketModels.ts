@@ -1,6 +1,9 @@
 import { WebSocket } from "ws";
 
-export type WebSocketExt = WebSocket & { isAlive?: boolean };
+export type WebSocketExt = WebSocket & {
+  isAlive?: boolean;
+  connectionTime?: Date;
+};
 
 export type WSUser = {
   ws: WebSocketExt;

@@ -10,9 +10,11 @@ interface WebsocketContextType {
     wsMessages: Array<MessageEvent>
     isConnected: boolean
     isDisconnected: boolean
+    showReconnectPage: boolean
     reconnect: () => void
     setWsMessages: (messages: Array<MessageEvent>) => void
     setIsDisconnected: (isDisconnected: boolean) => void
+    setShowReconnectPage: (showReconnectPage: boolean) => void
     closeWebsocketConnection: () => void
     connectToWebsocketServer: () => void
     sendWebsocketMessageToServer: (message: ClientMessage) => void
@@ -23,9 +25,11 @@ export const WebsocketContext = createContext<WebsocketContextType>({
     wsMessages: [],
     isConnected: false,
     isDisconnected: false,
+    showReconnectPage: false,
     reconnect: () => undefined,
     setWsMessages: () => undefined,
     setIsDisconnected: () => undefined,
+    setShowReconnectPage: () => undefined,
     closeWebsocketConnection: () => undefined,
     connectToWebsocketServer: () => undefined,
     sendWebsocketMessageToServer: (message: ClientMessage) => undefined,
@@ -53,6 +57,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const [isConnected, setIsConnected] = useState<boolean>(false)
     const [wsMessages, setWsMessages] = useState<any[]>([])
     const [isDisconnected, setIsDisconnected] = useState<boolean>(false)
+    const [showReconnectPage, setShowReconnectPage] = useState<boolean>(false)
     const addMessage = (message: MessageEvent) => {
         const updatedMessages = [...wsMessages, message]
         setWsMessages(updatedMessages)
@@ -71,8 +76,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         wsArg.pingTimeout = setTimeout(() => {
             console.log('Terminating connection due to heartbeat timeout')
             wsArg.close()
-            //should open reconnect logic
-            //reconnect()
+            setShowReconnectPage(true)
         }, HEARTBEAT_TIMEOUT)
 
         const pongMessage: ClientMessage = {
@@ -168,9 +172,11 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
                 wsMessages,
                 isConnected,
                 isDisconnected,
+                showReconnectPage,
                 reconnect,
                 setWsMessages,
                 setIsDisconnected,
+                setShowReconnectPage,
                 closeWebsocketConnection,
                 connectToWebsocketServer,
                 sendWebsocketMessageToServer,

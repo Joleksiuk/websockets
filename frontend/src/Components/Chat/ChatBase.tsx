@@ -16,6 +16,7 @@ import { getColorInMode } from '../../Colors'
 import { useChatroomContext } from '../../Providers/ChatroomProvider'
 import LinearProgress from '@mui/material/LinearProgress'
 import { useWebsocketContext } from '../../Providers/WebsocketProvider'
+import ReconnectPage from '../Reconnect/ReconnectPage'
 
 export default function ChatBase(): JSX.Element {
     const squareRef = useRef<HTMLDivElement>(null)
@@ -24,18 +25,13 @@ export default function ChatBase(): JSX.Element {
         useChatroomContext()
     const { mode } = useModeContext()
 
-    const { isDisconnected } = useWebsocketContext()
+    const { isDisconnected, showReconnectPage } = useWebsocketContext()
+
     if (isLoading) {
         return <LinearProgress />
     }
-    if (isDisconnected) {
-        return (
-            <NoPermissionContainer>
-                <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
-                    You are disconnected from the server.
-                </Typography>
-            </NoPermissionContainer>
-        )
+    if (showReconnectPage || isDisconnected) {
+        return <ReconnectPage />
     }
 
     if (!isAuthenticated) {

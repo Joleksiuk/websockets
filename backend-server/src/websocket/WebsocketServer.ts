@@ -12,8 +12,8 @@ import {
   WSRoom,
 } from "./WebsocketModels";
 
-const HEARTBEAT_INTERVAL: number = 5000 * 2; //(5000 seconds = 83 minutes );
-const HEARTBEAT_VALUE: number = 1;
+const HEARTBEAT_INTERVAL: number = 5000 * 2;
+const MAX_CONNECTION_TIME: number = 5000 * 1000;
 
 export const rooms: Map<string, WSRoom> = new Map();
 
@@ -23,6 +23,18 @@ function onSocketPreError(error: Error) {
 
 function onSocketPostError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
+}
+
+function isClientAliveForTooLong(ws: WebSocketExt) {
+  const now = new Date();
+  const diff = now.getTime() - ws.connectionTime.getTime();
+  console.log("connectionTime: ", diff);
+
+  if (diff > MAX_CONNECTION_TIME) {
+    return true;
+  }
+
+  return false;
 }
 
 function isClientAliveMessage(message: any) {
@@ -67,6 +79,8 @@ export default function initializeWebSocketServer(server: any) {
 
   wss.on("connection", (ws: WebSocketExt, req) => {
     ws.isAlive = true;
+    ws.connectionTime = new Date();
+    console.log("New connection established");
 
     ws.on("error", onSocketPostError);
     ws.on("message", (message) => {
@@ -82,11 +96,12 @@ export default function initializeWebSocketServer(server: any) {
     });
   });
 
-  const interval = setInterval(() => {
+  const isAliveInterval = setInterval(() => {
     console.log("firing interval");
     wss.clients.forEach((client: WebSocketExt) => {
       console.log("checking client");
-      if (!client.isAlive) return client.terminate();
+      if (!client.isAlive || isClientAliveForTooLong(client))
+        return client.terminate();
 
       client.isAlive = false;
       ping(client);
@@ -94,6 +109,6 @@ export default function initializeWebSocketServer(server: any) {
   }, HEARTBEAT_INTERVAL);
 
   wss.on("close", () => {
-    clearInterval(interval);
+    clearInterval(isAliveInterval);
   });
 }
