@@ -1,7 +1,9 @@
-import WebSocket, { Server, WebSocket as WS } from "ws";
+import { WebSocket } from "ws";
+
+export type WebSocketExt = WebSocket & { isAlive?: boolean };
 
 export type WSUser = {
-  ws: WS;
+  ws: WebSocketExt;
   id: number;
   username: string;
 };
@@ -11,12 +13,17 @@ export type WSRoom = {
   name: string;
 };
 
-export type ClientEvent = "JOIN ROOM" | "LEAVE ROOM" | "SEND CHAT MESSAGE";
+export type ClientEvent =
+  | "JOIN ROOM"
+  | "LEAVE ROOM"
+  | "SEND CHAT MESSAGE"
+  | "PONG";
 export type ServerEvent =
   | "USER JOINED ROOM"
   | "USER LEFT ROOM"
   | "USER SENT CHAT MESSAGE"
-  | "SERVER CLOSED";
+  | "SERVER CLOSED"
+  | "PING";
 
 export type ServerMessage<
   TPayload =
@@ -33,6 +40,7 @@ export type ClientMessage<
     | UserChatMessageClientMessagePayload
     | UserJoinedClientMessagePayload
     | UseLeftClientMessagePayload
+    | null
 > = {
   eventName: ClientEvent;
   payload: TPayload;

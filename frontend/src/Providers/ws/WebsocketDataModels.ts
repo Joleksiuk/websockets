@@ -1,15 +1,21 @@
-export type ClientEvent = 'JOIN ROOM' | 'LEAVE ROOM' | 'SEND CHAT MESSAGE'
+export type ClientEvent =
+    | 'JOIN ROOM'
+    | 'LEAVE ROOM'
+    | 'SEND CHAT MESSAGE'
+    | 'PONG'
 export type ServerEvent =
     | 'USER JOINED ROOM'
     | 'USER LEFT ROOM'
     | 'USER SENT CHAT MESSAGE'
     | 'SERVER CLOSED'
+    | 'PING'
 
 export type ServerMessage<
     TPayload =
         | UserJoinedServerMessagePayload
         | UserLeftServerMessagePayload
-        | UserChatMessageServerMessagePayload,
+        | UserChatMessageServerMessagePayload
+        | null,
 > = {
     eventName: ServerEvent
     payload: TPayload
@@ -19,7 +25,8 @@ export type ClientMessage<
     TPayload =
         | UserChatMessageClientMessagePayload
         | UserJoinedClientMessagePayload
-        | UseLeftClientMessagePayload,
+        | UseLeftClientMessagePayload
+        | null,
 > = {
     eventName: ClientEvent
     payload: TPayload

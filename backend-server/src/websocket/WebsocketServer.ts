@@ -1,17 +1,21 @@
-import { WebSocketServer, WebsocketServer, Websocket, RawData } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { handleMessage, handleUserLeftRoom } from "./WebsocketService";
 import { COOKIE_SECRET } from "../config";
 import {
   extractJwtFromRequest,
   isValidToken,
 } from "../middlewares/cookieService";
-import { WSRoom, WSUser } from "./WebsocketModels";
+import {
+  ClientMessage,
+  ServerMessage,
+  WebSocketExt,
+  WSRoom,
+} from "./WebsocketModels";
 
-const HEARTBEAT_INTERVAL: number = 5000 * 1000; //(5000 seconds = 83 minutes );
+const HEARTBEAT_INTERVAL: number = 5000 * 2; //(5000 seconds = 83 minutes );
 const HEARTBEAT_VALUE: number = 1;
 
 export const rooms: Map<string, WSRoom> = new Map();
-export const users: Map<string, WSUser> = new Map();
 
 function onSocketPreError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
@@ -21,13 +25,27 @@ function onSocketPostError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
 }
 
-function ping(ws: Websocket) {
+function isClientAliveMessage(message: any) {
+  const msg: ClientMessage = JSON.parse(message);
+  if (msg?.eventName === "PONG") {
+    console.log("PONG");
+    return true;
+  }
+  console.log(" NO PONG");
+  return false;
+}
+
+function ping(ws: WebSocketExt) {
   console.log("ping");
-  ws.send(Buffer.from([HEARTBEAT_VALUE]), { binary: true });
+  const pingMessage: ServerMessage = {
+    eventName: "PING",
+    payload: null,
+  };
+  ws.send(JSON.stringify(pingMessage));
 }
 
 export default function initializeWebSocketServer(server: any) {
-  const wss: WebsocketServer = new WebSocketServer({ noServer: true });
+  const wss: WebSocketServer = new WebSocketServer({ noServer: true });
 
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
@@ -44,32 +62,30 @@ export default function initializeWebSocketServer(server: any) {
     wss.handleUpgrade(request, socket, head, (ws) => {
       socket.removeListener("error", onSocketPreError);
       wss.emit("connection", ws, request);
-      users.set(ws.id, wss);
     });
   });
 
-  wss.on("connection", (ws, req) => {
-    (ws as any).isAlive = true;
+  wss.on("connection", (ws: WebSocketExt, req) => {
+    ws.isAlive = true;
 
     ws.on("error", onSocketPostError);
-    ws.on("message", (message: RawData, isBinary) => {
-      if (isBinary && (message as any)[0] === HEARTBEAT_VALUE) {
+    ws.on("message", (message) => {
+      if (isClientAliveMessage(message)) {
         ws.isAlive = true;
-        console.log("pong");
       } else {
         handleMessage(message, ws);
       }
     });
 
     ws.on("close", () => {
-      console.log(`WebSocket closed for user: ${ws.id}`);
       handleUserLeftRoom(ws);
     });
   });
 
   const interval = setInterval(() => {
     console.log("firing interval");
-    wss.clients.forEach((client) => {
+    wss.clients.forEach((client: WebSocketExt) => {
+      console.log("checking client");
       if (!client.isAlive) return client.terminate();
 
       client.isAlive = false;

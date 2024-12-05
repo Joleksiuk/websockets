@@ -131,7 +131,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
     }
 
     const setActivityStatusForUser = (userId: number, isActive: boolean) => {
-        console.log('Setting activity status for user:', userId, isActive)
         setChatroomUsers((prevUsers) => {
             const updatedUsers = prevUsers.map((user) => {
                 if (user.id === userId) {
@@ -139,7 +138,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                 }
                 return user
             })
-            console.log('Updated users:', updatedUsers)
             return updatedUsers
         })
     }
@@ -191,14 +189,12 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
                     break
                 case 'USER LEFT ROOM':
                     const userLeftMessage = message as UserLeftServerMessage
-                    console.log('User left room:', userLeftMessage.payload)
                     setActivityStatusForUser(
                         userLeftMessage.payload.userId,
                         false,
                     )
                     break
                 case 'SERVER CLOSED':
-                    console.log('Server closed the connection')
                     break
                 default:
                     console.error('Unknown message type:', message)
@@ -210,7 +206,6 @@ export const ChatroomProvider: React.FC<ChatroomProviderProps> = ({
 
     const handleUserJoinedRoom = (message: UserJoinedServerMessage) => {
         const { roomId, activeUsers } = message.payload
-        console.log('activeUsers:', activeUsers)
         if (roomId === Number(chatroomId)) {
             activeUsers.forEach((user) => {
                 setActivityStatusForUser(user.userId, true)

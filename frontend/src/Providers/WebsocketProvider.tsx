@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { useAuthContext } from './AuthProvider'
-import { useSnackbar } from '../Components/SnackBars'
 import { USE_SSL } from '../config'
-import { ClientMessage } from './ws/WebsocketDataModels'
+import { ClientMessage, ServerMessage } from './ws/WebsocketDataModels'
 
-const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1
-const HEARTBEAT_VALUE = 1
+const HEARTBEAT_TIMEOUT = 1000 * 2 * 5 + 1000 * 1
 
 interface WebsocketContextType {
     ws: WebSocket | null
@@ -37,12 +35,11 @@ interface WebsocketProviderProps {
     children: ReactNode
 }
 
-function isBinary(data: any) {
-    return (
-        data instanceof ArrayBuffer ||
-        data instanceof Uint8Array ||
-        Object.prototype.toString.call(data) === '[object Blob]'
-    )
+function isPing(data: ServerMessage) {
+    if (data.eventName === 'PING') {
+        return true
+    }
+    return false
 }
 
 interface WebSocketExt extends WebSocket {
@@ -60,24 +57,30 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         const updatedMessages = [...wsMessages, message]
         setWsMessages(updatedMessages)
     }
-
-    const { addMessage: AddSnackbarMessage } = useSnackbar()
     const { user } = useAuthContext()
 
-    const heartbeat = () => {
-        if (!ws) {
+    const heartbeat = (wsArg: WebSocketExt) => {
+        console.log('heartbeat')
+        if (!wsArg) {
+            console.log('No WebSocket connection')
             return
-        } else if (!!ws.pingTimeout) {
-            clearTimeout(ws.pingTimeout)
+        } else if (!!wsArg.pingTimeout) {
+            console.log('Clearing pingTimeout')
+            clearTimeout(wsArg.pingTimeout)
         }
-        ws.pingTimeout = setTimeout(() => {
+        wsArg.pingTimeout = setTimeout(() => {
             console.log('Terminating connection due to heartbeat timeout')
-            ws.close()
-            reconnect()
+            wsArg.close()
+            //should open reconnect logic
+            //reconnect()
         }, HEARTBEAT_TIMEOUT)
-        const data = new Uint8Array(1)
-        data[0] = HEARTBEAT_VALUE
-        ws.send(data)
+
+        const pongMessage: ClientMessage = {
+            eventName: 'PONG',
+            payload: null,
+        }
+        console.log('Sending PONG message to server')
+        wsArg.send(JSON.stringify(pongMessage))
     }
 
     const connectToWebsocketServer = () => {
@@ -98,7 +101,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
             console.log('Successfully Connected to WebSocket server!')
             setIsConnected(true)
             setIsDisconnected(false)
-            //heartbeat() // Start the heartbeat mechanism
         }
 
         socket.onclose = () => {
@@ -106,15 +108,10 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
             setIsDisconnected(true)
         }
 
-        socket.onmessage = (event) => {
+        socket.onmessage = async (event) => {
             console.log('Received message from server:', event.data)
-            AddSnackbarMessage(
-                `Received message from server -${event.data} `,
-                'info',
-            )
-            if (isBinary(event.data)) {
-                console.log('Received binary data:', event.data)
-                heartbeat()
+            if (isPing(JSON.parse(event.data))) {
+                heartbeat(socket)
             } else {
                 addMessage(event)
             }
@@ -146,6 +143,12 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     const reconnect = () => {
         if (ws) {
+            ws.onopen = null
+            ws.onclose = null
+            ws.onmessage = null
+            if (ws.pingTimeout) {
+                clearTimeout(ws.pingTimeout)
+            }
             ws.close()
         }
         connectToWebsocketServer()

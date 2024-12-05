@@ -10,9 +10,9 @@ import {
 import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
-import { rooms, users } from "./WebsocketServer";
+import { rooms } from "./WebsocketServer";
 
-export function handleMessage(message: string, ws: WebSocket): void {
+export function handleMessage(message: any, ws: WebSocket): void {
   try {
     const clientMessage: ClientMessage = JSON.parse(message);
 
@@ -67,8 +67,6 @@ export async function handleUserJoinedRoom(
     if (!room.users.find((user) => user.username === wsUser.username)) {
       room.users.push(wsUser);
     }
-
-    console.log("Updated room:", room);
 
     const serverMessage: UserJoinedServerMessage = {
       eventName: "USER JOINED ROOM",
@@ -154,16 +152,4 @@ export function broadcastToRoom(roomId: number, message: ServerMessage): void {
   } else {
     console.warn(`Room with ID ${roomId} not found in rooms map.`);
   }
-}
-
-export function broadcastToAllUsers(message: ServerMessage): void {
-  users.forEach((client) => {
-    if (client.ws.readyState === WebSocket.OPEN) {
-      client.ws.send(JSON.stringify(message), (err) => {
-        if (err) {
-          console.error("Error sending message to client:", err);
-        }
-      });
-    }
-  });
 }
