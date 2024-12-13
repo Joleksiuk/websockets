@@ -33,7 +33,7 @@ export function extractJwtFromRequest(
   let jwt = cookies.access_token;
 
   if (!jwt && request.url) {
-    const url = new URL(request.url, `http://${request.headers.host}`);
+    const url = new URL(request.url, `http://localhost:8082`);
     jwt = url.searchParams.get(COOKIET_JWT_KEY);
   }
 

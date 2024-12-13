@@ -9,6 +9,7 @@ import {
   JWT_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
   JWT_SECRET,
+  USE_SSL,
 } from "../config";
 import { AppDataSource } from "../data-source";
 export class AuthController {
@@ -61,11 +62,13 @@ export class AuthController {
         httpOnly: true,
         sameSite: "strict",
         signed: true,
+        secure: USE_SSL,
       })
       .cookie(COOKIE_RT_KEY, refreshToken, {
         httpOnly: true,
         sameSite: "strict",
         signed: true,
+        secure: USE_SSL,
       })
       .status(200)
       .send({

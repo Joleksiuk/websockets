@@ -4,8 +4,8 @@ import path from "path";
 
 export function loadSSLCertificates(): https.ServerOptions {
   try {
-    const certPath = path.resolve(__dirname, "../files/cert.pem");
-    const keyPath = path.resolve(__dirname, "../files/key.pem");
+    const certPath = path.resolve(__dirname, "../files/localhost.pem");
+    const keyPath = path.resolve(__dirname, "../files/localhost-key.pem");
 
     const cert = fs.readFileSync(certPath);
     const key = fs.readFileSync(keyPath);

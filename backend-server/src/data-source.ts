@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   port: 5432,
   username: "postgres",
   password: "postgres",
-  database: "chatdb",
+  database: "ws",
   synchronize: true,
   logging: false,
   entities: [User, Room],

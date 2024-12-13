@@ -8,6 +8,7 @@ import initializeWebSocketServer from "./websocket/WebsocketServer";
 import * as https from "https";
 import { loadSSLCertificates } from "./utils/LoadSSL";
 import http from "http";
+import { helmetWithCSP } from "./middlewares/helmetWithCSP";
 
 const sslOptions = loadSSLCertificates();
 
@@ -24,7 +25,7 @@ AppDataSource.initialize()
 
       app.use(express.json());
       app.use(express.urlencoded({ extended: true }));
-      app.use(helmet());
+      app.use(helmetWithCSP);
       app.use(rateLimiter);
 
       initializeWebSocketServer(httpsServer);

@@ -5,7 +5,7 @@ import { Routes } from "./routes";
 import { validationResult } from "express-validator";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
-import { COOKIE_SECRET } from "./config";
+import { COOKIE_SECRET, USE_SSL } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
 
 function handleError(
@@ -20,8 +20,10 @@ function handleError(
   res.status(errorStatus).send(errorMessage);
 }
 
+const origin = USE_SSL ? "https://localhost:3000" : "http://localhost:3000";
+
 const corsOptions: CorsOptions = {
-  origin: "http://localhost:3000",
+  origin: origin,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],

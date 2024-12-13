@@ -32,7 +32,7 @@ export const authenticateRequest = async (
       if (error.message === "Unauthorized") {
         return res.status(401).send("Unauthorized: Token validation failed.");
       }
-      throw error; // Unhandled error
+      throw error;
     }
   } catch (error) {
     console.error("Authentication error:", error);
