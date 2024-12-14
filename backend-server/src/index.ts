@@ -1,25 +1,25 @@
-import { AppDataSource } from "./data-source";
+import { AppDataSource, RenderDataSource } from "./data-source";
 import app from "./app";
-import { HOST_NAME, port, USE_SSL } from "./config";
+import { HOST_NAME, port, USE_SSL, LOCAL_SERVER } from "./config";
 import express from "express";
-import helmet from "helmet";
 import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
 import * as https from "https";
 import { loadSSLCertificates } from "./utils/LoadSSL";
 import http from "http";
-import { helmetWithCSP } from "./middlewares/helmetWithCSP";
 
 const sslOptions = loadSSLCertificates();
 
-AppDataSource.initialize()
+const DataSource = LOCAL_SERVER ? AppDataSource : RenderDataSource;
+
+DataSource.initialize()
   .then(async () => {
     if (USE_SSL) {
       const httpsServer = https.createServer(sslOptions, app);
 
       httpsServer.listen(port, () => {
         console.log(
-          `Secure Express server has started. Open https://${HOST_NAME}:${port}/users to see results`
+          `Secure Express server has started. Open https://${HOST_NAME}:${port} to see results`
         );
       });
       app.use(express.json());
@@ -31,7 +31,7 @@ AppDataSource.initialize()
 
       httpServer.listen(port, () => {
         console.log(
-          `Express server has started. Open http://${HOST_NAME}:${port}/users to see results`
+          `Express server has started. Open http://${HOST_NAME}:${port} to see results`
         );
       });
 

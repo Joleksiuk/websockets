@@ -1,10 +1,11 @@
 require("dotenv").config();
 
 export const USE_SSL = true;
+export const LOCAL_SERVER = true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
-export const HOST_NAME = process.env.HOST_NAME || "localhost";
-export const port = process.env.PORT || 8082;
+export const HOST_NAME = LOCAL_SERVER ? "localhost" : "";
+export const port = process.env.PORT || 3000;
 export const testPort = process.env.TEST_PORT || 8081;
 export const COMMON_RATE_LIMIT_MAX_REQUESTS =
   process.env.COMMON_RATE_LIMIT_MAX_REQUESTS || 1000;

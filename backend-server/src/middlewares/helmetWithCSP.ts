@@ -5,9 +5,9 @@ export const helmetWithCSP = helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "https://apis.google.com"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://api.dicebear.com"],
-      connectSrc: ["'self'", "https://localhost:8082"],
+      connectSrc: ["'self'", "https://localhost:3000"],
       fontSrc: [
         "'self'",
         "https://fonts.googleapis.com",
