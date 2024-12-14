@@ -57,7 +57,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
                             vertical: 'top',
                             horizontal: 'left',
                         }}
-                        style={{ bottom: 20 + index * 60 }}
+                        // style={{ bottom: 20 + index * 60 }}
                     >
                         <Alert
                             onClose={handleClose(snackbar.id)}

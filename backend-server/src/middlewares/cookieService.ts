@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { COOKIET_JWT_KEY, JWT_SECRET } from "../config";
+import { COOKIET_JWT_KEY, HOST_NAME, JWT_SECRET } from "../config";
 import { signedCookies } from "cookie-parser";
 
 export const isValidToken = (token: string | undefined): boolean => {
@@ -33,7 +33,7 @@ export function extractJwtFromRequest(
   let jwt = cookies.access_token;
 
   if (!jwt && request.url) {
-    const url = new URL(request.url, `http://localhost:8082`);
+    const url = new URL(request.url, `http://${HOST_NAME}:8082`);
     jwt = url.searchParams.get(COOKIET_JWT_KEY);
   }
 

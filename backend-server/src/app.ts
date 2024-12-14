@@ -5,8 +5,10 @@ import { Routes } from "./routes";
 import { validationResult } from "express-validator";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
-import { COOKIE_SECRET, USE_SSL } from "./config";
+import { COOKIE_SECRET, ORIGIN, USE_SSL } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
+import { setupFrontend } from "./middlewares/setupFrontend";
+import { helmetWithCSP } from "./middlewares/helmetWithCSP";
 
 function handleError(
   err: any,
@@ -20,10 +22,8 @@ function handleError(
   res.status(errorStatus).send(errorMessage);
 }
 
-const origin = USE_SSL ? "https://localhost:3000" : "http://localhost:3000";
-
 const corsOptions: CorsOptions = {
-  origin: origin,
+  origin: ORIGIN,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,6 +34,7 @@ app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser(COOKIE_SECRET));
+app.use(helmetWithCSP);
 app.use("/secure", authenticateRequest);
 
 Routes.forEach((route) => {
@@ -61,6 +62,7 @@ Routes.forEach((route) => {
   );
 });
 
+setupFrontend(app);
 app.use(handleError);
 
 export default app;

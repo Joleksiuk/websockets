@@ -2,6 +2,8 @@ require("dotenv").config();
 
 export const USE_SSL = true;
 
+export const PROTOCOLE = USE_SSL ? "https" : "http";
+export const HOST_NAME = process.env.HOST_NAME || "localhost";
 export const port = process.env.PORT || 8082;
 export const testPort = process.env.TEST_PORT || 8081;
 export const COMMON_RATE_LIMIT_MAX_REQUESTS =
@@ -16,3 +18,5 @@ export const JWT_REFRESH_EXPIRATION =
 export const COOKIE_SECRET = process.env.COOKIE_SECRET || "sddfdsfsdf";
 export const COOKIET_JWT_KEY = "access_token";
 export const COOKIE_RT_KEY = "refresh_token";
+
+export const ORIGIN = `${PROTOCOLE}://${HOST_NAME}:${port}`;

@@ -6,3 +6,7 @@ export const AvatarStyled = styled.div`
     border-radius: 32px;
     background-color: #d43838;
 `
+
+export const StyledImage = styled.img<{ radius?: string }>`
+    border-radius: ${(props) => props.radius || '10%'};
+`

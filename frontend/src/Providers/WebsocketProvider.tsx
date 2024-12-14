@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { useAuthContext } from './AuthProvider'
-import { USE_SSL } from '../config'
+import { HOST_NAME, USE_SSL } from '../config'
 import { ClientMessage, ServerMessage } from './ws/WebsocketDataModels'
 
 const HEARTBEAT_TIMEOUT = 1000 * 2 * 5 + 1000 * 1
@@ -97,7 +97,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
         const protocole = USE_SSL ? 'wss' : 'ws'
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://localhost:8082?`,
+            `${protocole}://${HOST_NAME}:8082?`,
         )
         console.log('Connecting to WebSocket server...')
 

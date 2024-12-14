@@ -1,4 +1,5 @@
 import React from 'react'
+import { StyledImage } from './Avatar.styled'
 
 export type DiceBearAvatarCategory =
     | 'adventurer'
@@ -71,7 +72,7 @@ const AvatarUtils = {
         category: DiceBearAvatarCategory = 'fun-emoji',
     ): JSX.Element {
         const source = `https://api.dicebear.com/7.x/${category}/svg?seed=${seed}`
-        return <img src={source} alt="Avatar" style={{ borderRadius: '10%' }} />
+        return <StyledImage src={source} alt="Avatar" radius="10%" />
     },
 }
 

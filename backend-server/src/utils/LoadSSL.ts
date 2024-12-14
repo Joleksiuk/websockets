@@ -10,7 +10,11 @@ export function loadSSLCertificates(): https.ServerOptions {
     const cert = fs.readFileSync(certPath);
     const key = fs.readFileSync(keyPath);
 
-    return { cert, key };
+    return {
+      cert,
+      key,
+      secureProtocol: "TLSv1_2_method",
+    };
   } catch (error) {
     console.error("Error loading SSL certificates:", error);
     process.exit(1); // Exit the process if certificates cannot be loaded

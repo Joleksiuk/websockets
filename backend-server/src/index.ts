@@ -1,6 +1,6 @@
 import { AppDataSource } from "./data-source";
 import app from "./app";
-import { port, USE_SSL } from "./config";
+import { HOST_NAME, port, USE_SSL } from "./config";
 import express from "express";
 import helmet from "helmet";
 import rateLimiter from "./utils/rateLimiter";
@@ -19,30 +19,25 @@ AppDataSource.initialize()
 
       httpsServer.listen(port, () => {
         console.log(
-          `Secure Express server has started. Open https://localhost:${port}/users to see results`
+          `Secure Express server has started. Open https://${HOST_NAME}:${port}/users to see results`
         );
       });
-
       app.use(express.json());
       app.use(express.urlencoded({ extended: true }));
-      app.use(helmetWithCSP);
       app.use(rateLimiter);
-
       initializeWebSocketServer(httpsServer);
     } else {
       const httpServer = http.createServer(app);
 
       httpServer.listen(port, () => {
         console.log(
-          `Express server has started. Open http://localhost:${port}/users to see results`
+          `Express server has started. Open http://${HOST_NAME}:${port}/users to see results`
         );
       });
 
       app.use(express.json());
       app.use(express.urlencoded({ extended: true }));
-      app.use(helmet());
       app.use(rateLimiter);
-
       initializeWebSocketServer(httpServer);
     }
   })
