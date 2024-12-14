@@ -1,6 +1,6 @@
 import { AppDataSource } from "./data-source";
 import app from "./app";
-import { HOST_NAME, port, USE_SSL, LOCAL_SERVER } from "./config";
+import { HOST_NAME, PORT, USE_SSL, LOCAL_SERVER } from "./config";
 import express from "express";
 import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
@@ -15,9 +15,9 @@ AppDataSource.initialize()
     if (USE_SSL) {
       const httpsServer = https.createServer(sslOptions, app);
 
-      httpsServer.listen(port, () => {
+      httpsServer.listen(PORT, () => {
         console.log(
-          `Secure Express server has started. Open https://${HOST_NAME}:${port} to see results`
+          `Secure Express server has started. Open https://${HOST_NAME}:${PORT} to see results`
         );
       });
       app.use(express.json());
@@ -27,9 +27,9 @@ AppDataSource.initialize()
     } else {
       const httpServer = http.createServer(app);
 
-      httpServer.listen(port, () => {
+      httpServer.listen(PORT, () => {
         console.log(
-          `Express server has started. Open http://${HOST_NAME}:${port} to see results`
+          `Express server has started. Open http://${HOST_NAME}:${PORT} to see results`
         );
       });
 
