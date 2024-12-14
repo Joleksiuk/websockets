@@ -1,4 +1,4 @@
-import { AppDataSource, RenderDataSource } from "./data-source";
+import { AppDataSource } from "./data-source";
 import app from "./app";
 import { HOST_NAME, port, USE_SSL, LOCAL_SERVER } from "./config";
 import express from "express";
@@ -10,9 +10,7 @@ import http from "http";
 
 const sslOptions = loadSSLCertificates();
 
-const DataSource = LOCAL_SERVER ? AppDataSource : RenderDataSource;
-
-DataSource.initialize()
+AppDataSource.initialize()
   .then(async () => {
     if (USE_SSL) {
       const httpsServer = https.createServer(sslOptions, app);
