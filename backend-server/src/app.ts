@@ -62,7 +62,7 @@ Routes.forEach((route) => {
   );
 });
 
-setupFrontend(app);
+// setupFrontend(app);
 app.use(handleError);
 
 export default app;
