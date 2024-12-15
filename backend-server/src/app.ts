@@ -26,6 +26,7 @@ const app: Application = express();
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
+app.set("trust proxy", 1);
 app.use(cookieParser(COOKIE_SECRET));
 app.use(helmetWithCSP);
 app.use("/secure", authenticateRequest);
