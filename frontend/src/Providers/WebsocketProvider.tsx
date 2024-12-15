@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { useAuthContext } from './AuthProvider'
-import { BACKEND_PORT, HOST_NAME, USE_SSL } from '../config'
+import { HOST_NAME, USE_SSL } from '../config'
 import { ClientMessage, ServerMessage } from './ws/WebsocketDataModels'
 
 const HEARTBEAT_TIMEOUT = 1000 * 2 * 5 + 1000 * 1

@@ -8,15 +8,12 @@ import Navbar from './Components/Navbar/Navbar'
 import { ChatroomProvider } from './Providers/ChatroomProvider'
 import AuthPage from './Pages/AuthPage'
 import { useAuthContext } from './Providers/AuthProvider'
-import { useWebsocketContext } from './Providers/WebsocketProvider'
-import ReconnectPage from './Components/Reconnect/ReconnectPage'
 import { LinearProgress } from '@mui/material'
 import { UsersProvider } from './Providers/UserProvider'
 
 export default function AppBase() {
     const { mode } = useModeContext()
     const { user, isAuthenticating } = useAuthContext()
-    const { isDisconnected } = useWebsocketContext()
 
     if (isAuthenticating) {
         return (
@@ -26,9 +23,6 @@ export default function AppBase() {
         )
     }
 
-    // if (isDisconnected) {
-    //     return <ReconnectPage />
-    // }
     if (!user) {
         return (
             <BasePageStyled mode={mode}>

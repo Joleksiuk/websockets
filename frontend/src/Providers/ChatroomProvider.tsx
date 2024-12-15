@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
     createContext,
     useContext,
     useState,
     ReactNode,
     useEffect,
-    act,
 } from 'react'
 import { useParams } from 'react-router-dom'
 import { useWebsocketContext } from './WebsocketProvider'
