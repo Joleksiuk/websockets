@@ -1,5 +1,6 @@
 export const USE_SSL = true
-export const HOST_NAME = process.env.BACKEND_HOSTNAME || 'localhost:3000'
+export const HOST_NAME =
+    process.env.REACT_APP_BACKEND_HOSTNAME || 'localhost:3000'
 export const BACKEND_PORT = '3000'
 export const PROTOCOLE = USE_SSL ? 'https' : 'http'
 export const BACKEND_URL = `${PROTOCOLE}://${HOST_NAME}`
