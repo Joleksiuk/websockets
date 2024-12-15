@@ -5,7 +5,7 @@ import { Routes } from "./routes";
 import { validationResult } from "express-validator";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { COOKIE_SECRET, HOST_NAME } from "./config";
+import { COOKIE_SECRET } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
 import { helmetWithCSP } from "./middlewares/helmetWithCSP";
 import { corsOptions } from "./middlewares/cors";
