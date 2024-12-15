@@ -23,5 +23,5 @@ export const AppDataSource = new DataSource({
   entities: [User, Room],
   migrations: [],
   subscribers: [],
-  ...(LOCAL_SERVER ? { ssl: { rejectUnauthorized: false } } : {}),
+  ...(!LOCAL_SERVER ? { ssl: { rejectUnauthorized: false } } : {}),
 });

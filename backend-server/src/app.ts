@@ -3,12 +3,12 @@ import morgan from "morgan";
 import express, { Application, Request, Response, NextFunction } from "express";
 import { Routes } from "./routes";
 import { validationResult } from "express-validator";
-import cors, { CorsOptions } from "cors";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { COOKIE_SECRET, HOST_NAME } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
-import { setupFrontend } from "./middlewares/setupFrontend";
 import { helmetWithCSP } from "./middlewares/helmetWithCSP";
+import { corsOptions } from "./middlewares/cors";
 
 function handleError(
   err: any,
@@ -21,19 +21,6 @@ function handleError(
   const errorMessage = { message: err.message || "Internal Server Error" };
   res.status(errorStatus).send(errorMessage);
 }
-
-const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || origin.endsWith(".onrender.com")) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
 
 const app: Application = express();
 app.use(morgan("tiny"));
@@ -68,7 +55,6 @@ Routes.forEach((route) => {
   );
 });
 
-// setupFrontend(app);
 app.use(handleError);
 
 export default app;
