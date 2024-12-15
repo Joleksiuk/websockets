@@ -23,7 +23,13 @@ function handleError(
 }
 
 const corsOptions: CorsOptions = {
-  origin: HOST_NAME,
+  origin: (origin, callback) => {
+    if (!origin || origin.endsWith(".onrender.com")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
