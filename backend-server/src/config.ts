@@ -4,7 +4,7 @@ export const USE_SSL = true;
 export const LOCAL_SERVER = true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
-export const HOST_NAME = process.env.HOSTNAME || "localhost";
+export const HOST_NAME = process.env.RENDER_EXTERNAL_HOSTNAME || "localhost";
 export const PORT = process.env.PORT || 3000;
 export const ORIGIN = `${PROTOCOLE}://${HOST_NAME}:${PORT}`;
 
