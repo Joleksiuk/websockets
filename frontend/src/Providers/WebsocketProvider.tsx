@@ -96,8 +96,12 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         const protocole = USE_SSL ? 'wss' : 'ws'
+        // const socket: WebSocketExt = new WebSocket(
+        //     `${protocole}://${HOST_NAME}:${BACKEND_PORT}?`,
+        // )
+        // Porcik
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://${HOST_NAME}:${BACKEND_PORT}?`,
+            `${protocole}://${HOST_NAME}?`,
         )
         console.log('Connecting to WebSocket server...')
 
