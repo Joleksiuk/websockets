@@ -8,6 +8,7 @@ import {
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
+  LOCAL_SERVER,
 } from "./config";
 
 export const AppDataSource = new DataSource({
@@ -22,5 +23,5 @@ export const AppDataSource = new DataSource({
   entities: [User, Room],
   migrations: [],
   subscribers: [],
-  ssl: { rejectUnauthorized: false },
+  ...(LOCAL_SERVER ? { ssl: { rejectUnauthorized: false } } : {}),
 });

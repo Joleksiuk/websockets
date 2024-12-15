@@ -1,6 +1,6 @@
 import { AppDataSource } from "./data-source";
 import app from "./app";
-import { HOST_NAME, PORT, USE_SSL, LOCAL_SERVER } from "./config";
+import { HOST_NAME, PORT, LOCAL_SERVER, USE_SSL } from "./config";
 import express from "express";
 import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
@@ -12,7 +12,7 @@ const sslOptions = loadSSLCertificates();
 
 AppDataSource.initialize()
   .then(async () => {
-    if (USE_SSL) {
+    if (LOCAL_SERVER && USE_SSL) {
       const httpsServer = https.createServer(sslOptions, app);
 
       httpsServer.listen(PORT, () => {
