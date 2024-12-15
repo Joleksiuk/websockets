@@ -5,7 +5,7 @@ import { Routes } from "./routes";
 import { validationResult } from "express-validator";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
-import { COOKIE_SECRET, ORIGIN, USE_SSL } from "./config";
+import { COOKIE_SECRET, HOST_NAME } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
 import { setupFrontend } from "./middlewares/setupFrontend";
 import { helmetWithCSP } from "./middlewares/helmetWithCSP";
@@ -23,7 +23,7 @@ function handleError(
 }
 
 const corsOptions: CorsOptions = {
-  origin: ORIGIN,
+  origin: HOST_NAME,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],

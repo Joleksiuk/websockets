@@ -17,7 +17,7 @@ AppDataSource.initialize()
 
       httpsServer.listen(PORT, () => {
         console.log(
-          `Secure Express server has started. Open https://${HOST_NAME}:${PORT} to see results`
+          `Secure Express server has started. Open https://${HOST_NAME} to see results`
         );
       });
       app.use(express.json());
@@ -29,7 +29,7 @@ AppDataSource.initialize()
 
       httpServer.listen(PORT, () => {
         console.log(
-          `Express server has started. Open http://${HOST_NAME}:${PORT} to see results`
+          `Express server has started. Open http://${HOST_NAME} to see results`
         );
       });
 

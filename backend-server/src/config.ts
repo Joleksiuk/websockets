@@ -4,11 +4,10 @@ export const USE_SSL = true;
 export const LOCAL_SERVER = true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
-export const HOST_NAME = process.env.RENDER_EXTERNAL_HOSTNAME || "localhost";
+export const HOST_NAME =
+  process.env.RENDER_EXTERNAL_HOSTNAME || "localhost:3000";
 export const PORT = process.env.PORT || 3000;
-//export const ORIGIN = `${PROTOCOLE}://${HOST_NAME}:${PORT}`;
-export const ORIGIN = `${PROTOCOLE}://${HOST_NAME}`;
-//Porcik
+
 export const COMMON_RATE_LIMIT_MAX_REQUESTS =
   process.env.COMMON_RATE_LIMIT_MAX_REQUESTS || 1000;
 export const COMMON_RATE_LIMIT_WINDOW_MS =
