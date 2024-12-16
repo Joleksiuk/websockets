@@ -1,11 +1,18 @@
 import * as https from "https";
 import fs from "fs";
 import path from "path";
+import { HOST_PERFIX } from "../config";
 
 export function loadSSLCertificates(): https.ServerOptions {
   try {
-    const certPath = path.resolve(__dirname, "../files/localhost.pem");
-    const keyPath = path.resolve(__dirname, "../files/localhost-key.pem");
+    const certPath = path.resolve(
+      __dirname,
+      "../files/" + HOST_PERFIX + ".pem"
+    );
+    const keyPath = path.resolve(
+      __dirname,
+      "../files/" + HOST_PERFIX + "-key.pem"
+    );
 
     const cert = fs.readFileSync(certPath);
     const key = fs.readFileSync(keyPath);

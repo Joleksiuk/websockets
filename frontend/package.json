@@ -54,6 +54,7 @@
         "@types/axios": "^0.9.36",
         "@types/js-cookie": "^3.0.6",
         "@types/react-router-dom": "^5.3.3",
+        "cross-env": "^7.0.3",
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2"
     },

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { useAuthContext } from './AuthProvider'
-import { HOST_NAME, USE_SSL } from '../config'
+import { BACKEND_HOST_NAME, USE_SSL } from '../config'
 import { ClientMessage, ServerMessage } from './ws/WebsocketDataModels'
 
 const HEARTBEAT_TIMEOUT = 1000 * 2 * 5 + 1000 * 1
@@ -96,12 +96,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         }
 
         const protocole = USE_SSL ? 'wss' : 'ws'
-        // const socket: WebSocketExt = new WebSocket(
-        //     `${protocole}://${HOST_NAME}:${BACKEND_PORT}?`,
-        // )
-        // Porcik
         const socket: WebSocketExt = new WebSocket(
-            `${protocole}://${HOST_NAME}?`,
+            `${protocole}://${BACKEND_HOST_NAME}?`,
         )
         console.log('Connecting to WebSocket server...')
 
@@ -165,7 +161,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
         console.log('Sending message to server:', message)
         if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ ...message, token: user?.jwt }))
+            ws.send(JSON.stringify(message))
         }
     }
 
