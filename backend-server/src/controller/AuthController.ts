@@ -60,13 +60,13 @@ export class AuthController {
     res
       .cookie(COOKIET_JWT_KEY, accessToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         signed: true,
         secure: true,
       })
       .cookie(COOKIE_RT_KEY, refreshToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         signed: true,
         secure: true,
       })
