@@ -1,21 +1,15 @@
 import { CorsOptions } from "cors";
-import { HOST_NAME, LOCAL_SERVER } from "../config";
+import { FRONTEND_HOST_NAME, LOCAL_SERVER } from "../config";
 
 export const corsOptions: CorsOptions = LOCAL_SERVER
   ? {
-      origin: HOST_NAME,
+      origin: "https://" + FRONTEND_HOST_NAME,
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
     }
   : {
-      origin: (origin, callback) => {
-        if (!origin || origin.endsWith(".onrender.com")) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
+      origin: "https://websockets-front.onrender.com",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
