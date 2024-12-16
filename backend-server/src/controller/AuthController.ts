@@ -62,11 +62,13 @@ export class AuthController {
         httpOnly: true,
         sameSite: "lax",
         signed: true,
+        secure: true,
       })
       .cookie(COOKIE_RT_KEY, refreshToken, {
         httpOnly: true,
         sameSite: "lax",
         signed: true,
+        secure: true,
       })
       .status(200)
       .send({
