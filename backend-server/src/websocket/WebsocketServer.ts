@@ -56,11 +56,64 @@ function ping(ws: WebSocketExt) {
   ws.send(JSON.stringify(pingMessage));
 }
 
+const rateLimitMap = new Map<string, { count: number; lastAttempt: number }>();
+
+function limitRate(
+  ip: string,
+  limit: number = 5,
+  timeWindow: number = 1000
+): boolean {
+  const currentTime = Date.now();
+
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, lastAttempt: currentTime });
+    return false;
+  }
+
+  const rateData = rateLimitMap.get(ip)!;
+
+  if (currentTime - rateData.lastAttempt < timeWindow) {
+    rateData.count += 1;
+  } else {
+    rateData.count = 1;
+  }
+
+  rateData.lastAttempt = currentTime;
+
+  if (rateData.count > limit) {
+    console.log(`Rate limit exceeded for IP: ${ip}`);
+    return true;
+  }
+
+  return false;
+}
+
+const allowedOrigins = ["https://websockets-front.onrender.com"];
+
+function verifyOrigin(origin: string, socket: any) {
+  if (!origin || !allowedOrigins.includes(origin)) {
+    console.log(`Rejected connection from origin: ${origin}`);
+    socket.write("HTTP/1.1 403 Forbidden\r\n\r\n");
+    socket.destroy();
+    return;
+  }
+}
+
 export default function initializeWebSocketServer(server: any) {
   const wss: WebSocketServer = new WebSocketServer({ noServer: true });
 
   server.on("upgrade", (request, socket, head) => {
     socket.on("error", onSocketPreError);
+
+    verifyOrigin(request.headers.origin, socket);
+    const ip = request.socket.remoteAddress || "unknown";
+
+    if (limitRate(ip, 5, 1000)) {
+      // Limit 5 prób na 1000ms
+      socket.write("HTTP/1.1 429 Too Many Requests\r\n\r\n");
+      socket.destroy();
+      return;
+    }
 
     console.log("Upgrading connection...");
     const authorizationToken = extractJwtFromRequest(request, COOKIE_SECRET);
