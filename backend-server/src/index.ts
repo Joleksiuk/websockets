@@ -1,6 +1,12 @@
 import { AppDataSource } from "./data-source";
 import app from "./app";
-import { FRONTEND_HOST_NAME, PORT, LOCAL_SERVER, USE_SSL } from "./config";
+import {
+  FRONTEND_HOST_NAME,
+  PORT,
+  LOCAL_SERVER,
+  USE_SSL,
+  BACKEND_HOST_NAME,
+} from "./config";
 import express from "express";
 import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
@@ -17,7 +23,7 @@ AppDataSource.initialize()
 
       httpsServer.listen(PORT, () => {
         console.log(
-          `Secure Express server has started. Open https://${FRONTEND_HOST_NAME} to see results`
+          `Secure Express server has started on adress https://${BACKEND_HOST_NAME}. Open https://${FRONTEND_HOST_NAME} to see frontend`
         );
       });
       app.use(express.json());
@@ -29,7 +35,7 @@ AppDataSource.initialize()
 
       httpServer.listen(PORT, () => {
         console.log(
-          `Express server has started. Open http://${FRONTEND_HOST_NAME} to see results`
+          `Express server has started on adress http://${BACKEND_HOST_NAME}. Open http://${FRONTEND_HOST_NAME} to see frontend`
         );
       });
 

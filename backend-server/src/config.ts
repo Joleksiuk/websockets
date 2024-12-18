@@ -29,7 +29,11 @@ export const COOKIE_SECRET = process.env.COOKIE_SECRET || "sddfdsfsdf";
 export const COOKIET_JWT_KEY = "access_token";
 export const COOKIE_RT_KEY = "refresh_token";
 
-export const DATABASE_HOST = process.env.DATABASE_HOST || HOST_PERFIX;
+export const NODE_ENV = process.env.NODE_ENV || "development";
+
+export const DATABASE_HOST =
+  process.env.DATABASE_HOST || NODE_ENV === "test" ? "db" : HOST_PERFIX;
+
 export const DATABASE_PORT = process.env.DATABASE_PORT || "5432";
 export const DATABASE_USER = process.env.DATABASE_USER || "postgres";
 export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || "postgres";
