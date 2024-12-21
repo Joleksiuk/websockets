@@ -33,3 +33,12 @@ export function authenticate(
     callback(false, decoded);
   });
 }
+
+export function authenticateConnectionRequest(socket: any, req: any) {
+  //   const authorizationToken = extractJwtFromRequest(req, COOKIE_SECRET);
+  //   if (!isValidToken(authorizationToken)) {
+  //     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+  //     socket.destroy();
+  //     return;
+  //   }
+}

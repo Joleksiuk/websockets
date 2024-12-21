@@ -9,7 +9,6 @@ import {
   JWT_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
   JWT_SECRET,
-  USE_SSL,
 } from "../config";
 import { AppDataSource } from "../data-source";
 export class AuthController {

@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-export const USE_SSL = process.env.RENDER || true;
+export const USE_SSL = process.env.USE_SSL || true;
 export const LOCAL_SERVER = process.env.RENDER ? false : true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
@@ -16,7 +16,7 @@ export const FRONTEND_HOST_NAME =
   process.env.RENDER_EXTERNAL_HOSTNAME || `${HOST_PERFIX}:${FRONTEND_PORT}`;
 
 export const COMMON_RATE_LIMIT_MAX_REQUESTS =
-  process.env.COMMON_RATE_LIMIT_MAX_REQUESTS || 1000;
+  process.env.COMMON_RATE_LIMIT_MAX_REQUESTS || 10000;
 export const COMMON_RATE_LIMIT_WINDOW_MS =
   process.env.COMMON_RATE_LIMIT_WINDOW_MS || 1000;
 

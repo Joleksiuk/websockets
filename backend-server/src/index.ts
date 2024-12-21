@@ -5,6 +5,7 @@ import {
   PORT,
   LOCAL_SERVER,
   USE_SSL,
+  PROTOCOLE,
   BACKEND_HOST_NAME,
 } from "./config";
 import express from "express";
@@ -23,7 +24,7 @@ AppDataSource.initialize()
 
       httpsServer.listen(PORT, () => {
         console.log(
-          `Secure Express server has started on adress https://${BACKEND_HOST_NAME}. Open https://${FRONTEND_HOST_NAME} to see frontend`
+          `Secure Express server has started on adress ${PROTOCOLE}://${BACKEND_HOST_NAME}. Open ${PROTOCOLE}://${FRONTEND_HOST_NAME} to see frontend`
         );
       });
       app.use(express.json());
@@ -35,7 +36,7 @@ AppDataSource.initialize()
 
       httpServer.listen(PORT, () => {
         console.log(
-          `Express server has started on adress http://${BACKEND_HOST_NAME}. Open http://${FRONTEND_HOST_NAME} to see frontend`
+          `Express server has started on adress ${PROTOCOLE}://${BACKEND_HOST_NAME}. Open ${PROTOCOLE}://${FRONTEND_HOST_NAME} to see frontend`
         );
       });
 

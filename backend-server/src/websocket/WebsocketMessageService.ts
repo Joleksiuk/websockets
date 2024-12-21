@@ -6,21 +6,59 @@ import {
   UserLeftServerMessage,
   UserSentChatMessageClientMessage,
   UserSentChatMessageServerMessage,
+  WebSocketExt,
 } from "./WebsocketModels";
 import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
 import { rooms } from "./WebsocketServer";
 
+export const rateLimitMap = new Map<
+  string,
+  { count: number; lastAttempt: number }
+>();
+
+export function limitRate(
+  ip: string,
+  limit: number = 5,
+  timeWindow: number = 1000
+): boolean {
+  const currentTime = Date.now();
+
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, lastAttempt: currentTime });
+    return false;
+  }
+
+  const rateData = rateLimitMap.get(ip)!;
+
+  if (currentTime - rateData.lastAttempt < timeWindow) {
+    rateData.count += 1;
+  } else {
+    rateData.count = 1;
+  }
+
+  rateData.lastAttempt = currentTime;
+
+  if (rateData.count > limit) {
+    console.log(`Rate limit exceeded for IP: ${ip}`);
+    return true;
+  }
+
+  return false;
+}
+
+export const sendHealthCheck = (ws: WebSocketExt) => {
+  const pingMessage: ServerMessage = {
+    eventName: "PING",
+    payload: null,
+  };
+  ws.send(JSON.stringify(pingMessage));
+};
+
 export function handleMessage(message: any, ws: WebSocket): void {
   try {
     const clientMessage: ClientMessage = JSON.parse(message);
-
-    // if (!isAuthenticated(chatMessage)) {
-    //   ws.send(JSON.stringify({ activity: "INVALID AUTHENTICATION" }));
-    //   return;
-    // }
-
     console.log("Received message from client: ", clientMessage);
     const { eventName } = clientMessage;
 
@@ -152,4 +190,13 @@ export function broadcastToRoom(roomId: number, message: ServerMessage): void {
   } else {
     console.warn(`Room with ID ${roomId} not found in rooms map.`);
   }
+}
+
+export function isClientAliveMessage(message: any) {
+  const msg: ClientMessage = JSON.parse(message);
+  if (msg?.eventName === "PONG") {
+    console.log("PONG");
+    return true;
+  }
+  return false;
 }

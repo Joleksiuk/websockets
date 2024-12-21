@@ -1,5 +1,10 @@
 import jwt from "jsonwebtoken";
-import { BACKEND_HOST_NAME, COOKIET_JWT_KEY, JWT_SECRET } from "../config";
+import {
+  BACKEND_HOST_NAME,
+  COOKIET_JWT_KEY,
+  JWT_SECRET,
+  PROTOCOLE,
+} from "../config";
 import { signedCookies } from "cookie-parser";
 
 export const isValidToken = (token: string | undefined): boolean => {
@@ -33,7 +38,7 @@ export function extractJwtFromRequest(
   let jwt = cookies.access_token;
 
   if (!jwt && request.url) {
-    const url = new URL(request.url, `http://${BACKEND_HOST_NAME}`);
+    const url = new URL(request.url, `${PROTOCOLE}://${BACKEND_HOST_NAME}`);
     jwt = url.searchParams.get(COOKIET_JWT_KEY);
   }
 
