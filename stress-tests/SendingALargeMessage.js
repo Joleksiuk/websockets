@@ -1,11 +1,6 @@
 import ws from "k6/ws";
 import { check, sleep } from "k6";
-import {
-  registerUser,
-  loginUser,
-  generateRandomIpAddress,
-} from "./AuthService.js";
-import { baseUrl } from "./TestConstants.js";
+import { generateRandomIpAddress } from "./AuthService.js";
 
 export const options = {
   vus: 1,
@@ -34,37 +29,31 @@ function isPing(data) {
   return false;
 }
 
-function sendHugeMessage(wsArg) {
-  const somethingMessage = {
-    eventName: "SEND CHAT MESSAGE",
-    payload: {
-      message: generateLargeMessage(10),
-    },
-  };
-  wsArg.send(JSON.stringify(somethingMessage));
-}
-
 function sendPong(wsArg) {
+  sleepForRandomTime();
   console.log("Sending PONG message to server");
   const pongMessage = {
     eventName: "PONG",
-    payload: null,
+    payload: {
+      userId: 123,
+      roomdId: 2,
+      message: generateLargeMessage(10),
+    },
   };
   wsArg.send(JSON.stringify(pongMessage));
 }
+function sleepForRandomTime() {
+  const randomDelay = Math.random();
+  sleep(randomDelay);
+}
 
 export default function () {
-  const username = `user${__VU}${Math.random().toString(36).substring(2, 7)}`;
-  const password = "testpassword";
-
-  registerUser(baseUrl, username, password);
-  const loginData = loginUser(baseUrl, username, password);
-  console.log(
-    `User ${loginData.username} logged in with JWT: ${loginData.jwt}`
-  );
-
-  const wsUrl = `wss://localhost:8082?access_token=${loginData.jwt}`;
   let closedByTimeout = false;
+  sleepForRandomTime();
+
+  const wsUrl = `wss://localhost:8082?access_token=`;
+  const randomDelay = Math.random() * 0.1;
+  sleep(randomDelay);
 
   const res = ws.connect(
     wsUrl,
@@ -77,11 +66,6 @@ export default function () {
     function (socket) {
       socket.on("open", function () {
         console.log("WebSocket connection established!");
-
-        // Loop to send "something" message continuously
-        // while (true) {
-        //   sendSomething(socket);
-        // }
       });
 
       socket.on("message", function (message) {
@@ -103,15 +87,13 @@ export default function () {
 
       socket.setTimeout(() => {
         closedByTimeout = true;
+        console.log("WebSocket connection closed by timeout");
         socket.close();
-      }, 50000);
+      }, 30000);
     }
   );
 
   check(res, {
     "WebSocket connection closed by timeout": () => closedByTimeout,
-    "WebSocket not closed prematurely by server": () => !closedByTimeout,
   });
-
-  return loginData;
 }

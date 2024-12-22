@@ -1,0 +1,46 @@
+   1000
+
+                                                                                                                                                                                                                                                                                        
+     ✓ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                         
+     checks................: 100.00% 1000 out of 1000
+     data_received.........: 2.1 MB  42 kB/s
+     data_sent.............: 1.1 MB  21 kB/s
+     iteration_duration....: avg=50.69s   min=50.03s med=50.72s  max=51.24s   p(90)=51.15s   p(95)=51.19s
+     iterations............: 1000    19.514314/s
+     vus...................: 261     min=261          max=1000
+     vus_max...............: 1000    min=1000         max=1000
+     ws_connecting.........: avg=140.85ms min=2.05ms med=167.6ms max=229.58ms p(90)=219.22ms p(95)=222.3ms
+     ws_msgs_received......: 5000    97.57157/s
+     ws_msgs_sent..........: 5000    97.57157/s
+     ws_session_duration...: avg=50.14s   min=50s    med=50.16s  max=50.22s   p(90)=50.21s   p(95)=50.22s
+     ws_sessions...........: 1000    19.514314/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.2s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 1000 VUs  0m51.2s/1m0s  1000/1000 shared iters                     
+  
+  
+  
+  
+   5000
+   
+   ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  63% — ✓ 3157 / ✗ 1843                                                                                                                                                                                                                                                           
+
+     checks................: 63.13% 3157 out of 5000
+     data_received.........: 6.7 MB 123 kB/s
+     data_sent.............: 3.4 MB 63 kB/s
+     iteration_duration....: avg=33.59s min=679.28ms med=51.51s max=54.59s p(90)=54s    p(95)=54.29s
+     iterations............: 5000   91.581558/s
+     vus...................: 624    min=624          max=4863
+     vus_max...............: 5000   min=5000         max=5000
+     ws_connecting.........: avg=1.46s  min=3.63ms   med=1.12s  max=3.98s  p(90)=3.47s  p(95)=3.72s
+     ws_msgs_received......: 15785  289.122979/s
+     ws_msgs_sent..........: 15785  289.122979/s
+     ws_session_duration...: avg=33.03s min=3.63ms   med=51.13s max=53.98s p(90)=53.47s p(95)=53.72s
+     ws_sessions...........: 5000   91.581558/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m54.6s), 0000/5000 VUs, 5000 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 5000 VUs  0m54.6s/1m0s  5000/5000 shared iters    

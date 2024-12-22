@@ -3,9 +3,9 @@ import { check, sleep } from "k6";
 import { generateRandomIpAddress } from "./AuthService.js";
 
 export const options = {
-  vus: 10,
-  iterations: 10,
-  duration: "2m",
+  vus: 3000,
+  iterations: 3000,
+  duration: "1m",
 };
 
 function isPing(data) {
@@ -22,6 +22,19 @@ function sendPong(wsArg) {
   const pongMessage = {
     eventName: "PONG",
     payload: null,
+  };
+  wsArg.send(JSON.stringify(pongMessage));
+}
+
+function sendChatMessage(wsArg) {
+  sleepForRandomTime();
+  const pongMessage = {
+    eventName: "SEND CHAT MESSAGE",
+    payload: {
+      userId: 123,
+      roomdId: 2,
+      message: "Hello, world! This is a chat message!",
+    },
   };
   wsArg.send(JSON.stringify(pongMessage));
 }
@@ -63,6 +76,7 @@ export default function () {
         if (!closedByTimeout) {
           console.warn("Connection was closed by the server prematurely");
         }
+        clearInterval(sendChatMessageInterval);
       });
 
       socket.on("error", function (e) {
@@ -73,7 +87,13 @@ export default function () {
         closedByTimeout = true;
         console.log("WebSocket connection closed by timeout");
         socket.close();
-      }, 50000);
+      }, 30000);
+
+      const sendChatMessageInterval = setInterval(() => {
+        if (socket.readyState === 1) {
+          sendChatMessage(socket);
+        }
+      }, 1000);
     }
   );
 

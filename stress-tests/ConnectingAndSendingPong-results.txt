@@ -1,0 +1,228 @@
+100 
+
+
+  ✓ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                         
+     checks................: 100.00% 100 out of 100
+     data_received.........: 213 kB  4.3 kB/s
+     data_sent.............: 109 kB  2.2 kB/s
+     iteration_duration....: avg=50.11s  min=50.02s  med=50.13s  max=50.19s   p(90)=50.18s   p(95)=50.18s
+     iterations............: 100     1.992271/s
+     vus...................: 100     min=100        max=100
+     vus_max...............: 100     min=100        max=100
+     ws_connecting.........: avg=69.55ms min=11.46ms med=92.26ms max=103.97ms p(90)=102.09ms p(95)=103.12ms
+     ws_msgs_received......: 500     9.961354/s
+     ws_msgs_sent..........: 500     9.961354/s
+     ws_session_duration...: avg=50.06s  min=50.01s  med=50.09s  max=50.1s    p(90)=50.1s    p(95)=50.1s
+     ws_sessions...........: 100     1.992271/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m50.2s), 000/100 VUs, 100 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 100 VUs  0m50.2s/2m0s  100/100 shared iters         
+
+
+500
+
+  ✓ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                         
+     checks................: 100.00% 500 out of 500
+     data_received.........: 1.1 MB  21 kB/s
+     data_sent.............: 544 kB  11 kB/s
+     iteration_duration....: avg=50.64s  min=50.02s  med=50.67s   max=51.43s p(90)=51.32s p(95)=51.35s
+     iterations............: 500     9.720411/s
+     vus...................: 120     min=120        max=500
+     vus_max...............: 500     min=500        max=500
+     ws_connecting.........: avg=594.5ms min=14.58ms med=623.48ms max=1.33s  p(90)=1.23s  p(95)=1.26s
+     ws_msgs_received......: 2500    48.602055/s
+     ws_msgs_sent..........: 2500    48.602055/s
+     ws_session_duration...: avg=50.59s  min=50.01s  med=50.62s   max=51.33s p(90)=51.23s p(95)=51.26s
+     ws_sessions...........: 500     9.720411/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.4s), 000/500 VUs, 500 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 500 VUs  0m51.4s/2m0s  500/500 shared iters          
+
+
+600
+
+ ✓ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                         
+     checks................: 100.00% 600 out of 600
+     data_received.........: 1.3 MB  25 kB/s
+     data_sent.............: 652 kB  13 kB/s
+     iteration_duration....: avg=50.69s   min=50.02s  med=50.66s   max=51.32s p(90)=51.24s p(95)=51.27s
+     iterations............: 600     11.688965/s
+     vus...................: 212     min=212        max=600
+     vus_max...............: 600     min=600        max=600
+     ws_connecting.........: avg=648.33ms min=25.41ms med=613.21ms max=1.22s  p(90)=1.15s  p(95)=1.18s
+     ws_msgs_received......: 3000    58.444823/s
+     ws_msgs_sent..........: 3000    58.444823/s
+     ws_session_duration...: avg=50.64s   min=50.02s  med=50.61s   max=51.22s p(90)=51.15s p(95)=51.18s
+     ws_sessions...........: 600     11.688965/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.3s), 000/600 VUs, 600 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 600 VUs  0m51.3s/2m0s  600/600 shared iters         
+
+700
+
+   ✓ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                         
+     checks................: 100.00% 700 out of 700
+     data_received.........: 1.5 MB  29 kB/s
+     data_sent.............: 761 kB  15 kB/s
+     iteration_duration....: avg=50.82s   min=50.03s  med=50.71s   max=51.85s p(90)=51.42s p(95)=51.49s
+     iterations............: 700     13.499321/s
+     vus...................: 311     min=311        max=700
+     vus_max...............: 700     min=700        max=700
+     ws_connecting.........: avg=758.52ms min=30.66ms med=663.16ms max=1.76s  p(90)=1.33s  p(95)=1.41s
+     ws_msgs_received......: 3500    67.496604/s
+     ws_msgs_sent..........: 3500    67.496604/s
+     ws_session_duration...: avg=50.77s   min=50.03s  med=50.66s   max=51.76s p(90)=51.33s p(95)=51.41s
+     ws_sessions...........: 700     13.499321/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.9s), 000/700 VUs, 700 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 700 VUs  0m51.9s/2m0s  700/700 shared iters          
+
+800
+
+INFO[0051] WebSocket connection closed by timeout        source=console                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                         
+     ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  81% — ✓ 655 / ✗ 145                                                                                                                                                                                                                                                             
+
+     checks................: 81.87% 655 out of 800
+     data_received.........: 1.4 MB 27 kB/s
+     data_sent.............: 712 kB 14 kB/s
+     iteration_duration....: avg=41.57s   min=84.76ms med=50.61s   max=51.35s p(90)=51.25s p(95)=51.28s
+     iterations............: 800    15.577803/s
+     vus...................: 296    min=296        max=655
+     vus_max...............: 800    min=800        max=800
+     ws_connecting.........: avg=589.13ms min=0s      med=578.51ms max=1.27s  p(90)=1.17s  p(95)=1.2s
+     ws_msgs_received......: 3275   63.771631/s
+     ws_msgs_sent..........: 3275   63.771631/s
+     ws_session_duration...: avg=41.52s   min=0s      med=50.57s   max=51.27s p(90)=51.17s p(95)=51.2s
+     ws_sessions...........: 800    15.577803/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.4s), 000/800 VUs, 800 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 800 VUs  0m51.4s/2m0s  800/800 shared iters       
+
+900
+
+  ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  58% — ✓ 527 / ✗ 373                                                                                                                                                                                                                                                             
+
+     checks................: 58.55% 527 out of 900
+     data_received.........: 1.1 MB 22 kB/s
+     data_sent.............: 573 kB 11 kB/s
+     iteration_duration....: avg=29.66s   min=54.23ms med=50.1s   max=51.24s p(90)=51.01s   p(95)=51.07s
+     iterations............: 900    17.560641/s
+     vus...................: 135    min=135        max=527
+     vus_max...............: 900    min=900        max=900
+     ws_connecting.........: avg=331.68ms min=0s      med=84.85ms max=1.14s  p(90)=959.02ms p(95)=1s
+     ws_msgs_received......: 2635   51.413653/s
+     ws_msgs_sent..........: 2635   51.413653/s
+     ws_session_duration...: avg=29.6s    min=0s      med=50.08s  max=51.14s p(90)=50.95s   p(95)=51s
+     ws_sessions...........: 900    17.560641/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.3s), 000/900 VUs, 900 complete and 0 interrupted iterations                                                                                                                                                                                                                
+default ✓ [======================================] 900 VUs  0m51.3s/2m0s  900/900 shared iters                   
+
+1000
+
+  ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  61% — ✓ 618 / ✗ 382                                                                                                                                                                                                                                                             
+
+     checks................: 61.80% 618 out of 1000
+     data_received.........: 1.3 MB 26 kB/s
+     data_sent.............: 672 kB 13 kB/s
+     iteration_duration....: avg=31.38s   min=29.91ms med=50.16s   max=51.35s p(90)=51.21s p(95)=51.27s
+     iterations............: 1000   19.470514/s
+     vus...................: 254    min=254         max=618
+     vus_max...............: 1000   min=1000        max=1000
+     ws_connecting.........: avg=433.89ms min=0s      med=159.42ms max=1.26s  p(90)=1.13s  p(95)=1.18s
+     ws_msgs_received......: 3090   60.163888/s
+     ws_msgs_sent..........: 3090   60.163888/s
+     ws_session_duration...: avg=31.33s   min=0s      med=50.16s   max=51.26s p(90)=51.13s p(95)=51.18s
+     ws_sessions...........: 1000   19.470514/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.4s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 1000 VUs  0m51.4s/2m0s  1000/1000 shared iter
+
+
+1500
+
+INFO[0051] WebSocket connection closed by timeout        source=console                                                                                                                                                                                                                  
+
+     ✗ WebSocket connection closed by timeout
+      ↳  28% — ✓ 433 / ✗ 1067
+
+     checks................: 28.86% 433 out of 1500
+     data_received.........: 924 kB 18 kB/s
+     data_sent.............: 471 kB 9.2 kB/s
+     iteration_duration....: avg=14.73s   min=28.5ms med=171.52ms max=51.35s p(90)=50.72s   p(95)=51.2s
+     iterations............: 1500   29.20562/s
+     vus...................: 115    min=115         max=433
+     vus_max...............: 1500   min=1500        max=1500
+     ws_connecting.........: avg=249.25ms min=1ms    med=93.89ms  max=1.32s  p(90)=698.18ms p(95)=1.17s
+     ws_msgs_received......: 2165   42.153446/s
+     ws_msgs_sent..........: 2165   42.153446/s
+     ws_session_duration...: avg=14.68s   min=1ms    med=93.89ms  max=51.32s p(90)=50.69s   p(95)=51.17s
+     ws_sessions...........: 1500   29.20562/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.4s), 0000/1500 VUs, 1500 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 1500 VUs  0m51.4s/2m0s  1500/1500 shared iters 
+
+
+2000
+
+
+                                                                                                                                                                                                                                                                                         
+     ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  17% — ✓ 356 / ✗ 1644                                                                                                                                                                                                                                                            
+
+     checks................: 17.80% 356 out of 2000
+     data_received.........: 760 kB 15 kB/s
+     data_sent.............: 387 kB 7.6 kB/s
+     iteration_duration....: avg=9.19s    min=11.27ms med=267.77ms max=50.99s   p(90)=50.51s   p(95)=50.62s
+     iterations............: 2000   39.220051/s
+     vus...................: 8      min=8           max=356
+     vus_max...............: 2000   min=2000        max=2000
+     ws_connecting.........: avg=237.49ms min=0s      med=192.78ms max=968.85ms p(90)=503.39ms p(95)=615.75ms
+     ws_msgs_received......: 1780   34.905846/s
+     ws_msgs_sent..........: 1780   34.905846/s
+     ws_session_duration...: avg=9.13s    min=0s      med=192.78ms max=50.96s   p(90)=50.5s    p(95)=50.61s
+     ws_sessions...........: 2000   39.220051/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.0s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 2000 VUs  0m51.0s/2m0s  2000/2000 shared iters      
+
+
+3000
+
+                                                                                                                                                                                                                                                                                     
+     ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                            
+      ↳  10% — ✓ 305 / ✗ 2695                                                                                                                                                                                                                                                            
+
+     checks................: 10.16% 305 out of 3000
+     data_received.........: 651 kB 13 kB/s
+     data_sent.............: 332 kB 6.5 kB/s
+     iteration_duration....: avg=5.64s    min=10.25ms med=580ms    max=50.97s   p(90)=50.56s   p(95)=50.64s
+     iterations............: 3000   58.847055/s
+     vus...................: 6      min=6           max=305
+     vus_max...............: 3000   min=3000        max=3000
+     ws_connecting.........: avg=450.89ms min=4.13ms  med=459.83ms max=954.14ms p(90)=562.51ms p(95)=631.92ms
+     ws_msgs_received......: 1525   29.91392/s
+     ws_msgs_sent..........: 1525   29.91392/s
+     ws_session_duration...: avg=5.53s    min=4.13ms  med=459.86ms max=50.95s   p(90)=50.56s   p(95)=50.64s
+     ws_sessions...........: 3000   58.847055/s
+
+                                                                                                                                                                                                                                                                                         
+running (0m51.0s), 0000/3000 VUs, 3000 complete and 0 interrupted iterations                                                                                                                                                                                                             
+default ✓ [======================================] 3000 VUs  0m51.0s/2m0s  3000/3000 shared iters      
