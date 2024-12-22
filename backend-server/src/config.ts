@@ -31,8 +31,11 @@ export const COOKIE_RT_KEY = "refresh_token";
 
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
-export const DATABASE_HOST =
-  process.env.DATABASE_HOST || NODE_ENV === "test" ? "db" : HOST_PERFIX;
+export const DATABASE_HOST = process.env.DATABASE_HOST
+  ? process.env.DATABASE_HOST
+  : NODE_ENV === "test"
+  ? "db"
+  : HOST_PERFIX;
 
 export const DATABASE_PORT = process.env.DATABASE_PORT || "5432";
 export const DATABASE_USER = process.env.DATABASE_USER || "postgres";
