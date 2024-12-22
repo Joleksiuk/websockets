@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: websocket-app
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=ws
+    depends_on:
+      - db
+    networks:
+      - test_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0" # Limit to 1 CPU core
+          memory: "512M" # Limit to 512 MB RAM
+        reservations:
+          cpus: "0.5" # Reserve 0.5 CPU core
+          memory: "256M" # Reserve 256 MB RAM
+
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ws
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5" # Limit to 0.5 CPU core
+          memory: "256M" # Limit to 256 MB RAM
+        reservations:
+          cpus: "0.25" # Reserve 0.25 CPU core
+          memory: "128M" # Reserve 128 MB RAM
+
+volumes:
+  postgres-data:
+
+networks:
+  test_network:
+    driver: bridge
