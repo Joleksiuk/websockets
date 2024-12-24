@@ -8,8 +8,6 @@ import {
   PROTOCOLE,
   BACKEND_HOST_NAME,
 } from "./config";
-import express from "express";
-import rateLimiter from "./utils/rateLimiter";
 import initializeWebSocketServer from "./websocket/WebsocketServer";
 import * as https from "https";
 import { loadSSLCertificates } from "./utils/LoadSSL";
@@ -27,9 +25,6 @@ AppDataSource.initialize()
           `Secure Express server has started on adress ${PROTOCOLE}://${BACKEND_HOST_NAME}. Open ${PROTOCOLE}://${FRONTEND_HOST_NAME} to see frontend`
         );
       });
-      app.use(express.json());
-      app.use(express.urlencoded({ extended: true }));
-      app.use(rateLimiter);
       initializeWebSocketServer(httpsServer);
     } else {
       const httpServer = http.createServer(app);
@@ -40,9 +35,6 @@ AppDataSource.initialize()
         );
       });
 
-      app.use(express.json());
-      app.use(express.urlencoded({ extended: true }));
-      app.use(rateLimiter);
       initializeWebSocketServer(httpServer);
     }
   })

@@ -5,6 +5,7 @@ import {
   COMMON_RATE_LIMIT_WINDOW_MS,
 } from "../config";
 
+//5000 requests per 15 minutes
 const rateLimiter = rateLimit({
   legacyHeaders: true,
   limit: Number(COMMON_RATE_LIMIT_MAX_REQUESTS),

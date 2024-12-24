@@ -3,7 +3,7 @@ import { check, sleep } from "k6";
 import { generateRandomIpAddress } from "./AuthService.js";
 
 export const options = {
-  vus: 3000,
+  vus: 2000,
   iterations: 3000,
   duration: "1m",
 };

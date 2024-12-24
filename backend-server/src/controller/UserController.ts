@@ -2,6 +2,8 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -22,10 +24,11 @@ export class UserController {
   }
 
   async createNewUser(req: Request, res: Response) {
-    let { username, password, role } = req.body;
+    let { username, password, email, role } = req.body;
     let user = new User();
     user.username = username;
     user.password = password;
+    user.email = email;
     user.role = role;
 
     const errors = await validate(user);
@@ -70,5 +73,21 @@ export class UserController {
       };
     });
     res.send(responseData);
+  }
+
+  async confirmEmail(req: Request, res: Response) {
+    const { token } = req.params;
+
+    try {
+      const { userId } = jwt.verify(token, JWT_SECRET);
+      console.log(`Użytkownik o ID ${userId} potwierdził e-mail`);
+
+      res.status(200).json({ message: "E-mail potwierdzony pomyślnie!" });
+    } catch (error) {
+      console.error("Błąd weryfikacji tokenu:", error);
+      res
+        .status(400)
+        .json({ message: "Nieprawidłowy lub przeterminowany token." });
+    }
   }
 }

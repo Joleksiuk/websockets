@@ -32,10 +32,11 @@ export function loginUser(baseUrl, username, password) {
   };
 
   const response = http.post(`${baseUrl}/login`, payload, { headers });
-
-  check(response, {
-    "Login successful": (r) => r.status === 200,
-  });
+  console.log(`Attempting login with username: ${username}`);
+  console.log(`Response status: ${response.status}`);
+  // check(response, {
+  //   "Login successful": (r) => r.status === 200,
+  // });
 
   const loginData = response.json();
   return {

@@ -18,7 +18,6 @@ export function verifyOrigin(socket: any, request: any) {
     console.log(`Rejected connection from origin: ${origin}`);
     socket.write("HTTP/1.1 403 Forbidden\r\n\r\n");
     socket.destroy();
-    return;
   }
 }
 
@@ -28,7 +27,6 @@ export function verifyConnectionRateLimit(socket: any, req: any) {
   if (limitRate(ip, MAX_REQUEST_PER_SECOND, SECOND_IN_MS)) {
     socket.write("HTTP/1.1 429 Too Many Requests\r\n\r\n");
     socket.destroy();
-    return;
   }
 }
 
@@ -58,7 +56,6 @@ export const secureMessageBeforeProcessing = (
 
   if (validateIncomingMessage(message)) {
     ws.close(1009, "Invalid message type");
-    return;
   }
 };
 

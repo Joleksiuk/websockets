@@ -1,5 +1,8 @@
 import { COOKIE_SECRET, JWT_SECRET } from "../config";
-import { extractJwtFromRequest } from "../middlewares/cookieService";
+import {
+  extractJwtFromRequest,
+  isValidToken,
+} from "../middlewares/cookieService";
 import jwt from "jsonwebtoken";
 
 export function authenticateToken(token: string): any {
@@ -35,10 +38,9 @@ export function authenticate(
 }
 
 export function authenticateConnectionRequest(socket: any, req: any) {
-  //   const authorizationToken = extractJwtFromRequest(req, COOKIE_SECRET);
-  //   if (!isValidToken(authorizationToken)) {
-  //     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-  //     socket.destroy();
-  //     return;
-  //   }
+  const authorizationToken = extractJwtFromRequest(req, COOKIE_SECRET);
+  if (!isValidToken(authorizationToken)) {
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    socket.destroy();
+  }
 }

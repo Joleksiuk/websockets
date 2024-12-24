@@ -9,6 +9,8 @@ import { COOKIE_SECRET } from "./config";
 import { authenticateRequest } from "./middlewares/authentication";
 import { helmetWithCSP } from "./middlewares/helmetWithCSP";
 import { corsOptions } from "./middlewares/cors";
+import rateLimiter from "./utils/rateLimiter";
+import bruteForceProtection from "./middlewares/bruteForceProtection";
 
 function handleError(
   err: any,
@@ -23,13 +25,17 @@ function handleError(
 }
 
 const app: Application = express();
-app.use(morgan("tiny"));
+app.use(morgan("short"));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.set("trust proxy", 1);
 app.use(cookieParser(COOKIE_SECRET));
 app.use(helmetWithCSP);
 app.use("/secure", authenticateRequest);
+app.use(rateLimiter);
+//app.use(bruteForceProtection);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 Routes.forEach((route) => {
   (app as any)[route.method](
