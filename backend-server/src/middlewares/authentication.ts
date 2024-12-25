@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 import {
@@ -7,8 +7,8 @@ import {
 } from "../service/AuthenticationService";
 
 export const authenticateRequest = async (
-  req: Request,
-  res: Response,
+  req: any,
+  res: any,
   next: NextFunction
 ) => {
   try {
@@ -37,24 +37,5 @@ export const authenticateRequest = async (
   } catch (error) {
     console.error("Authentication error:", error);
     return res.status(500).send("Internal server error.");
-  }
-};
-
-const checkJwt = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) {
-    return;
-  }
-
-  const token = authHeader.startsWith("Bearer ")
-    ? authHeader.slice(7, authHeader.length)
-    : authHeader;
-
-  try {
-    const jwtPayload = jwt.verify(token, JWT_SECRET);
-    res.locals.jwtPayload = jwtPayload;
-    next();
-  } catch (error) {
-    res.status(401).send("Invalid token");
   }
 };

@@ -33,9 +33,9 @@ app.use(cookieParser(COOKIE_SECRET));
 app.use(helmetWithCSP);
 app.use("/secure", authenticateRequest);
 app.use(rateLimiter);
-//app.use(bruteForceProtection);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bruteForceProtection);
 
 Routes.forEach((route) => {
   (app as any)[route.method](

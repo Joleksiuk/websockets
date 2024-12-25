@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction } from "express";
-import { getRepository } from "typeorm";
-
+import { NextFunction } from "express";
 import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
 
-export const checkRole = (roles: Array<string>) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+const roles = ["admin"];
+
+export const authorizeRequestAsAdmin = async (
+  req: any,
+  res: any,
+  next: NextFunction
+) => {
+  try {
     const id = res.locals.jwtPayload.userId;
 
     const userRepository = AppDataSource.getRepository(User);
@@ -19,5 +23,8 @@ export const checkRole = (roles: Array<string>) => {
     //Check if array of authorized roles includes the user's role
     if (roles.indexOf(user.role) > -1) next();
     else res.status(401).send();
-  };
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return res.status(500).send("Internal server error.");
+  }
 };
