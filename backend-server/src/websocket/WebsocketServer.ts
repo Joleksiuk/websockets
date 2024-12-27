@@ -1,5 +1,6 @@
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 import {
+  addMessageToQueue,
   handleMessage,
   handleUserLeftRoom,
   isClientAliveMessage,
@@ -23,6 +24,8 @@ function onSocketPreError(error: Error) {
 function onSocketPostError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
 }
+
+export const userWebSockets: Map<number, WebSocket> = new Map();
 
 export default function initializeWebSocketServer(server: any) {
   const wss: WebSocketServer = new WebSocketServer({ noServer: true });
@@ -49,7 +52,7 @@ export default function initializeWebSocketServer(server: any) {
       if (isClientAliveMessage(message)) {
         ws.isAlive = true;
       } else {
-        handleMessage(message, ws);
+        addMessageToQueue(message);
       }
     });
 

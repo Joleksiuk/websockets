@@ -12,6 +12,7 @@ import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
 import { rooms } from "./WebsocketServer";
+import { taskQueue } from "../worker";
 
 export const rateLimitMap = new Map<
   string,
@@ -56,30 +57,40 @@ export const sendHealthCheck = (ws: WebSocketExt) => {
   ws.send(JSON.stringify(pingMessage));
 };
 
-export function handleMessage(message: any, ws: WebSocket): void {
+export async function addMessageToQueue(message: any) {
   try {
-    const clientMessage: ClientMessage = JSON.parse(message);
-    console.log("Received message from client: ", clientMessage);
-    const { eventName } = clientMessage;
+    const messageString = message.toString();
+    const clientMessage: ClientMessage = JSON.parse(messageString);
 
-    switch (eventName) {
-      case "JOIN ROOM":
-        handleUserJoinedRoom(clientMessage, ws);
-        break;
-      case "LEAVE ROOM":
-        handleUserLeftRoom(ws);
-        break;
-      case "SEND CHAT MESSAGE":
-        handleUserSendChatMessage(
-          clientMessage as UserSentChatMessageClientMessage
-        );
-        break;
-      default:
-        console.warn("Unknown eventName: ", eventName);
-        break;
-    }
+    await taskQueue.add(clientMessage);
+    console.log("Message added to queue:", clientMessage);
   } catch (error) {
-    console.error("Error parsing message: ", error);
+    console.error("Error parsing or adding message to queue: ", error);
+  }
+}
+
+//TODO userId cannot be serialized
+export function handleMessage(clientMessage): void {
+  console.log("Received message from client: ", clientMessage);
+  const { eventName } = clientMessage;
+
+  switch (eventName) {
+    case "JOIN ROOM":
+      //todo get ws from aarray
+      handleUserJoinedRoom(clientMessage, clientMessage.ws);
+      break;
+    case "LEAVE ROOM":
+      //todo get ws
+      handleUserLeftRoom(clientMessage.ws);
+      break;
+    case "SEND CHAT MESSAGE":
+      handleUserSendChatMessage(
+        clientMessage as UserSentChatMessageClientMessage
+      );
+      break;
+    default:
+      console.warn("Unknown eventName: ", eventName);
+      break;
   }
 }
 

@@ -47,6 +47,7 @@ export type ClientMessage<
 > = {
   eventName: ClientEvent;
   payload: TPayload;
+  ws?: WebSocket;
 };
 
 export type UserJoinedClientMessagePayload = {

@@ -26,13 +26,6 @@ export class User {
   password: string;
 
   @Column()
-  @Length(8, 100)
-  email: string;
-
-  @Column()
-  isEmailConfirmed: boolean;
-
-  @Column()
   @IsNotEmpty()
   role: string;
 

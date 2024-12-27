@@ -1,29 +1,36 @@
-# Use the Node.js 20 base image for the build stage
+# Build stage: Prepare the Backend
 FROM node:20 as build-stage
 
-# Step 2: Prepare the Backend
+# Set the working directory for the backend
 WORKDIR /app/backend-server
 
-# Copy backend files
+# Copy package.json and package-lock.json for dependencies
 COPY backend-server/package*.json ./
-COPY backend-server/ ./
 
-# Install backend dependencies
+# Install dependencies
 RUN npm install
 
-# Final stage: Running the Backend
+# Copy the rest of the backend files
+COPY backend-server/ ./
+
+# Compile TypeScript to JavaScript
+RUN npm run build
+
+# Final stage: Running the Backend and Worker
 FROM node:20
 
-# Set working directory in the final image
+# Set the working directory in the final image
 WORKDIR /app/backend-server
 
-# Copy backend files and frontend build from the build stage
+# Copy compiled JavaScript files from the build stage
 COPY --from=build-stage /app/backend-server ./
 
-# Expose the port the Express server listens on
+COPY --from=build-stage /app/backend-server/dist ./dist
+# Expose the port for the Express server
 EXPOSE 8082
 
-# Start the server
+# Default command will start the server
 CMD ["npm", "start"]
 
+# Allow overriding the command for workers
 ENV NODE_ENV=test

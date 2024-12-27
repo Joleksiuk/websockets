@@ -24,11 +24,10 @@ export class UserController {
   }
 
   async createNewUser(req: Request, res: Response) {
-    let { username, password, email, role } = req.body;
+    let { username, password, role } = req.body;
     let user = new User();
     user.username = username;
     user.password = password;
-    user.email = email;
     user.role = role;
 
     const errors = await validate(user);
@@ -61,7 +60,7 @@ export class UserController {
   }
 
   async getAllUsersByName(req: Request, res: Response) {
-    const name = req.query.name;
+    const name = req.query.name as string;
     const users = await this.userRepository.find({
       where: { username: name },
     });

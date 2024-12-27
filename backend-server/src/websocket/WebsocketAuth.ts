@@ -4,6 +4,7 @@ import {
   isValidToken,
 } from "../middlewares/cookieService";
 import jwt from "jsonwebtoken";
+import { userWebSockets } from "./WebsocketServer";
 
 export function authenticateToken(token: string): any {
   try {
@@ -39,6 +40,10 @@ export function authenticate(
 
 export function authenticateConnectionRequest(socket: any, req: any) {
   const authorizationToken = extractJwtFromRequest(req, COOKIE_SECRET);
+  const decodedJwt = jwt.verify(authorizationToken, JWT_SECRET);
+  const user = decodedJwt.user;
+  userWebSockets[user.userId] = socket;
+
   if (!isValidToken(authorizationToken)) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
     socket.destroy();
