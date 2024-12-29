@@ -26,7 +26,6 @@ export const Routes = [
     validation: [
       body("username").isString().withMessage("username must be a string"),
       body("password").isString().withMessage("password must be a string"),
-      body("email").isEmail().withMessage("email must be a valid email"),
       body("role").isString().withMessage("role must be a string"),
     ],
   },

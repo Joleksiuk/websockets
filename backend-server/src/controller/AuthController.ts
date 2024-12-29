@@ -12,7 +12,7 @@ import {
 } from "../config";
 import { AppDataSource } from "../data-source";
 export class AuthController {
-  private userRepository = AppDataSource.getRepository(User);
+  private readonly userRepository = AppDataSource.getRepository(User);
 
   async getLoggedUser(res: Response): Promise<User> {
     const jwtPayload = res.locals.jwtPayload;

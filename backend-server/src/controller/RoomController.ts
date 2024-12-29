@@ -5,8 +5,8 @@ import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
 
 export class RoomController {
-  private roomRepository = AppDataSource.getRepository(Room);
-  private userRepository = AppDataSource.getRepository(User);
+  private readonly roomRepository = AppDataSource.getRepository(Room);
+  private readonly userRepository = AppDataSource.getRepository(User);
 
   async getLoggedUser(res: Response): Promise<User> {
     const jwtPayload = res.locals.jwtPayload;

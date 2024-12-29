@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 
 export class UserController {
-  private userRepository = AppDataSource.getRepository(User);
+  private readonly userRepository = AppDataSource.getRepository(User);
 
   async getAll(request: Request, response: Response, next: NextFunction) {
     const users = await this.userRepository.find();
@@ -24,11 +24,10 @@ export class UserController {
   }
 
   async createNewUser(req: Request, res: Response) {
-    let { username, password, email, role } = req.body;
+    let { username, password, role } = req.body;
     let user = new User();
     user.username = username;
     user.password = password;
-    user.email = email;
     user.role = role;
 
     const errors = await validate(user);
@@ -52,7 +51,7 @@ export class UserController {
     const id = parseInt(req.params.id);
 
     try {
-      const user = await this.userRepository.findOneOrFail({ where: { id } });
+      await this.userRepository.findOneOrFail({ where: { id } });
       await this.userRepository.delete(id);
       res.status(204).send();
     } catch (error) {
