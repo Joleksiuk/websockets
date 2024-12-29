@@ -8,7 +8,7 @@ const SECOND_IN_MS = 1000;
 
 const allowedOrigins = [
   "https://websockets-front.onrender.com",
-  "http://localhost:3000",
+  "https://localhost:3000",
 ];
 
 export function verifyOrigin(socket: any, request: any) {

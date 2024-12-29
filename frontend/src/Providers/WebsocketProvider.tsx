@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { useAuthContext } from './AuthProvider'
 import { BACKEND_HOST_NAME, USE_SSL } from '../config'
 import { ClientMessage, ServerMessage } from './ws/WebsocketDataModels'
+import { useAuthContext } from './AuthProvider'
 
 const HEARTBEAT_TIMEOUT = 1000 * 2 * 5 + 1000 * 1
 
@@ -62,8 +62,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         const updatedMessages = [...wsMessages, message]
         setWsMessages(updatedMessages)
     }
-    const { user } = useAuthContext()
 
+    const { user } = useAuthContext()
     const heartbeat = (wsArg: WebSocketExt) => {
         console.log('heartbeat')
         if (!wsArg) {
@@ -159,9 +159,11 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
 
     const sendWebsocketMessageToServer = async (message: ClientMessage) => {
+        const enrichedMessage = { ...message, userId: user?.userId }
+
         console.log('Sending message to server:', message)
         if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(message))
+            ws.send(JSON.stringify(enrichedMessage))
         }
     }
 

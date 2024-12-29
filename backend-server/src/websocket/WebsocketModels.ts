@@ -21,6 +21,7 @@ export type ClientEvent =
   | "LEAVE ROOM"
   | "SEND CHAT MESSAGE"
   | "PONG";
+
 export type ServerEvent =
   | "USER JOINED ROOM"
   | "USER LEFT ROOM"
@@ -47,6 +48,7 @@ export type ClientMessage<
 > = {
   eventName: ClientEvent;
   payload: TPayload;
+  userId: number;
   ws?: WebSocket;
 };
 

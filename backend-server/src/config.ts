@@ -1,7 +1,6 @@
 require("dotenv").config();
 
-// export const USE_SSL = process.env.USE_SSL || true;
-export const USE_SSL = false;
+export const USE_SSL = process.env.USE_SSL || true;
 export const LOCAL_SERVER = process.env.RENDER ? false : true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";

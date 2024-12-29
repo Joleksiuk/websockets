@@ -11,7 +11,7 @@ import {
 import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
-import { rooms } from "./WebsocketServer";
+import { rooms, userWebSockets } from "./WebsocketServer";
 import { taskQueue } from "../worker";
 
 export const rateLimitMap = new Map<
@@ -69,19 +69,23 @@ export async function addMessageToQueue(message: any) {
   }
 }
 
-//TODO userId cannot be serialized
 export function handleMessage(clientMessage): void {
   console.log("Received message from client: ", clientMessage);
-  const { eventName } = clientMessage;
+
+  const { eventName, userId } = clientMessage;
+  const ws = userWebSockets.get(Number(userId));
+
+  if (!ws) {
+    console.warn(`WebSocket not found for userId: ${userId}`);
+    return;
+  }
 
   switch (eventName) {
     case "JOIN ROOM":
-      //todo get ws from aarray
-      handleUserJoinedRoom(clientMessage, clientMessage.ws);
+      handleUserJoinedRoom(clientMessage, ws);
       break;
     case "LEAVE ROOM":
-      //todo get ws
-      handleUserLeftRoom(clientMessage.ws);
+      handleUserLeftRoom(ws);
       break;
     case "SEND CHAT MESSAGE":
       handleUserSendChatMessage(
@@ -98,6 +102,7 @@ export async function handleUserJoinedRoom(
   message: UserJoinedClientMessage,
   ws: WebSocket
 ): Promise<void> {
+  console.log("Handling user joined room message: ", message, ws);
   const { roomId, userId } = message.payload;
 
   const roomKey = String(roomId);

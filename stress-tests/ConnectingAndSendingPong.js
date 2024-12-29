@@ -3,8 +3,8 @@ import { check, sleep } from "k6";
 import { generateRandomIpAddress } from "./AuthService.js";
 
 export const options = {
-  vus: 2000,
-  iterations: 3000,
+  vus: 10000,
+  iterations: 10000,
   duration: "1m",
 };
 
@@ -18,7 +18,6 @@ function isPing(data) {
 
 function sendPong(wsArg) {
   sleepForRandomTime();
-  console.log("Sending PONG message to server");
   const pongMessage = {
     eventName: "PONG",
     payload: null,

@@ -3,7 +3,7 @@ import { LOCAL_SERVER } from "../config";
 
 export const corsOptions: CorsOptions = LOCAL_SERVER
   ? {
-      origin: "http://localhost:3000",
+      origin: "https://localhost:3000",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
