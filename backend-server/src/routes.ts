@@ -2,6 +2,7 @@ import { body, param } from "express-validator";
 import { UserController } from "./controller/UserController";
 import { AuthController } from "./controller/AuthController";
 import { RoomController } from "./controller/RoomController";
+import { RabbitMQController } from "./controller/RabbitMQController";
 
 export const Routes = [
   {
@@ -130,6 +131,15 @@ export const Routes = [
     validator: [
       param("id").isInt().withMessage("id must be a number"),
       body("userId").isInt().withMessage("userId must be a number"),
+    ],
+  },
+  {
+    method: "post",
+    route: "/send-message",
+    controller: RabbitMQController,
+    action: "sendMessage",
+    validation: [
+      body("message").isString().withMessage("Message must be a string"),
     ],
   },
 ];

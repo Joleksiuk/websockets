@@ -11,8 +11,11 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=ws
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
     depends_on:
       - db
+      - rabbitmq
     networks:
       - test_network
     deploy:
@@ -50,6 +53,18 @@ services:
         reservations:
           cpus: "0.25" # Reserve 0.25 CPU core
           memory: "128M" # Reserve 128 MB RAM
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - test_network
 
 volumes:
   postgres-data:

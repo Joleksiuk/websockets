@@ -13,6 +13,7 @@ import {
   setupIsAliveInterval,
   setupRateLimitInterval,
 } from "./WebsocketIntervals";
+import { connectRabbitMQ, consumeMessages, publishMessage } from "../rabbitmq";
 
 export const rooms: Map<string, WSRoom> = new Map();
 
@@ -26,6 +27,12 @@ function onSocketPostError(error: Error) {
 
 export default function initializeWebSocketServer(server: any) {
   const wss: WebSocketServer = new WebSocketServer({ noServer: true });
+
+  connectRabbitMQ();
+
+  consumeMessages("websocket_queue", async (message) => {
+    console.log("Consumed message from RabbitMQ:", message);
+  });
 
   server.on("upgrade", (request, socket, head) => {
     console.log("Upgrade request received");
@@ -50,6 +57,7 @@ export default function initializeWebSocketServer(server: any) {
         ws.isAlive = true;
       } else {
         handleMessage(message, ws);
+        publishMessage("websocket_queue", { message });
       }
     });
 
