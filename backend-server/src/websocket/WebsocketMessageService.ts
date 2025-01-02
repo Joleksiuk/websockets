@@ -12,7 +12,7 @@ import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
 import { rooms, userWebSockets } from "./WebsocketServer";
-import { taskQueue } from "../worker";
+import { addMessageToRedisQueue } from "../worker";
 
 export const rateLimitMap = new Map<
   string,
@@ -62,13 +62,13 @@ export async function addMessageToQueue(message: any) {
     const messageString = message.toString();
     const clientMessage: ClientMessage = JSON.parse(messageString);
 
-    await taskQueue.add(clientMessage);
+    console.log("Entering addMessageToQueue with message:", clientMessage);
+    await addMessageToRedisQueue(clientMessage);
     console.log("Message added to queue:", clientMessage);
   } catch (error) {
-    console.error("Error parsing or adding message to queue: ", error);
+    console.error("Error parsing or adding message to queue:", error);
   }
 }
-
 export function handleMessage(clientMessage): void {
   console.log("Received message from client: ", clientMessage);
 

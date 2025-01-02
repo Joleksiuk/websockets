@@ -28,17 +28,38 @@ function onSocketPostError(error: Error) {
   console.error("Error occurred in websocket server: ", error);
 }
 
-const redisSubscriber = new Redis({
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379", 10),
-  password: process.env.REDIS_PASSWORD || "",
-});
-
 export const rooms: Map<string, WSRoom> = new Map();
 export const userWebSockets: Map<number, WebSocket> = new Map();
 
 export default function initializeWebSocketServer(server: any) {
   const wss: WebSocketServer = new WebSocketServer({ noServer: true });
+  const redisSubscriber = new Redis({
+    host: process.env.REDIS_HOST || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379", 10),
+    password: process.env.REDIS_PASSWORD || "",
+    connectTimeout: 10000, // 10-second timeout for connections
+    commandTimeout: 5000, // 5-second timeout for commands
+  });
+
+  redisSubscriber.subscribe("websocket:process", (err, count) => {
+    if (err) {
+      console.error("Failed to subscribe to channel:", err);
+    } else {
+      console.log(
+        `Subscribed to ${count} channel(s). Listening for updates on "websocket:process".`
+      );
+    }
+  });
+
+  redisSubscriber.on("message", (channel, message) => {
+    if (channel === "websocket:process") {
+      const parsedMessage = JSON.parse(message);
+      console.log("Received message from channel:", parsedMessage);
+
+      // Handle the message (e.g., broadcast to WebSocket clients)
+      // handleMessage(parsedMessage);
+    }
+  });
 
   redisSubscriber.subscribe("websocket:process");
   redisSubscriber.on("message", (channel, message) => {
@@ -47,6 +68,14 @@ export default function initializeWebSocketServer(server: any) {
       console.log("Processing delegated message from worker:", clientMessage);
       handleMessage(clientMessage);
     }
+  });
+
+  redisSubscriber.on("connect", () => {
+    console.log("WebSocket server connected to Redis successfully.");
+  });
+
+  redisSubscriber.on("error", (err) => {
+    console.error("WebSocket server Redis connection error:", err);
   });
 
   server.on("upgrade", (request, socket, head) => {

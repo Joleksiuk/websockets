@@ -29,7 +29,7 @@ COPY --from=build-stage /app/backend-server/dist ./dist
 # Expose the port for the Express server
 EXPOSE 8082
 
-# Default command will start the server
+# Default command starts the WebSocket server
 CMD ["npm", "start"]
 
 # Allow overriding the command for workers

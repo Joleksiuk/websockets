@@ -1,28 +1,47 @@
 import Redis from "ioredis";
-import { ClientMessage } from "./websocket/WebsocketModels";
-import Queue from "bull";
 
-export const taskQueue = new Queue<ClientMessage>("taskQueue", {
-  redis: {
-    host: process.env.REDIS_HOST || "localhost",
-    port: parseInt(process.env.REDIS_PORT || "6379", 10),
-    password: process.env.REDIS_PASSWORD || "",
-  },
-});
-
-const redisPublisher = new Redis({
+const redisClient = new Redis({
   host: process.env.REDIS_HOST || "localhost",
   port: parseInt(process.env.REDIS_PORT || "6379", 10),
   password: process.env.REDIS_PASSWORD || "",
 });
 
-taskQueue.process(async (job) => {
-  console.log(`Processing job ${job.id} with data:`, job.data);
-
-  try {
-    await redisPublisher.publish("websocket:process", JSON.stringify(job.data));
-    console.log(`Job ${job.id} delegated to WebSocket server.`);
-  } catch (error) {
-    console.error(`Failed to delegate job ${job.id}:`, error);
-  }
+redisClient.on("connect", () => {
+  console.log("Worker connected to Redis successfully.");
 });
+
+redisClient.on("error", (err) => {
+  console.error("Worker Redis connection error:", err);
+});
+
+export async function addMessageToRedisQueue(message: any) {
+  try {
+    const messageString = JSON.stringify(message);
+
+    console.log("Attempting to push message to Redis queue:", messageString);
+    const result = await redisClient.rpush("testQueue", messageString);
+    console.log(
+      "Message pushed to Redis queue successfully. Queue length:",
+      result
+    );
+  } catch (error) {
+    console.error("Error adding message to Redis queue:", error);
+  }
+}
+
+async function processMessages() {
+  while (true) {
+    try {
+      const result = await redisClient.blpop("testQueue", 0);
+      const message = JSON.parse(result[1]);
+      console.log("Processing message from Redis queue:", message);
+
+      await redisClient.publish("websocket:process", JSON.stringify(message));
+      console.log("Message published to WebSocket server:", message);
+    } catch (error) {
+      console.error("Error processing message from Redis queue:", error);
+    }
+  }
+}
+
+processMessages();
