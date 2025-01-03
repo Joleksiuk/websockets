@@ -30,6 +30,16 @@ export class User {
   role: string;
 
   @Column()
+  @IsNotEmpty()
+  email: string;
+
+  @Column()
+  isEmailConfirmed: boolean;
+
+  @Column({ default: false })
+  isLoggingBlocked: boolean;
+
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 

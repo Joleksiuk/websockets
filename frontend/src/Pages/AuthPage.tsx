@@ -5,11 +5,15 @@ import { ThemeProvider } from '@mui/material'
 import { theme } from './StartPage.styled'
 import { useModeContext } from '../Providers/ModeProvider'
 import Navbar from '../Components/Navbar/Navbar'
+import CaptchaComponent from '../Components/Captcha/Captcha'
 
 export default function AuthPage() {
-    const { currentPage } = useAuthContext()
+    const { currentPage, passedCaptcha } = useAuthContext()
     const { mode } = useModeContext()
     const getContent = () => {
+        if (!passedCaptcha) {
+            return <CaptchaComponent />
+        }
         if (currentPage === 'signin') {
             return <SingIn />
         }

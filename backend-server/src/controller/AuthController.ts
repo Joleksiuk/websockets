@@ -4,6 +4,8 @@ import { validate } from "class-validator";
 
 import { User } from "../entity/User";
 import {
+  CAPTCHA_SECRET,
+  CAPTCHA_URL,
   COOKIE_RT_KEY,
   COOKIET_JWT_KEY,
   JWT_EXPIRATION,
@@ -11,6 +13,7 @@ import {
   JWT_SECRET,
 } from "../config";
 import { AppDataSource } from "../data-source";
+import axios from "axios";
 export class AuthController {
   private readonly userRepository = AppDataSource.getRepository(User);
 
@@ -37,6 +40,10 @@ export class AuthController {
       user = await this.userRepository.findOneOrFail({ where: { username } });
     } catch (error) {
       res.status(401).send();
+    }
+
+    if (!user.isEmailConfirmed) {
+      res.status(401).send("Email is not confirmed");
     }
 
     if (!user.checkIfUnencryptedPasswordIsValid(password)) {
@@ -134,5 +141,38 @@ export class AuthController {
     this.userRepository.save(user);
 
     res.status(204).send();
+  }
+
+  async verifyCaptcha(req: Request, res: Response) {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).send({ message: "CAPTCHA token is required" });
+    }
+
+    try {
+      const response = await axios.post(
+        CAPTCHA_URL,
+        {},
+        {
+          params: {
+            secret: CAPTCHA_SECRET,
+            response: token,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        return res
+          .status(200)
+          .send({ message: "CAPTCHA verified successfully!" });
+      } else {
+        console.log(response.data);
+        return res.status(400).send({ message: "CAPTCHA verification failed" });
+      }
+    } catch (error) {
+      console.error("CAPTCHA verification error:", error);
+      return res.status(500).send({ message: "Internal server error" });
+    }
   }
 }

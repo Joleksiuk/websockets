@@ -25,6 +25,8 @@ interface AuthContextType {
     currentPage: AuthPageType
     setCurrentPage: (page: AuthPageType) => void
     isAuthenticating: boolean
+    passedCaptcha: boolean
+    setPassedCaptcha: (value: boolean) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -37,6 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [currentPage, setCurrentPage] = useState<AuthPageType>('signin')
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false)
+    const [passedCaptcha, setPassedCaptcha] = useState<boolean>(false)
 
     const initializeAuth = async () => {
         try {
@@ -73,6 +76,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 currentPage,
                 setCurrentPage,
                 isAuthenticating,
+                passedCaptcha,
+                setPassedCaptcha,
             }}
         >
             {children}

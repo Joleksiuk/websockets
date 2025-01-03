@@ -2,6 +2,7 @@ import { body, param } from "express-validator";
 import { UserController } from "./controller/UserController";
 import { AuthController } from "./controller/AuthController";
 import { RoomController } from "./controller/RoomController";
+import { USE_EMAIL_VALIDATION } from "./config";
 
 export const Routes = [
   {
@@ -22,16 +23,25 @@ export const Routes = [
     method: "post",
     route: "/users",
     controller: UserController,
-    action: "createNewUser",
-    validation: [
-      body("username").isString().withMessage("username must be a string"),
-      body("password").isString().withMessage("password must be a string"),
-      body("role").isString().withMessage("role must be a string"),
-    ],
+    action: USE_EMAIL_VALIDATION
+      ? "createNewUserAfterEmailConfirmation"
+      : "createNewUser",
+    validation: USE_EMAIL_VALIDATION
+      ? [
+          body("username").isString().withMessage("username must be a string"),
+          body("password").isString().withMessage("password must be a string"),
+          body("email").isEmail().withMessage("email must be a valid email"),
+          body("role").isString().withMessage("role must be a string"),
+        ]
+      : [
+          body("username").isString().withMessage("username must be a string"),
+          body("password").isString().withMessage("password must be a string"),
+          body("role").isString().withMessage("role must be a string"),
+        ],
   },
   {
-    method: "post",
-    route: "secure/users/confirm-email",
+    method: "get",
+    route: "/confirm",
     controller: UserController,
     action: "confirmEmail",
   },
@@ -131,5 +141,11 @@ export const Routes = [
       param("id").isInt().withMessage("id must be a number"),
       body("userId").isInt().withMessage("userId must be a number"),
     ],
+  },
+  {
+    method: "post",
+    route: "/captcha/verify",
+    controller: AuthController,
+    action: "verifyCaptcha",
   },
 ];

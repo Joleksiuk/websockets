@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 export const USE_SSL = process.env.USE_SSL || true;
+export const USE_EMAIL_VALIDATION = true;
 export const LOCAL_SERVER = process.env.RENDER ? false : true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
@@ -41,3 +42,10 @@ export const DATABASE_PORT = process.env.DATABASE_PORT || "5432";
 export const DATABASE_USER = process.env.DATABASE_USER || "postgres";
 export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || "postgres";
 export const DATABASE_NAME = process.env.DATABASE_NAME || "ws";
+
+export const EMAIL = "julaapex@gmail.com";
+export const EMAIL_PASS = "nehl uina lyvc xnzh";
+
+export const CAPTCHA_KEY = process.env.CAPTCHA_KEY;
+export const CAPTCHA_SECRET = process.env.CAPTCH_SECRET_KEY;
+export const CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify";

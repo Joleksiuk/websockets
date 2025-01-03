@@ -11,3 +11,6 @@ export const SECURE_BACKEND_URL = `${PROTOCOLE}://${BACKEND_HOST_NAME}/secure`
 
 export const JWT_EXPIRATION = '1d'
 export const JWT_REFRESH_EXPIRATION = '7d'
+
+export const CAPTCHA_KEY =
+    process.env.CAPTCHA_KEY || '6LfqNq0qAAAAAKSX3m9L3-vbyMoFHbLtr74H7dHY'

@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 import { AppDataSource } from "../data-source";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config";
+import { BACKEND_HOST_NAME, JWT_SECRET, PROTOCOLE } from "../config";
+import { generateConfirmationToken, sendEmail } from "../service/EmailService";
 
 export class UserController {
   private readonly userRepository = AppDataSource.getRepository(User);
@@ -23,11 +24,60 @@ export class UserController {
     response.send(user);
   }
 
-  async createNewUser(req: Request, res: Response) {
-    let { username, password, role } = req.body;
+  async createNewUserAfterEmailConfirmation(req: Request, res: Response) {
+    const { username, password, role, email } = req.body;
+
     let user = new User();
     user.username = username;
     user.password = password;
+    user.email = email;
+    user.role = role;
+    user.isEmailConfirmed = false;
+
+    const errors = await validate(user);
+    if (errors.length > 0) {
+      res.status(400).send(errors);
+      return;
+    }
+
+    user.hashPassword();
+    let savedUser;
+
+    try {
+      savedUser = await this.userRepository.save(user);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send("Something wron with saving user");
+      return;
+    }
+
+    try {
+      const token = generateConfirmationToken(savedUser.id);
+
+      const confirmationLink = `${PROTOCOLE}://${BACKEND_HOST_NAME}/confirm?token=${token}`;
+      const subject = "Email Confirmation";
+      const html = `
+          <p>Hi ${username},</p>
+          <p>Thank you for registering. Please confirm your email by clicking the link below:</p>
+          <a href="${confirmationLink}">Confirm Email</a>
+        `;
+
+      await sendEmail(email, subject, html, process.env.EMAIL_PASS);
+      res.status(201).send("User created. Confirmation email sent.");
+    } catch (e) {
+      console.log(e);
+      res.status(500).send("Something went wrong with sending email");
+      return;
+    }
+  }
+
+  async createNewUser(req: Request, res: Response) {
+    let { username, password, role, email } = req.body;
+    let user = new User();
+    user.username = username;
+    user.password = password;
+    user.email = email;
+    user.isEmailConfirmed = true;
     user.role = role;
 
     const errors = await validate(user);
@@ -75,18 +125,26 @@ export class UserController {
   }
 
   async confirmEmail(req: Request, res: Response) {
-    const { token } = req.params;
+    const { token } = req.query;
+    try {
+      jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+      console.error("Error while veryfing token", error);
+      res.status(401).json({ message: "Unauthorized" });
+    }
 
     try {
       const { userId } = jwt.verify(token, JWT_SECRET);
-      console.log(`Użytkownik o ID ${userId} potwierdził e-mail`);
-
-      res.status(200).json({ message: "E-mail potwierdzony pomyślnie!" });
+      const user = await this.userRepository.findOneOrFail({
+        where: { id: userId },
+      });
+      user.isEmailConfirmed = true;
+      await this.userRepository.save(user);
+      console.log(`User with ID ${userId} confirmed e-mail`);
+      res.status(200).json({ message: "E-mail confirmed!" });
     } catch (error) {
-      console.error("Błąd weryfikacji tokenu:", error);
-      res
-        .status(400)
-        .json({ message: "Nieprawidłowy lub przeterminowany token." });
+      console.error("Error while veryfing token", error);
+      res.status(404).json({ message: "User not found" });
     }
   }
 }
