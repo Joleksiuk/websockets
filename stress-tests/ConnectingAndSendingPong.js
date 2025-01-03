@@ -3,9 +3,18 @@ import { check, sleep } from "k6";
 import { generateRandomIpAddress } from "./AuthService.js";
 
 export const options = {
-  vus: 10000,
-  iterations: 10000,
-  duration: "1m",
+  stages: [
+    { duration: "1m", target: 1000 },
+    { duration: "1m", target: 2000 },
+    { duration: "1m", target: 3000 },
+    { duration: "1m", target: 4000 },
+    { duration: "1m", target: 5000 },
+    { duration: "1m", target: 6000 },
+    { duration: "1m", target: 7000 },
+    { duration: "1m", target: 8000 },
+    { duration: "1m", target: 9000 },
+    { duration: "1m", target: 10000 },
+  ],
 };
 
 function isPing(data) {

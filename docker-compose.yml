@@ -18,6 +18,14 @@ services:
       - redis
     networks:
       - test_network
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: "8G"
+        reservations:
+          cpus: "2.0"
+          memory: "4G"
 
   worker:
     build:

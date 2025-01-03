@@ -2,7 +2,7 @@ import WebSocket from "ws";
 import { WebSocketExt } from "./WebsocketModels";
 import { rateLimitMap, sendHealthCheck } from "./WebsocketMessageService";
 
-const HEARTBEAT_INTERVAL: number = 5000 * 2;
+const HEARTBEAT_INTERVAL: number = 5000 * 6;
 const MAX_CONNECTION_TIME: number = 5000 * 1000;
 
 function isClientAliveForTooLong(ws: WebSocketExt) {
