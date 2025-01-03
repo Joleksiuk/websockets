@@ -1,0 +1,201 @@
+1000
+     checks................: 100.00% 1000 out of 1000
+     data_received.........: 1.9 MB  59 kB/s
+     data_sent.............: 807 kB  26 kB/s
+     iteration_duration....: avg=30.84s   min=30.03s med=30.93s   max=31.52s   p(90)=31.45s   p(95)=31.49s
+     iterations............: 1000    31.711614/s
+     vus...................: 485     min=485          max=1000
+     vus_max...............: 1000    min=1000         max=1000
+     ws_connecting.........: avg=288.07ms min=2.09ms med=353.41ms max=521.03ms p(90)=503.17ms p(95)=510.27ms
+     ws_msgs_received......: 1000    31.711614/s
+     ws_msgs_sent..........: 1000    31.711614/s
+     ws_session_duration...: avg=30.28s   min=30s    med=30.35s   max=30.52s   p(90)=30.5s    p(95)=30.51s
+     ws_sessions...........: 1000    31.711614/s
+
+2000
+     checks................: 100.00% 2000 out of 2000
+     data_received.........: 3.7 MB  110 kB/s
+     data_sent.............: 1.6 MB  47 kB/s
+     iteration_duration....: avg=31.73s min=30.03s med=31.66s  max=34.09s p(90)=32.77s p(95)=33.93s
+     iterations............: 2000    58.65805/s
+     vus...................: 103     min=103          max=2000
+     vus_max...............: 2000    min=2000         max=2000
+     ws_connecting.........: avg=1.18s  min=2.06ms med=966.5ms max=3.17s  p(90)=1.91s  p(95)=3.13s
+     ws_msgs_received......: 2000    58.65805/s
+     ws_msgs_sent..........: 2000    58.65805/s
+     ws_session_duration...: avg=31.18s min=30s    med=30.96s  max=33.17s p(90)=31.91s p(95)=33.13s
+     ws_sessions...........: 2000    58.65805/s
+
+3000                                                                                                                                                                                                                                                                            
+     checks................: 100.00% 3000 out of 3000
+     data_received.........: 5.6 MB  161 kB/s
+     data_sent.............: 2.4 MB  69 kB/s
+     iteration_duration....: avg=32.53s min=30.04s med=32.47s max=34.91s p(90)=34.43s p(95)=34.55s
+     iterations............: 3000    85.921329/s
+     vus...................: 9       min=9            max=3000
+     vus_max...............: 3000    min=3000         max=3000
+     ws_connecting.........: avg=1.98s  min=9.35ms med=1.9s   max=3.89s  p(90)=3.53s  p(95)=3.58s
+     ws_msgs_received......: 3000    85.921329/s
+     ws_msgs_sent..........: 3000    85.921329/s
+     ws_session_duration...: avg=31.98s min=30s    med=31.9s  max=33.89s p(90)=33.53s p(95)=33.58s
+     ws_sessions...........: 3000    85.921329/s
+
+4000                                                                                                                                                                                                                                                                    
+     checks................: 100.00% 4000 out of 4000
+     data_received.........: 7.5 MB  195 kB/s
+     data_sent.............: 3.2 MB  84 kB/s
+     iteration_duration....: avg=33.21s min=30.03s med=33.03s max=38.39s p(90)=35.55s p(95)=38.03s
+     iterations............: 4000    104.171564/s
+     vus...................: 289     min=289          max=4000
+     vus_max...............: 4000    min=4000         max=4000
+     ws_connecting.........: avg=2.65s  min=9.54ms med=2.21s  max=7.65s  p(90)=5.15s  p(95)=7.26s
+     ws_msgs_received......: 4000    104.171564/s
+     ws_msgs_sent..........: 4000    104.171564/s
+     ws_session_duration...: avg=32.66s min=30.01s med=32.21s max=37.65s p(90)=35.2s  p(95)=37.26s
+     ws_sessions...........: 4000    104.171564/s
+
+
+5000
+✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  82% — ✓ 4147 / ✗ 853                                                                                                                                                                                                                                                  
+
+     checks................: 82.94% 4147 out of 5000
+     data_received.........: 7.8 MB 200 kB/s
+     data_sent.............: 3.3 MB 86 kB/s
+     iteration_duration....: avg=28.2s  min=917.14ms med=32.94s max=38.77s p(90)=37.89s p(95)=38.35s
+     iterations............: 5000   128.924846/s
+     vus...................: 523    min=523          max=5000
+     vus_max...............: 5000   min=5000         max=5000
+     ws_connecting.........: avg=2.76s  min=7.3ms    med=2.28s  max=7.95s  p(90)=7.2s   p(95)=7.59s
+     ws_msgs_received......: 4147   106.930267/s
+     ws_msgs_sent..........: 4147   106.930267/s
+     ws_session_duration...: avg=27.64s min=17.91ms  med=32.28s max=37.95s p(90)=37.2s  p(95)=37.59s
+     ws_sessions...........: 5000   128.924846/s
+
+6000
+ ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  55% — ✓ 3329 / ✗ 2671                                                                                                                                                                                                                                                 
+
+     checks................: 55.48% 3329 out of 6000
+     data_received.........: 6.2 MB 164 kB/s
+     data_sent.............: 2.7 MB 71 kB/s
+     iteration_duration....: avg=19.4s  min=628.39ms med=31.86s max=37.96s p(90)=34.59s p(95)=35.04s
+     iterations............: 6000   158.041249/s
+     vus...................: 45     min=45           max=5991
+     vus_max...............: 6000   min=6000         max=6000
+     ws_connecting.........: avg=2.14s  min=2.61ms   med=1.56s  max=7.41s  p(90)=4.19s  p(95)=4.6s
+     ws_msgs_received......: 3329   87.686553/s
+     ws_msgs_sent..........: 3329   87.686553/s
+     ws_session_duration...: avg=18.79s min=10.56ms  med=31.57s max=37.41s p(90)=34.19s p(95)=34.6s
+     ws_sessions...........: 6000   158.041249/s
+
+7000
+✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  34% — ✓ 2430 / ✗ 4570                                                                                                                                                                                                                                                 
+
+     checks................: 34.71% 2430 out of 7000
+     data_received.........: 4.5 MB 119 kB/s
+     data_sent.............: 2.0 MB 52 kB/s
+     iteration_duration....: avg=13.36s min=400.94ms med=3.02s max=38.09s p(90)=33.73s p(95)=34.2s
+     iterations............: 7000   183.734968/s
+     vus...................: 168    min=168          max=6721
+     vus_max...............: 7000   min=7000         max=7000
+     ws_connecting.........: avg=2.28s  min=1.54ms   med=1.97s max=7.78s  p(90)=3.47s  p(95)=3.9s
+     ws_msgs_received......: 2430   63.782282/s
+     ws_msgs_sent..........: 2430   63.782282/s
+     ws_session_duration...: avg=12.69s min=1.54ms   med=1.99s max=37.78s p(90)=33.47s p(95)=33.9s
+     ws_sessions...........: 7000   183.734968/s
+
+
+8000
+ ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  27% — ✓ 2217 / ✗ 5783                                                                                                                                                                                                                                                 
+
+     checks................: 27.71% 2217 out of 8000
+     data_received.........: 4.1 MB 118 kB/s
+     data_sent.............: 1.8 MB 51 kB/s
+     iteration_duration....: avg=11.72s min=303.23ms med=3.67s max=35.12s p(90)=34.14s p(95)=34.56s
+     iterations............: 8000   227.68202/s
+     vus...................: 179    min=179          max=7707
+     vus_max...............: 8000   min=8000         max=8000
+     ws_connecting.........: avg=2.63s  min=4.51ms   med=2.54s max=4.79s  p(90)=3.89s  p(95)=4.33s
+     ws_msgs_received......: 2217   63.09638/s
+     ws_msgs_sent..........: 2217   63.09638/s
+     ws_session_duration...: avg=10.95s min=4.51ms   med=2.56s max=34.79s p(90)=33.94s p(95)=34.33s
+     ws_sessions...........: 8000   227.68202/s
+9000
+
+   ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  16% — ✓ 1446 / ✗ 7554                                                                                                                                                                                                                                                 
+
+     checks................: 16.06% 1446 out of 9000
+     data_received.........: 2.7 MB 77 kB/s
+     data_sent.............: 1.2 MB 33 kB/s
+     iteration_duration....: avg=8.58s min=70.8ms med=4.37s max=34.93s p(90)=34.49s p(95)=34.59s
+     iterations............: 9000   257.600414/s
+     vus...................: 87     min=87           max=8430
+     vus_max...............: 9000   min=9000         max=9000
+     ws_connecting.........: avg=2.91s min=0s     med=3.03s max=4.67s  p(90)=4.37s  p(95)=4.4s
+     ws_msgs_received......: 1446   41.3878/s
+     ws_msgs_sent..........: 1446   41.3878/s
+     ws_session_duration...: avg=7.73s min=0s     med=3.06s max=34.67s p(90)=34.38s p(95)=34.43s
+     ws_sessions...........: 9000   257.600414/s
+
+10000 
+1.0 - 512 mB
+ ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  13% — ✓ 1383 / ✗ 8617                                                                                                                                                                                                                                                 
+
+     checks................: 13.83% 1383 out of 10000
+     data_received.........: 2.6 MB 71 kB/s
+     data_sent.............: 1.1 MB 31 kB/s
+     iteration_duration....: avg=9.22s min=170.89ms med=5.74s max=36.44s p(90)=35.79s p(95)=35.91s
+     iterations............: 10000  274.332662/s
+     vus...................: 1224   min=1224          max=9599
+     vus_max...............: 10000  min=10000         max=10000
+     ws_connecting.........: avg=4.05s min=0s       med=4.17s max=6.2s   p(90)=5.69s  p(95)=5.78s
+     ws_msgs_received......: 1383   37.940207/s
+     ws_msgs_sent..........: 1383   37.940207/s
+     ws_session_duration...: avg=8.2s  min=0s       med=4.21s max=36.2s  p(90)=35.7s  p(95)=35.78s
+     ws_sessions...........: 10000  274.332662/s
+
+      
+10000
+4.0 - 8GB 
+
+                                                                                                                                                                                                                                                                            
+     ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  18% — ✓ 1896 / ✗ 8104                                                                                                                                                                                                                                                 
+
+     checks................: 18.96% 1896 out of 10000
+     data_received.........: 3.5 MB 98 kB/s
+     data_sent.............: 1.5 MB 42 kB/s
+     iteration_duration....: avg=10.93s min=223.72ms med=5.83s max=36.33s p(90)=36.03s p(95)=36.14s
+     iterations............: 10000  275.113045/s
+     vus...................: 1789   min=1789          max=9833
+     vus_max...............: 10000  min=10000         max=10000
+     ws_connecting.........: avg=4.23s  min=3.94ms   med=4.19s max=6.06s  p(90)=5.88s  p(95)=5.95s
+     ws_msgs_received......: 1896   52.161433/s
+     ws_msgs_sent..........: 1896   52.161433/s
+     ws_session_duration...: avg=9.91s  min=4.45ms   med=4.21s max=36.06s p(90)=35.88s p(95)=35.95s
+     ws_sessions...........: 10000  275.113045/s
+
+
+10000
+8.0 - 16GB 
+
+     ✗ WebSocket connection closed by timeout                                                                                                                                                                                                                                  
+      ↳  17% — ✓ 1896 / ✗ 8104                                                                                                                                                                                                                                                 
+
+     checks................: 18.96% 1896 out of 10000
+     data_received.........: 3.5 MB 98 kB/s
+     data_sent.............: 1.5 MB 42 kB/s
+     iteration_duration....: avg=10.93s min=223.72ms med=5.83s max=36.33s p(90)=36.03s p(95)=36.14s
+     iterations............: 10000  275.113045/s
+     vus...................: 1789   min=1789          max=9833
+     vus_max...............: 10000  min=10000         max=10000
+     ws_connecting.........: avg=4.23s  min=3.94ms   med=4.19s max=6.06s  p(90)=5.88s  p(95)=5.95s
+     ws_msgs_received......: 1896   52.161433/s
+     ws_msgs_sent..........: 1896   52.161433/s
+     ws_session_duration...: avg=9.91s  min=4.45ms   med=4.21s max=36.06s p(90)=35.88s p(95)=35.95s
+     ws_sessions...........: 10000  275.113045/s
