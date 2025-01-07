@@ -50,7 +50,7 @@ export default function UserSearch() {
                     )}
                     loading={isLoadingAllUsers}
                 />
-                <Button onClick={handleAddUser}>Add</Button>
+                <Button onClick={handleAddUser}>Dodaj</Button>
             </UserSearchContainerStyled>
         </ThemeProvider>
     )

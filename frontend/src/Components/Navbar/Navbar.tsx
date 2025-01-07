@@ -34,9 +34,11 @@ export default function Navbar() {
                     <ModeSwitch />
                     <NavbarDropdown />
                     <Button onClick={() => closeWebsocketConnection()}>
-                        Disconnect
+                        Rozłącz Websocket
                     </Button>
-                    <Button onClick={() => reconnect()}>Connect</Button>
+                    <Button onClick={() => reconnect()}>
+                        Połącz Websocket
+                    </Button>
                 </HorizontalContainerStyled>
             ) : (
                 <ModeSwitch />

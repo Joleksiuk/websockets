@@ -40,11 +40,11 @@ export default function CaptchaComponent() {
     return (
         <CaptchaWrapperStyled>
             <Typography color={getColorInMode('TEXT', mode)} variant="h5">
-                Please complete the CAPTCHA
+                Proszę potwierdzić, że nie jesteś robotem
             </Typography>
             <ReCAPTCHA sitekey={CAPTCHA_KEY} onChange={handleCaptchaChange} />
             <Button variant="outlined" type="button" onClick={handleSubmit}>
-                Submit
+                Potwierdź
             </Button>
         </CaptchaWrapperStyled>
     )

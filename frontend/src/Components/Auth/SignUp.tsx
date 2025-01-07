@@ -51,7 +51,7 @@ export default function SignUp() {
         validateInputs()
 
         try {
-            await sendRegisterRequest(username, password)
+            await sendRegisterRequest(username, password, email)
             setCurrentPage('signin')
         } catch (e: unknown) {
             console.error(e)
@@ -66,11 +66,11 @@ export default function SignUp() {
         <SingInWrapper>
             {error && <Alert severity="error">{error.message}</Alert>}
             <Typography color={getColorInMode('TEXT', mode)} variant="h3">
-                Sign Up
+                Rejestracja
             </Typography>
             <TextField
                 variant="outlined"
-                placeholder="Enter username"
+                placeholder="Wprowadź nazwę użytkownika"
                 autoComplete="off"
                 value={username}
                 onChange={handleUsernameChange}
@@ -84,7 +84,7 @@ export default function SignUp() {
             />
             <TextField
                 variant="outlined"
-                placeholder="Enter email"
+                placeholder="Wprowadź email"
                 autoComplete="off"
                 value={email}
                 sx={{ width: '25%' }}
@@ -93,7 +93,7 @@ export default function SignUp() {
                 error={error?.element === 'email'}
             />
             <TextField
-                placeholder="Enter password"
+                placeholder="Wprowadź hasło"
                 autoComplete="off"
                 variant="outlined"
                 value={password}
@@ -107,21 +107,21 @@ export default function SignUp() {
                 sx={{ width: '25%' }}
                 onClick={handleSignUp}
             >
-                Submit
+                Potwierdź
             </Button>
             <Typography
                 sx={{ paddingTop: '50px' }}
                 color={getColorInMode('TEXT', mode)}
                 variant="h5"
             >
-                Already have an account? Sing in.
+                Masz już konto? Zaloguj się
             </Typography>
             <Button
                 variant="outlined"
                 sx={{ width: '25%' }}
                 onClick={handlePressSignIn}
             >
-                Sign Up
+                Przejdź do logowania
             </Button>
         </SingInWrapper>
     )

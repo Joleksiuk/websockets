@@ -75,11 +75,11 @@ export default function RoomChoicePage() {
         <HorizontalContainerStyled>
             <ContainerStyled>
                 <Typography color={getColorInMode('TEXT', mode)} variant="h3">
-                    Join room
+                    Dołącz do pokoju
                 </Typography>
 
                 <TextField
-                    label="Chatroom ID"
+                    label="Identyfikator pokoju"
                     variant="outlined"
                     value={chatroomId}
                     onChange={handleChatroomIdChange}
@@ -92,17 +92,17 @@ export default function RoomChoicePage() {
                     }}
                     onClick={handleJoinChatroom}
                 >
-                    JOIN
+                    Dołącz
                 </Button>
             </ContainerStyled>
             <Divider orientation="vertical" flexItem />
             <ContainerStyled>
                 <Typography color={getColorInMode('TEXT', mode)} variant="h3">
-                    Create room
+                    Stwórz pokój
                 </Typography>
 
                 <TextField
-                    label="Chatroom name"
+                    label="Nazwa pokoju"
                     variant="outlined"
                     value={chatroomName}
                     onChange={handleChatroomChange}
@@ -114,7 +114,7 @@ export default function RoomChoicePage() {
                     }}
                     onClick={handleCreateChatroom}
                 >
-                    CREATE
+                    Stwórz
                 </Button>
             </ContainerStyled>
         </HorizontalContainerStyled>

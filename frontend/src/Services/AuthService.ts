@@ -1,5 +1,5 @@
 import { SECURE_BACKEND_URL, BACKEND_URL } from '../config'
-import { request } from './APIService'
+import { request, requestWithStatus } from './APIService'
 
 export async function getMyself(): Promise<any> {
     try {
@@ -14,15 +14,11 @@ export async function sendLoginRequest(
     username: string,
     password: string,
 ): Promise<any> {
-    try {
-        const response = await request(`${BACKEND_URL}/login`, 'post', {
-            username,
-            password,
-        })
-        return response
-    } catch (error) {
-        console.error('Error during login request:', error)
-    }
+    const response = await requestWithStatus(`${BACKEND_URL}/login`, 'post', {
+        username,
+        password,
+    })
+    return response
 }
 
 export async function sendLogoutRequest() {
@@ -34,10 +30,15 @@ export async function sendLogoutRequest() {
     }
 }
 
-export async function sendRegisterRequest(username: string, password: string) {
+export async function sendRegisterRequest(
+    username: string,
+    password: string,
+    email: string,
+): Promise<any> {
     try {
         const data = {
             username,
+            email,
             password,
             role: 'user',
         }

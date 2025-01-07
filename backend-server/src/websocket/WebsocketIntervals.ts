@@ -2,23 +2,36 @@ import WebSocket from "ws";
 import { WebSocketExt } from "./WebsocketModels";
 import { rateLimitMap, sendHealthCheck } from "./WebsocketMessageService";
 
-const HEARTBEAT_INTERVAL: number = 5000 * 2;
-const MAX_CONNECTION_TIME: number = 5000 * 1000;
+const HEARTBEAT_INTERVAL: number = 5000 * 6;
+const MAX_CONNECTION_TIME: number = 5000 * 100;
 
 function isClientAliveForTooLong(ws: WebSocketExt) {
   const now = new Date();
   const diff = now.getTime() - ws.connectionTime.getTime();
 
   if (diff > MAX_CONNECTION_TIME) {
+    console.log(
+      getCurrentTime(),
+      " Client is alive for too long. Closing connection."
+    );
     return true;
   }
 
   return false;
 }
 
+export function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleTimeString("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 export function setupIsAliveInterval(wss: WebSocket.Server) {
   const isAliveInterval = setInterval(() => {
-    console.log("firing interval");
+    console.log(getCurrentTime(), "Serwer: PING");
     wss.clients.forEach((client: WebSocketExt) => {
       if (!client.isAlive || isClientAliveForTooLong(client))
         return client.terminate();

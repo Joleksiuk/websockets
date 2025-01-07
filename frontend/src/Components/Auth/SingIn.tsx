@@ -5,6 +5,7 @@ import { SingInWrapper } from './SignIn.styled'
 import { useModeContext } from '../../Providers/ModeProvider'
 import { useAuthContext } from '../../Providers/AuthProvider'
 import ValidationService, { CustomValidationError } from './ValidationService'
+import { useSnackbar } from '../SnackBars'
 
 export type Error = {
     message: string
@@ -24,11 +25,24 @@ export default function SingIn() {
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<CustomValidationError | null>(null)
+    const { addMessage } = useSnackbar()
 
     const handleSignIn = async () => {
         try {
             validateInputs()
-            await login(username, password)
+            const response = await login(username, password)
+
+            console.log('Response:', response)
+            if (response.status === 429) {
+                addMessage(
+                    'Zbyt wiele prób logowania spróbuj ponownie za 15 minut',
+                    'error',
+                )
+            }
+
+            if (response.status === 401) {
+                addMessage('Niepoprawne dane logowania', 'error')
+            }
         } catch (e: unknown) {
             if (e instanceof CustomValidationError) {
                 const error = e as CustomValidationError
@@ -67,10 +81,10 @@ export default function SingIn() {
         <SingInWrapper>
             {error && <Alert severity="error">{error.message}</Alert>}
             <Typography color={getColorInMode('TEXT', mode)} variant="h3">
-                Sign In
+                Logowanie
             </Typography>
             <TextField
-                placeholder="Enter username"
+                placeholder="Wprowadź nazwę użytkownika"
                 variant="outlined"
                 value={username}
                 onChange={handleUsernameChange}
@@ -83,7 +97,7 @@ export default function SingIn() {
                 error={error?.element === 'username'}
             />
             <TextField
-                placeholder="Enter password"
+                placeholder="Wprowadź hasło"
                 variant="outlined"
                 value={password}
                 sx={{ width: '25%' }}
@@ -96,17 +110,17 @@ export default function SingIn() {
                 sx={{ width: '25%' }}
                 onClick={handleSignIn}
             >
-                Submit
+                Potwierdź
             </Button>
             <Typography color={getColorInMode('TEXT', mode)} variant="h5">
-                Don't have an account?
+                Nie masz konta?
             </Typography>
             <Button
                 variant="outlined"
                 sx={{ width: '25%' }}
                 onClick={handlePressSignUp}
             >
-                Sign Up
+                Przejdź do rejestracji
             </Button>
         </SingInWrapper>
     )

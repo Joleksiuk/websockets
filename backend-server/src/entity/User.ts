@@ -33,7 +33,7 @@ export class User {
   @IsNotEmpty()
   email: string;
 
-  @Column()
+  @Column({ default: false })
   isEmailConfirmed: boolean;
 
   @Column({ default: false })

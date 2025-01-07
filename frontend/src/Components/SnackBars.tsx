@@ -29,7 +29,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
         message: string,
         severity: SnackBarProps['severity'] = 'success',
     ) => {
-        //setSnackbars((prev) => [...prev, { id: Date.now(), message, severity }])
+        setSnackbars((prev) => [...prev, { id: Date.now(), message, severity }])
     }
 
     const handleClose =

@@ -10,11 +10,12 @@ import {
   secureMessageBeforeProcessing,
 } from "./WebsocketConnectionSecurityService";
 import {
+  getCurrentTime,
   setupIsAliveInterval,
   setupRateLimitInterval,
 } from "./WebsocketIntervals";
 
-export const MAX_CONNECTIONS = 5000;
+export const MAX_CONNECTIONS = 1000;
 export const rooms: Map<string, WSRoom> = new Map();
 let connectionsCount: number = 0;
 
@@ -71,6 +72,7 @@ export default function initializeWebSocketServer(server: any) {
     });
 
     ws.on("close", () => {
+      console.log(getCurrentTime(), " User ended connection");
       handleUserLeftRoom(ws);
       connectionsCount -= 1;
     });

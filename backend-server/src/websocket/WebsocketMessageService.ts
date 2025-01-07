@@ -12,6 +12,7 @@ import WebSocket from "ws";
 
 import { findRoomById, findUserById } from "./WebsocketRepository";
 import { rooms } from "./WebsocketServer";
+import { getCurrentTime } from "./WebsocketIntervals";
 
 export const rateLimitMap = new Map<
   string,
@@ -195,7 +196,7 @@ export function broadcastToRoom(roomId: number, message: ServerMessage): void {
 export function isClientAliveMessage(message: any) {
   const msg: ClientMessage = JSON.parse(message);
   if (msg?.eventName === "PONG") {
-    console.log("PONG");
+    console.log(getCurrentTime(), " Client: PONG");
     return true;
   }
   return false;

@@ -20,8 +20,8 @@ export type User = {
 export type AuthPageType = 'signin' | 'signup'
 interface AuthContextType {
     user: User | null
-    login: (username: string, jwt: string) => void
-    logout: () => void
+    login: (username: string, jwt: string) => Promise<any>
+    logout: () => Promise<any>
     currentPage: AuthPageType
     setCurrentPage: (page: AuthPageType) => void
     isAuthenticating: boolean
@@ -58,13 +58,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, [])
 
     const login = async (username: string, password: string) => {
-        const user = await sendLoginRequest(username, password)
-        setUser(user)
+        const response = await sendLoginRequest(username, password)
+        if (response.status !== 401) {
+            setUser(response.data)
+        }
+        return response
     }
 
     const logout = async () => {
-        await sendLogoutRequest()
+        const response = await sendLogoutRequest()
         setUser(null)
+        return response
     }
 
     return (

@@ -38,8 +38,7 @@ export default function ChatBase(): JSX.Element {
         return (
             <NoPermissionContainer>
                 <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
-                    You do not have access to this chatroom. Please ask the
-                    owner for permission.
+                    Nie masz dostępu do pokoju. Poproś właściciela o dostęp.
                 </Typography>
             </NoPermissionContainer>
         )
@@ -54,7 +53,7 @@ export default function ChatBase(): JSX.Element {
             <UserList />
             <ChatroomContentStyled>
                 <Typography variant="h5" color={getColorInMode('TEXT', mode)}>
-                    Chatroom : {room?.name}
+                    Nazwa pokoju : {room?.name}
                 </Typography>
                 {hasStarted ? (
                     <Square ref={squareRef} mode={mode}>

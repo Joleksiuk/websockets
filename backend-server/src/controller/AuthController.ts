@@ -11,6 +11,7 @@ import {
   JWT_EXPIRATION,
   JWT_REFRESH_EXPIRATION,
   JWT_SECRET,
+  USE_EMAIL_VALIDATION,
 } from "../config";
 import { AppDataSource } from "../data-source";
 import axios from "axios";
@@ -38,15 +39,16 @@ export class AuthController {
     let user: User;
     try {
       user = await this.userRepository.findOneOrFail({ where: { username } });
+      console.log(user);
     } catch (error) {
       res.status(401).send();
     }
 
-    if (!user.isEmailConfirmed) {
+    if (USE_EMAIL_VALIDATION && !user.isEmailConfirmed) {
       res.status(401).send("Email is not confirmed");
     }
 
-    if (!user.checkIfUnencryptedPasswordIsValid(password)) {
+    if (!user?.checkIfUnencryptedPasswordIsValid(password)) {
       res.status(401).send();
       return;
     }

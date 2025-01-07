@@ -16,9 +16,9 @@ export default function ReconnectPage() {
     return (
         <ReconnectComponentStyled>
             <Typography color={getColorInMode('TEXT', mode)}>
-                Are you still there?
+                Czy jesteś aktywny?
             </Typography>
-            <Button onClick={handleReconnect}>Reconnect</Button>
+            <Button onClick={handleReconnect}>Połącz ponownie</Button>
         </ReconnectComponentStyled>
     )
 }
