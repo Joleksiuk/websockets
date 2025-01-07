@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 export const USE_SSL = process.env.USE_SSL || true;
-export const USE_EMAIL_VALIDATION = false;
+export const USE_EMAIL_VALIDATION = process.env.USER_EMAIL_VALIDATION || false;
 export const LOCAL_SERVER = process.env.RENDER ? false : true;
 
 export const PROTOCOLE = USE_SSL ? "https" : "http";
