@@ -43,8 +43,8 @@ export const DATABASE_USER = process.env.DATABASE_USER || "postgres";
 export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || "postgres";
 export const DATABASE_NAME = process.env.DATABASE_NAME || "ws";
 
-export const EMAIL = "julaapex@gmail.com";
-export const EMAIL_PASS = "nehl uina lyvc xnzh";
+export const EMAIL = process.env.EMAIL;
+export const EMAIL_PASS = process.env.EMAIL_PASS;
 
 export const CAPTCHA_KEY = process.env.CAPTCHA_KEY;
 export const CAPTCHA_SECRET = process.env.CAPTCH_SECRET_KEY;
