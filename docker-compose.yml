@@ -18,11 +18,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0" # Limit to 1 CPU core
-          memory: "512M" # Limit to 512 MB RAM
+          cpus: "2" # Limit to 0.5 CPU core
+          memory: "2G" # Limit to 256 MB RAM
         reservations:
-          cpus: "0.5" # Reserve 0.5 CPU core
-          memory: "256M" # Reserve 256 MB RAM
+          cpus: "1" # Reserve 0.25 CPU core
+          memory: "2G" # Reserve 128 MB RAM
 
   db:
     image: postgres:15
@@ -45,11 +45,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5" # Limit to 0.5 CPU core
-          memory: "256M" # Limit to 256 MB RAM
+          cpus: "2" # Limit to 0.5 CPU core
+          memory: "2G" # Limit to 256 MB RAM
         reservations:
-          cpus: "0.25" # Reserve 0.25 CPU core
-          memory: "128M" # Reserve 128 MB RAM
+          cpus: "1" # Reserve 0.25 CPU core
+          memory: "2G" # Reserve 128 MB RAM
 
 volumes:
   postgres-data:
